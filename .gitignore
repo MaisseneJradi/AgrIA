@@ -214,6 +214,21 @@ tempCodeRunnerFile.py
 # Marimo
 marimo/_static/
 marimo/_lsp/
+# Data (trop lourd pour GitHub)
+data/raw/
+data/processed/
+*.zip
+*.h5
+*.pt
+*.pth
+
+# Bases locales
+*.db
+chroma/
+
+# Clés et secrets
+kaggle.json
+.env
 __marimo__/
 
 # Streamlit
