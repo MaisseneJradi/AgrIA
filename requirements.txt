@@ -1,0 +1,8 @@
+pandas
+requests
+matplotlib
+seaborn
+pdfplumber
+Pillow
+chromadb
+kaggle
