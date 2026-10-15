@@ -37,18 +37,18 @@ plt.savefig(os.path.join(FIG, "01_disease_class_balance.png"), dpi=150)
 plt.close()
 
 # ---------- 2. Deficiency: images per class, by crop ----------
-c2 = dfc.groupby(["class", "crop"]).size().unstack(fill_value=0)
+c2 = dfc.groupby(["class", "source"]).size().unstack(fill_value=0)
 c2 = c2.loc[c2.sum(axis=1).sort_values().index]
 fig, ax = plt.subplots(figsize=(9, 5))
 left = pd.Series(0, index=c2.index)
-palette = {"rice": LAB, "coffee": FIELD}
+palette = {"rice": LAB, "coleaf": FIELD, "plantvillage": OTHER}
 for crop in c2.columns:
     ax.barh(c2.index, c2[crop], left=left, color=palette.get(crop, OTHER), label=crop)
     left += c2[crop]
 for y, total in enumerate(left):
     ax.text(total + 5, y, str(int(total)), va="center", fontsize=10)
 ax.set_xlabel("Number of images")
-ax.set_title("Deficiencies: images per class, by crop", loc="left", fontweight="bold")
+ax.set_title("Deficiencies: images per class, by source", loc="left", fontweight="bold")
 ax.legend(frameon=False, ncol=2, loc="lower right", fontsize=9)
 plt.tight_layout()
 plt.savefig(os.path.join(FIG, "02_deficiency_class_balance.png"), dpi=150)
