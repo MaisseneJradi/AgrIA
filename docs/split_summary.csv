@@ -1,0 +1,6 @@
+split,diseases,deficiency
+test,8179,408
+test_field,240,0
+train,40403,1857
+val,8129,393
+total,56951,2658
