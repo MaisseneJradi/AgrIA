@@ -1,0 +1,39 @@
+﻿unified_class,crop,status,plantvillage_folder,plantdoc_folder
+apple__scab,apple,diseased,Apple___Apple_scab,Apple Scab Leaf
+apple__black_rot,apple,diseased,Apple___Black_rot,
+apple__rust,apple,diseased,Apple___Cedar_apple_rust,Apple rust leaf
+apple__healthy,apple,healthy,Apple___healthy,Apple leaf
+blueberry__healthy,blueberry,healthy,Blueberry___healthy,Blueberry leaf
+cherry__powdery_mildew,cherry,diseased,Cherry_(including_sour)___Powdery_mildew,
+cherry__healthy,cherry,healthy,Cherry_(including_sour)___healthy,Cherry leaf
+corn__gray_leaf_spot,corn,diseased,Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot,Corn Gray leaf spot
+corn__common_rust,corn,diseased,Corn_(maize)___Common_rust_,Corn rust leaf
+corn__northern_leaf_blight,corn,diseased,Corn_(maize)___Northern_Leaf_Blight,Corn leaf blight
+corn__healthy,corn,healthy,Corn_(maize)___healthy,
+grape__black_rot,grape,diseased,Grape___Black_rot,grape leaf black rot
+grape__esca,grape,diseased,Grape___Esca_(Black_Measles),
+grape__leaf_blight,grape,diseased,Grape___Leaf_blight_(Isariopsis_Leaf_Spot),
+grape__healthy,grape,healthy,Grape___healthy,grape leaf
+orange__citrus_greening,orange,diseased,Orange___Haunglongbing_(Citrus_greening),
+peach__bacterial_spot,peach,diseased,Peach___Bacterial_spot,
+peach__healthy,peach,healthy,Peach___healthy,Peach leaf
+pepper__bacterial_spot,pepper,diseased,"Pepper,_bell___Bacterial_spot",Bell_pepper leaf spot
+pepper__healthy,pepper,healthy,"Pepper,_bell___healthy",Bell_pepper leaf
+potato__early_blight,potato,diseased,Potato___Early_blight,Potato leaf early blight
+potato__late_blight,potato,diseased,Potato___Late_blight,Potato leaf late blight
+potato__healthy,potato,healthy,Potato___healthy,
+raspberry__healthy,raspberry,healthy,Raspberry___healthy,Raspberry leaf
+soybean__healthy,soybean,healthy,Soybean___healthy,Soyabean leaf
+squash__powdery_mildew,squash,diseased,Squash___Powdery_mildew,Squash Powdery mildew leaf
+strawberry__leaf_scorch,strawberry,diseased,Strawberry___Leaf_scorch,
+strawberry__healthy,strawberry,healthy,Strawberry___healthy,Strawberry leaf
+tomato__bacterial_spot,tomato,diseased,Tomato___Bacterial_spot,Tomato leaf bacterial spot
+tomato__early_blight,tomato,diseased,Tomato___Early_blight,Tomato Early blight leaf
+tomato__late_blight,tomato,diseased,Tomato___Late_blight,Tomato leaf late blight
+tomato__leaf_mold,tomato,diseased,Tomato___Leaf_Mold,Tomato mold leaf
+tomato__septoria_leaf_spot,tomato,diseased,Tomato___Septoria_leaf_spot,Tomato Septoria leaf spot
+tomato__spider_mites,tomato,diseased,Tomato___Spider_mites Two-spotted_spider_mite,Tomato two spotted spider mites leaf
+tomato__target_spot,tomato,diseased,Tomato___Target_Spot,
+tomato__yellow_leaf_curl_virus,tomato,diseased,Tomato___Tomato_Yellow_Leaf_Curl_Virus,Tomato leaf yellow virus
+tomato__mosaic_virus,tomato,diseased,Tomato___Tomato_mosaic_virus,Tomato leaf mosaic virus
+tomato__healthy,tomato,healthy,Tomato___healthy,Tomato leaf

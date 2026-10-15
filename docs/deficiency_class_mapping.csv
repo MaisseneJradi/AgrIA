@@ -1,0 +1,14 @@
+﻿dataset,original_class,n_images,unified_class,crop
+coleaf,CoLeaf DATASET\boron-B\boron-B,101,B_deficiency,coffee
+coleaf,CoLeaf DATASET\calcium-Ca\calcium-Ca,162,Ca_deficiency,coffee
+coleaf,CoLeaf DATASET\healthy\healthy,6,healthy,coffee
+coleaf,CoLeaf DATASET\iron-Fe\iron-Fe,65,Fe_deficiency,coffee
+coleaf,CoLeaf DATASET\magnesium-Mg\magnesium-Mg,79,Mg_deficiency,coffee
+coleaf,CoLeaf DATASET\manganese-Mn\manganese-Mn,83,Mn_deficiency,coffee
+coleaf,CoLeaf DATASET\more-deficiencies\more-deficiencies,104,EXCLUDE,coffee
+coleaf,CoLeaf DATASET\nitrogen-N\nitrogen-N,64,N_deficiency,coffee
+coleaf,CoLeaf DATASET\phosphorus-P\phosphorus-P,246,P_deficiency,coffee
+coleaf,CoLeaf DATASET\potasium-K\potasium-K,96,K_deficiency,coffee
+rice,rice_plant_lacks_nutrients\Nitrogen(N),440,N_deficiency,rice
+rice,rice_plant_lacks_nutrients\Phosphorus(P),333,P_deficiency,rice
+rice,rice_plant_lacks_nutrients\Potassium(K),383,K_deficiency,rice
