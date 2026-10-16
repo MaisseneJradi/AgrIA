@@ -1,0 +1,28 @@
+﻿task,unified_class,crop,status,folder,split
+diseases,olive__healthy,olive,healthy,olive/train/healthy,train
+diseases,olive__healthy,olive,healthy,olive/valid/healthy,val
+diseases,olive__healthy,olive,healthy,olive/test/healthy,test
+diseases,olive__peacock_spot,olive,diseased,olive/train/olive peacock spot,train
+diseases,olive__peacock_spot,olive,diseased,olive/valid/olive peacock spot,val
+diseases,olive__peacock_spot,olive,diseased,olive/test/olive peacock spot,test
+diseases,olive__knot_disease,olive,diseased,olive/train/knot disease,train
+diseases,olive__knot_disease,olive,diseased,olive/valid/knot disease,val
+diseases,olive__knot_disease,olive,diseased,olive/test/knot disease,test
+diseases,olive__aculus_olearius,olive,pest,olive/train/Aculus olearius,train
+diseases,olive__aculus_olearius,olive,pest,olive/valid/Aculus olearius,val
+diseases,olive__aculus_olearius,olive,pest,olive/test/Aculus olearius,test
+diseases,citrus__black_spot,citrus,diseased,citrus/Leaves/Black spot,auto
+diseases,citrus__canker,citrus,diseased,citrus/Leaves/canker,auto
+diseases,orange__citrus_greening,citrus,diseased,citrus/Leaves/greening,auto
+diseases,citrus__healthy,citrus,healthy,citrus/Leaves/healthy,auto
+diseases,EXCLUDE,citrus,diseased,citrus/Leaves/Melanose,auto
+diseases,datepalm__black_scorch,datepalm,diseased,datepalm/Infected Date Palm Leaves Dataset/Processed/4. Black Scorch,auto
+diseases,datepalm__leaf_spots,datepalm,diseased,datepalm/Infected Date Palm Leaves Dataset/Processed/5. Leaf Spots,auto
+diseases,datepalm__fusarium_wilt,datepalm,diseased,datepalm/Infected Date Palm Leaves Dataset/Processed/6. Fusarium Wilt,auto
+diseases,datepalm__rachis_blight,datepalm,diseased,datepalm/Infected Date Palm Leaves Dataset/Processed/7. Rachis Blight,auto
+diseases,datepalm__parlatoria_scale,datepalm,pest,datepalm/Infected Date Palm Leaves Dataset/Processed/8. Parlatoria Blanchardi,auto
+diseases,datepalm__healthy,datepalm,healthy,datepalm/Infected Date Palm Leaves Dataset/Processed/9. Healthy sample,auto
+deficiency,K_deficiency,datepalm,deficient,datepalm/Infected Date Palm Leaves Dataset/Processed/1. Potassium Deficiency,auto
+deficiency,Mn_deficiency,datepalm,deficient,datepalm/Infected Date Palm Leaves Dataset/Processed/2. Manganese Deficiency,auto
+deficiency,Mg_deficiency,datepalm,deficient,datepalm/Infected Date Palm Leaves Dataset/Processed/3. Magnesium Deficiency,auto
+deficiency,healthy,datepalm,healthy,datepalm/Infected Date Palm Leaves Dataset/Processed/9. Healthy sample,auto
