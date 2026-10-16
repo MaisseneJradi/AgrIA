@@ -1,8 +1,8 @@
-"""Count images per class for each image dataset (first EDA check)."""
+﻿"""Count images per class for each image dataset (first EDA check)."""
 import os
 from collections import Counter
 
-ROOTS = ["data/raw/plantvillage", "data/raw/plantdoc", "data/raw/deficiency"]
+ROOTS = ["data/raw/plantvillage", "data/raw/plantdoc", "data/raw/deficiency", "data/raw/olive", "data/raw/citrus", "data/raw/datepalm"]
 EXT = (".jpg", ".jpeg", ".png")
 
 for root in ROOTS:
