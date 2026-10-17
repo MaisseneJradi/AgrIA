@@ -20,39 +20,46 @@ plt.rcParams.update({"font.size": 11, "axes.spines.top": False, "axes.spines.rig
 dis = pd.read_csv(os.path.join(PROC, "diseases_manifest.csv"))
 dfc = pd.read_csv(os.path.join(PROC, "deficiency_manifest.csv"))
 
-# ---------- 1. Diseases: images per class, lab vs field ----------
-counts = dis.groupby(["class", "source"]).size().unstack(fill_value=0)
-for col in ("plantvillage", "plantdoc"):
-    if col not in counts:
-        counts[col] = 0
-counts = counts.assign(total=counts.sum(axis=1)).sort_values("total")
-fig, ax = plt.subplots(figsize=(10, 12))
-ax.barh(counts.index, counts["plantvillage"], color=LAB, label="Lab (PlantVillage)")
-ax.barh(counts.index, counts["plantdoc"], left=counts["plantvillage"], color=FIELD, label="Field (PlantDoc)")
-ax.set_xlabel("Number of images")
-ax.set_title("Diseases: images per class (lab vs field)", loc="left", fontweight="bold")
-ax.legend(loc="lower right", frameon=False)
-plt.tight_layout()
-plt.savefig(os.path.join(FIG, "01_disease_class_balance.png"), dpi=150)
-plt.close()
+# Colours per source (distinct in lightness, not only hue)
+SRC = {
+    "plantvillage": ("#2F6B3A", "Lab - PlantVillage"),
+    "plantdoc":     ("#E9A23B", "Field - PlantDoc"),
+    "olive":        ("#7A4E9C", "Olive (Roboflow)"),
+    "citrus":       ("#F2D16B", "Citrus (Mendeley)"),
+    "datepalm":     ("#3D7DB8", "Date palm (Mendeley)"),
+    "rice":         ("#1B3A24", "Rice NPK (Kaggle)"),
+    "coleaf":       ("#C2622D", "Coffee - CoLeaf"),
+}
 
-# ---------- 2. Deficiency: images per class, by crop ----------
-c2 = dfc.groupby(["class", "source"]).size().unstack(fill_value=0)
-c2 = c2.loc[c2.sum(axis=1).sort_values().index]
-fig, ax = plt.subplots(figsize=(9, 5))
-left = pd.Series(0, index=c2.index)
-palette = {"rice": LAB, "coleaf": FIELD, "plantvillage": OTHER}
-for crop in c2.columns:
-    ax.barh(c2.index, c2[crop], left=left, color=palette.get(crop, OTHER), label=crop)
-    left += c2[crop]
-for y, total in enumerate(left):
-    ax.text(total + 5, y, str(int(total)), va="center", fontsize=10)
-ax.set_xlabel("Number of images")
-ax.set_title("Deficiencies: images per class, by source", loc="left", fontweight="bold")
-ax.legend(frameon=False, ncol=2, loc="lower right", fontsize=9)
-plt.tight_layout()
-plt.savefig(os.path.join(FIG, "02_deficiency_class_balance.png"), dpi=150)
-plt.close()
+
+def stacked_by_source(df, title, out, height):
+    counts = df.groupby(["class", "source"]).size().unstack(fill_value=0)
+    counts = counts.loc[counts.sum(axis=1).sort_values().index]
+    fig, ax = plt.subplots(figsize=(10, height))
+    left = pd.Series(0, index=counts.index)
+    for src in [s for s in SRC if s in counts.columns] + [s for s in counts.columns if s not in SRC]:
+        color, label = SRC.get(src, (OTHER, src))
+        ax.barh(counts.index, counts[src], left=left, color=color, label=label)
+        left += counts[src]
+    for y, total in enumerate(left):
+        ax.text(total + left.max() * 0.005, y, str(int(total)), va="center", fontsize=8)
+    ax.set_xlabel("Number of images")
+    ax.set_title(title, loc="left", fontweight="bold")
+    ax.legend(loc="lower right", frameon=False, fontsize=9)
+    plt.tight_layout()
+    plt.savefig(os.path.join(FIG, out), dpi=150)
+    plt.close()
+    return counts
+
+
+# ---------- 1. Diseases: images per class, by source ----------
+counts = stacked_by_source(dis, "Diseases and pests: images per class, by source", "01_disease_class_balance.png", 15)
+counts["total"] = counts.sum(axis=1)
+if "plantdoc" not in counts:
+    counts["plantdoc"] = 0
+
+# ---------- 2. Deficiency: images per class, by source ----------
+c2 = stacked_by_source(dfc, "Deficiencies: images per class, by source", "02_deficiency_class_balance.png", 5.5)
 
 # ---------- 3. Sample grid: lab vs field for the same disease ----------
 both = dis.groupby("class")["source"].nunique()
@@ -81,7 +88,14 @@ print(summary)
 
 # ---------- Key numbers for the report ----------
 imb = counts["total"].max() / counts["total"].min()
-lab_only = int((counts["plantdoc"] == 0).sum())
-print(f"\nDisease classes: {len(counts)} | lab-only classes: {lab_only} | imbalance ratio max/min: {imb:.1f}x")
-print(f"Deficiency classes: {dfc['class'].nunique()} | smallest: {c2.sum(axis=1).idxmin()} ({int(c2.sum(axis=1).min())})")
+field_share = (dis["source"] == "plantdoc").mean() * 100
+print(f"\nDisease classes: {len(counts)} | crops: {dis['crop'].nunique()} | imbalance max/min: {imb:.0f}x "
+      f"({counts['total'].idxmax()} {int(counts['total'].max())} vs {counts['total'].idxmin()} {int(counts['total'].min())})")
+print(f"PlantDoc field photos: {field_share:.1f}% of disease images")
+tot = c2.sum(axis=1)
+print(f"Deficiency classes: {len(c2)} | imbalance max/min: {tot.max() / tot.min():.0f}x")
+print("Share of the main source in each deficiency class (crop confounding check):")
+share = (c2.max(axis=1) / tot * 100).round(0)
+for cls in tot.sort_values(ascending=False).index:
+    print(f"  {cls:<15} {int(tot[cls]):>5} images | {c2.loc[cls].idxmax():<12} {int(share[cls])}%")
 print(f"Figures saved in {FIG}")
