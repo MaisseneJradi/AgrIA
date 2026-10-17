@@ -1,9 +1,8 @@
-﻿unified_class,crop,status,plantvillage_folder,plantdoc_folder
+unified_class,crop,status,plantvillage_folder,plantdoc_folder
 apple__scab,apple,diseased,Apple___Apple_scab,Apple Scab Leaf
 apple__black_rot,apple,diseased,Apple___Black_rot,
 apple__rust,apple,diseased,Apple___Cedar_apple_rust,Apple rust leaf
 apple__healthy,apple,healthy,Apple___healthy,Apple leaf
-blueberry__healthy,blueberry,healthy,Blueberry___healthy,Blueberry leaf
 cherry__powdery_mildew,cherry,diseased,Cherry_(including_sour)___Powdery_mildew,
 cherry__healthy,cherry,healthy,Cherry_(including_sour)___healthy,Cherry leaf
 corn__gray_leaf_spot,corn,diseased,Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot,Corn Gray leaf spot
@@ -22,8 +21,6 @@ pepper__healthy,pepper,healthy,"Pepper,_bell___healthy",Bell_pepper leaf
 potato__early_blight,potato,diseased,Potato___Early_blight,Potato leaf early blight
 potato__late_blight,potato,diseased,Potato___Late_blight,Potato leaf late blight
 potato__healthy,potato,healthy,Potato___healthy,
-raspberry__healthy,raspberry,healthy,Raspberry___healthy,Raspberry leaf
-soybean__healthy,soybean,healthy,Soybean___healthy,Soyabean leaf
 squash__powdery_mildew,squash,diseased,Squash___Powdery_mildew,Squash Powdery mildew leaf
 strawberry__leaf_scorch,strawberry,diseased,Strawberry___Leaf_scorch,
 strawberry__healthy,strawberry,healthy,Strawberry___healthy,Strawberry leaf
