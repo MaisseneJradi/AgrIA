@@ -28,6 +28,7 @@ SRC = {
     "citrus":       ("#F2D16B", "Citrus (Mendeley)"),
     "datepalm":     ("#3D7DB8", "Date palm (Mendeley)"),
     "wheat":        ("#B8862F", "Wheat (Mendeley)"),
+    "olid":         ("#5FA8A0", "OLID I (field)"),
     "rice":         ("#1B3A24", "Rice NPK (Kaggle)"),
     "coleaf":       ("#C2622D", "Coffee - CoLeaf"),
 }
