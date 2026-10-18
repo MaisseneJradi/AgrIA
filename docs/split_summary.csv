@@ -1,6 +1,6 @@
 split,diseases,deficiency
-test,7789,709
+test,7918,799
 test_field,211,0
-train,38987,3302
-val,8096,695
-total,55083,4706
+train,39588,3722
+val,8225,785
+total,55942,5306

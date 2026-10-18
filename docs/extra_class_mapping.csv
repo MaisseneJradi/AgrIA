@@ -26,3 +26,15 @@ deficiency,K_deficiency,datepalm,deficient,datepalm/Infected Date Palm Leaves Da
 deficiency,Mn_deficiency,datepalm,deficient,datepalm/Infected Date Palm Leaves Dataset/Processed/2. Manganese Deficiency,auto
 deficiency,Mg_deficiency,datepalm,deficient,datepalm/Infected Date Palm Leaves Dataset/Processed/3. Magnesium Deficiency,auto
 deficiency,healthy,datepalm,healthy,datepalm/Infected Date Palm Leaves Dataset/Processed/9. Healthy sample,auto
+diseases,wheat__leaf_rust,wheat,diseased,wheat/WheatLeafRust/WheatLeafRust/train/diseased,train
+diseases,wheat__leaf_rust,wheat,diseased,wheat/WheatLeafRust/WheatLeafRust/val/diseased,val
+diseases,wheat__leaf_rust,wheat,diseased,wheat/WheatLeafRust/WheatLeafRust/test/diseased,test
+diseases,wheat__healthy,wheat,healthy,wheat/WheatLeafRust/WheatLeafRust/train/control,train
+diseases,wheat__healthy,wheat,healthy,wheat/WheatLeafRust/WheatLeafRust/val/control,val
+diseases,wheat__healthy,wheat,healthy,wheat/WheatLeafRust/WheatLeafRust/test/control,test
+deficiency,N_deficiency,wheat,deficient,wheat/Ndeficient/Ndeficient/train/deficiency,train
+deficiency,N_deficiency,wheat,deficient,wheat/Ndeficient/Ndeficient/val/deficiency,val
+deficiency,N_deficiency,wheat,deficient,wheat/Ndeficient/Ndeficient/test/deficiency,test
+deficiency,healthy,wheat,healthy,wheat/Ndeficient/Ndeficient/train/control,train
+deficiency,healthy,wheat,healthy,wheat/Ndeficient/Ndeficient/val/control,val
+deficiency,healthy,wheat,healthy,wheat/Ndeficient/Ndeficient/test/control,test
