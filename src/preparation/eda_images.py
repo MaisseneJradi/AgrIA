@@ -27,6 +27,7 @@ SRC = {
     "olive":        ("#7A4E9C", "Olive (Roboflow)"),
     "citrus":       ("#F2D16B", "Citrus (Mendeley)"),
     "datepalm":     ("#3D7DB8", "Date palm (Mendeley)"),
+    "wheat":        ("#B8862F", "Wheat (Mendeley)"),
     "rice":         ("#1B3A24", "Rice NPK (Kaggle)"),
     "coleaf":       ("#C2622D", "Coffee - CoLeaf"),
 }
