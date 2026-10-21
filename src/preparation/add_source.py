@@ -1,4 +1,4 @@
-﻿"""Add ONE new image source to the processed datasets, without touching what is already there.
+"""Add ONE new image source to the processed datasets, without touching what is already there.
 
 Usage: python src/preparation/add_source.py wheat
 
@@ -51,8 +51,10 @@ def main(source):
 
     for task in sorted({m["task"] for m in mapping}):
         man = os.path.join(OUT, f"{task}_manifest.csv")
-        with open(man, encoding="utf-8") as f:
-            rows = list(csv.DictReader(f))
+        rows = []
+        if os.path.exists(man):
+            with open(man, encoding="utf-8") as f:
+                rows = list(csv.DictReader(f))
         if any(r["source"] == source for r in rows):
             sys.exit(f"{task}: source '{source}' is already in the manifest, nothing done.")
         new = []
@@ -80,8 +82,12 @@ def main(source):
                 new.append({"path": dst, "split": split, "class": cls, "crop": m["crop"], "source": source})
                 idx += 1
             print(f"  {task:<11} {cls:<22} +{len(jobs)} ({m['folder']})")
+        new_file = not os.path.exists(man)
         with open(man, "a", newline="", encoding="utf-8") as f:
-            csv.DictWriter(f, fieldnames=["path", "split", "class", "crop", "source"]).writerows(new)
+            w = csv.DictWriter(f, fieldnames=["path", "split", "class", "crop", "source"])
+            if new_file:
+                w.writeheader()
+            w.writerows(new)
         print(f"{task}: +{len(new)} images, manifest now {len(rows) + len(new)}")
 
 

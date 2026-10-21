@@ -1,6 +1,6 @@
-split,diseases,deficiency
-test,8016,1975
-test_field,211,0
-train,40037,10089
-val,8321,2163
-total,56585,14227
+split,diseases,deficiency,fruits
+test,8016,1975,839
+test_field,211,0,0
+train,40037,10089,3867
+val,8321,2163,831
+total,56585,14227,5537
