@@ -19,6 +19,8 @@ plt.rcParams.update({"font.size": 11, "axes.spines.top": False, "axes.spines.rig
 
 dis = pd.read_csv(os.path.join(PROC, "diseases_manifest.csv"))
 dfc = pd.read_csv(os.path.join(PROC, "deficiency_manifest.csv"))
+FRUITS = os.path.join(PROC, "fruits_manifest.csv")
+frt = pd.read_csv(FRUITS) if os.path.exists(FRUITS) else None
 
 # Colours per source (distinct in lightness, not only hue)
 SRC = {
@@ -32,6 +34,9 @@ SRC = {
     "pepper":       ("#C0392B", "Pepper NPK (Mendeley)"),
     "rice":         ("#1B3A24", "Rice NPK (Kaggle)"),
     "coleaf":       ("#C2622D", "Coffee - CoLeaf"),
+    "tomato_fruit": ("#E0787A", "Tomato fruit - TFDD"),
+    "citrus_fruit": ("#9C8A1E", "Citrus fruit (Mendeley)"),
+    "pomegranate":  ("#6B1F3A", "Pomegranate (Mendeley)"),
 }
 
 
@@ -80,11 +85,15 @@ plt.tight_layout()
 plt.savefig(os.path.join(FIG, "03_lab_vs_field_samples.png"), dpi=150)
 plt.close()
 
-# ---------- 4. Split summary table ----------
+# ---------- 4. Fruits: images per class, by source ----------
+if frt is not None:
+    c4 = stacked_by_source(frt, "Fruits: images per class, by source", "04_fruit_class_balance.png", 6.5)
+
+# ---------- 5. Split summary table ----------
 summary = pd.concat([
     dis.groupby("split").size().rename("diseases"),
     dfc.groupby("split").size().rename("deficiency"),
-], axis=1).fillna(0).astype(int)
+] + ([frt.groupby("split").size().rename("fruits")] if frt is not None else []), axis=1).fillna(0).astype(int)
 summary.loc["total"] = summary.sum()
 summary.to_csv(os.path.join("docs", "split_summary.csv"))
 print(summary)
@@ -101,4 +110,8 @@ print("Share of the main source in each deficiency class (crop confounding check
 share = (c2.max(axis=1) / tot * 100).round(0)
 for cls in tot.sort_values(ascending=False).index:
     print(f"  {cls:<15} {int(tot[cls]):>5} images | {c2.loc[cls].idxmax():<12} {int(share[cls])}%")
+if frt is not None:
+    t4 = c4.sum(axis=1)
+    print(f"Fruit classes: {len(c4)} | crops: {frt['crop'].nunique()} | imbalance max/min: {t4.max() / t4.min():.0f}x "
+          f"({t4.idxmax()} {int(t4.max())} vs {t4.idxmin()} {int(t4.min())})")
 print(f"Figures saved in {FIG}")

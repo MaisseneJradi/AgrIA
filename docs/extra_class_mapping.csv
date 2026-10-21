@@ -86,3 +86,21 @@ deficiency,N_deficiency,pepper,deficient,pepper/by_split/test/n,test
 deficiency,P_deficiency,pepper,deficient,pepper/by_split/test/p,test
 deficiency,Zn_deficiency,pepper,deficient,pepper/by_split/test/zn,test
 deficiency,healthy,pepper,healthy,pepper/by_split/test/healthy,test
+fruits,pomegranate__alternaria_spot,pomegranate,diseased,pomegranate/Pomegranate Fruit Diseases Dataset for Deep Learning Models/Pomegranate Diseases Dataset/Alternaria,auto
+fruits,pomegranate__anthracnose,pomegranate,diseased,pomegranate/Pomegranate Fruit Diseases Dataset for Deep Learning Models/Pomegranate Diseases Dataset/Anthracnose,auto
+fruits,pomegranate__bacterial_blight,pomegranate,diseased,pomegranate/Pomegranate Fruit Diseases Dataset for Deep Learning Models/Pomegranate Diseases Dataset/Bacterial_Blight,auto
+fruits,pomegranate__cercospora_spot,pomegranate,diseased,pomegranate/Pomegranate Fruit Diseases Dataset for Deep Learning Models/Pomegranate Diseases Dataset/Cercospora,auto
+fruits,pomegranate__healthy,pomegranate,healthy,pomegranate/Pomegranate Fruit Diseases Dataset for Deep Learning Models/Pomegranate Diseases Dataset/Healthy,auto
+fruits,tomato__anthracnose,tomato,diseased,tomato_fruit/TFDD A High-Quality Image Dataset for Accurate Tom/Raw Data/Raw Data/Anthracnose,auto
+fruits,tomato__blossom_end_rot,tomato,deficient,tomato_fruit/TFDD A High-Quality Image Dataset for Accurate Tom/Raw Data/Raw Data/Blossom end root,auto
+fruits,tomato__cracking,tomato,physiological,tomato_fruit/TFDD A High-Quality Image Dataset for Accurate Tom/Raw Data/Raw Data/Cracking,auto
+fruits,tomato__early_blight,tomato,diseased,tomato_fruit/TFDD A High-Quality Image Dataset for Accurate Tom/Raw Data/Raw Data/Early Blight,auto
+fruits,tomato__fruitworm,tomato,pest,tomato_fruit/TFDD A High-Quality Image Dataset for Accurate Tom/Raw Data/Raw Data/Fruitworm,auto
+fruits,tomato__healthy,tomato,healthy,tomato_fruit/TFDD A High-Quality Image Dataset for Accurate Tom/Raw Data/Raw Data/Healthy,auto
+fruits,tomato__late_blight,tomato,diseased,tomato_fruit/TFDD A High-Quality Image Dataset for Accurate Tom/Raw Data/Raw Data/Late Blight,auto
+fruits,tomato__mold,tomato,diseased,tomato_fruit/TFDD A High-Quality Image Dataset for Accurate Tom/Raw Data/Raw Data/Mold,auto
+fruits,citrus__black_spot,citrus,diseased,citrus_fruit/Black spot,auto
+fruits,citrus__canker,citrus,diseased,citrus_fruit/Canker,auto
+fruits,orange__citrus_greening,citrus,diseased,citrus_fruit/Greening,auto
+fruits,citrus__scab,citrus,diseased,citrus_fruit/Scab,auto
+fruits,citrus__healthy,citrus,healthy,citrus_fruit/healthy,auto
