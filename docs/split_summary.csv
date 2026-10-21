@@ -1,6 +1,6 @@
 split,diseases,deficiency,fruits
-test,8016,1975,839
-test_field,211,0,0
-train,40037,10089,3867
-val,8321,2163,831
-total,56585,14227,5537
+test,7960,1871,833
+test_field,199,0,0
+train,39826,9810,3865
+val,8281,2090,826
+total,56266,13771,5524
