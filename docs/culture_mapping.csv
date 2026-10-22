@@ -1,0 +1,227 @@
+culture,crop,eu_codes,n_usages
+Vigne,grape,0151010 0151020,190
+Tomate,tomato,0231010,156
+Agrumes,citrus,0110020 0110030 0110050,128
+Pommier,apple,0130010,80
+Blé,wheat,0500090,75
+TOMATE SOUS SERRE,tomato,0231010,72
+Arbo,fruit_trees,,61
+Blé dur,wheat,0500090,56
+Pomme de terre,potato,0211000,45
+Poirier,pear,0130020,37
+Toutes cultures,non_crop,,36
+Orge,barley,0500010,32
+Palmier dattier,datepalm,0161010,30
+Fraisier,strawberry,0152000,29
+Pêcher,peach,0140030,23
+P. de terre,potato,0211000,23
+Blés,wheat,0500090,22
+Céréales,cereals,0500090 0500010 0500050,22
+Sol nu,non_crop,,22
+Melon,melon,0233010,21
+Piment,pepper,0231020,21
+Blé tendre,wheat,0500090,21
+Olivier,olive,0402010 0161030,19
+Tomate sous serre,tomato,0231010,17
+Betterave,sugar_beet,0900010,15
+Féverole,faba_bean,0260020 0300010,14
+Semences de blé,wheat,0500090,13
+Concombre,cucumber,0232010,12
+Colza,rapeseed,0401060,12
+Légumineuses,legumes,0260020 0300010 0300030,11
+Agrume,citrus,0110020 0110030 0110050,9
+Cultures Ornementales,ornamental,,9
+P.de terre,potato,0211000,9
+C. maraîchères,vegetables,,9
+Cultures maraîchères,vegetables,,9
+Arboriculture - Vigne,grape,0151010 0151020,9
+Cucurbitacées,cucurbits,0232010 0232030 0233010 0233030,8
+TOMATE,tomato,0231010,8
+Petit pois,pea,0260040,8
+Avoine,oat,0500050,8
+PIMENT SOUS SERRE,pepper,0231020,8
+Arboriculture,fruit_trees,,7
+Maïs,corn,0500030,7
+Tomate sous serre chauffées,tomato,0231010,7
+Fraisiers,strawberry,0152000,6
+Arbres fruitiers,fruit_trees,,6
+Betterave à sucre,sugar_beet,0900010,5
+Piment sous serre,pepper,0231020,5
+vigne,grape,0151010 0151020,5
+Féveroles,faba_bean,0260020 0300010,5
+Semence de blé,wheat,0500090,5
+Fraise,strawberry,0152000,4
+Pomme de Terre,potato,0211000,4
+Criquets pèlerins (adultes et larves),,,4
+Semences des féveroles,faba_bean,0260020 0300010,4
+Grenadier,pomegranate,0163050,4
+Forêt,,,4
+Fève,faba_bean,0260020 0300010,4
+souris domestiques,rodents,,4
+Rat,rodents,,4
+Tournesol,sunflower,0401050,4
+mulot,rodents,,4
+Oignons,onion,0220020,4
+Pommiers,apple,0130010,3
+Tomate de plein champs,tomato,0231010,3
+POIVRON SOUS SERRE,pepper,0231020,3
+COLZA,rapeseed,0401060,3
+Pois chiche,pea,0260040,3
+P de Terre,potato,0211000,3
+ail,garlic,0220010,3
+tendre,wheat,0500090,3
+Oignon,onion,0220020,3
+Melon sous serre,melon,0233010,3
+Vigne de table,grape,0151010 0151020,3
+pommier,apple,0130010,3
+Tomates sous serre,tomato,0231010,3
+Fenugrec,fenugreek,,3
+Tomate en plein champs,tomato,0231010,3
+tomate,tomato,0231010,3
+Légumuneuses,,,2
+CONCOMBRE,cucumber,0232010,2
+Fèves,faba_bean,0260020 0300010,2
+Tabac,tobacco,,2
+poirier,pear,0130020,2
+des dattes,datepalm,0161010,2
+Tomates,tomato,0231010,2
+Préventif,,,2
+P .de terre,,,2
+Cultures sous serres,,,2
+MELON SOUS SERRE,melon,0233010,2
+Dattes,datepalm,0161010,2
+Ail,garlic,0220010,2
+maïs,corn,0500030,2
+fénugrec,fenugreek,,2
+oignon,onion,0220020,2
+féverole,faba_bean,0260020 0300010,2
+févrole,,,2
+avoine,oat,0500050,2
+Fénugrec,fenugreek,,2
+fève,faba_bean,0260020 0300010,2
+petit pois,pea,0260040,2
+Blédur,,,2
+par cycle,,,2
+Laitue,lettuce,0251020,2
+p.de terre,potato,0211000,2
+Blé dur (en post levée),wheat,0500090,2
+canariensis),,,2
+Blé dur d'hiver,wheat,0500090,2
+orge,barley,0500010,2
+Céréales (Blés),wheat,0500090,2
+ex Nacer),,,2
+Tomate transplantée,tomato,0231010,2
+lentille,lentil,0300020,2
+curatif),rodents,,2
+OLIVIER,olive,0402010 0161030,2
+Pastèque,watermelon,0233030,2
+SERRE,,,2
+Vigne de cuve,grape,0151010 0151020,2
+cucurbitacées,cucurbits,0232010 0232030 0233010 0233030,2
+piment,pepper,0231020,2
+d’app,,,2
+ou trempage)Vigne,grape,0151010 0151020,1
+Intervention,,,1
+vignem,grape,0151010 0151020,1
+fraisier,strawberry,0152000,1
+P. de terre de conservation,potato,0211000,1
+Cultures sous serre,,,1
+Cultures Maraichères sous serre,vegetables,,1
+Grandes cultures,,,1
+Cactus,,,1
+Citronnier,citrus,0110020 0110030 0110050,1
+Semences de céréales,wheat,0500090,1
+Restrictiond'usage,,,1
+Restrictiond 'usage,,,1
+Poirrier,,,1
+Arbres fruitiers à pépins,fruit_trees,,1
+Persistance d'action,,,1
+Pomme de terre de conservation,potato,0211000,1
+Grains de Céreales,cereals,0500090 0500010 0500050,1
+o rnementale,,,1
+ornementale,ornamental,,1
+surfaces,,,1
+noisette,,,1
+pignon,,,1
+cacao,,,1
+ect…,,,1
+PASTEQUE SOUS SERRE,watermelon,0233030,1
+Une persistance d'action de,,,1
+Choux,cabbage,0242020,1
+C.maraîchères,vegetables,,1
+Amande,,,1
+pistache,,,1
+Arboriculture fruitière,fruit_trees,,1
+C. maraichères,vegetables,,1
+Type,,,1
+BBCH,,,1
+dattier,,,1
+POMMIER,apple,0130010,1
+Piments,pepper,0231020,1
+Tomate de pleins champs,tomato,0231010,1
+COURGETTE SOUS SERRE,squash,0232030,1
+fraise,strawberry,0152000,1
+Substrat(pépiniére),fruit_trees,,1
+Cocombre,,,1
+Légumineuses (févrole),legumes,0260020 0300010 0300030,1
+Ql,,,1
+ml eau,,,1
+trai,,,1
+C. ornementales,ornamental,,1
+Arbo+ Vigne,grape,0151010 0151020,1
+caries,,,1
+D AR,,,1
+Septoriose,,,1
+Semence d'orge,barley,0500010,1
+cycle,,,1
+Semences de p.de terre,potato,0211000,1
+jours-DAR,,,1
+O ignon,,,1
+OLIVER,olive,0402010 0161030,1
+d'app,,,1
+novembre,,,1
+Pecher,peach,0140030,1
+l’infection);DAR,,,1
+Tomate sous serrre,tomato,0231010,1
+d’infestation.-DAR,,,1
+Cuivre,,,1
+Helminthosporium solani,,,1
+jours. DAR,,,1
+Semenced'orge,barley,0500010,1
+Frasier,,,1
+Semences d’orge,barley,0500010,1
+P-HCI,,,1
+Vigne en plein champ,grape,0151010 0151020,1
+octobre,,,1
+Colza (variétés clearfield),rapeseed,0401060,1
+vivaces,,,1
+annuelles,,,1
+mauvaises herbes,,,1
+suivantes,,,1
+PECHER,peach,0140030,1
+Céréales à pailles,cereals,0500090 0500010 0500050,1
+Pois-chiche,pea,0260040,1
+précoce,,,1
+N,,,1
+B,,,1
+Triticale,triticale,0500990,1
+Petitpois,,,1
+triticale,triticale,0500990,1
+Céréales(en post levée),cereals,0500090 0500010 0500050,1
+Betteraves à sucre,sugar_beet,0900010,1
+florale en culture en plein air,,,1
+des maladies du sol,,,1
+ornementales,ornamental,,1
+d’intervention,,,1
+mention,,,1
+Mouillant parafinique adhesif,,,1
+P. de terre de consevation,potato,0211000,1
+Pêcher de saison,peach,0140030,1
+Artichaut,artichoke,0270050,1
+Pécher,peach,0140030,1
+Mouillant,,,1
+Courgette,squash,0232030,1
+(enrobage),,,1
+Voie terrestre,,,1
+Cultures maraichéres,vegetables,,1
+app,,,1
