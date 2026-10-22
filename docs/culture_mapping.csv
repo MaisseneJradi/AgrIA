@@ -9,7 +9,7 @@ Arbo,fruit_trees,,61
 Blé dur,wheat,0500090,58
 Pomme de terre,potato,0211000,45
 Poirier,pear,0130020,37
-Toutes cultures,non_crop,,36
+Toutes cultures,all_crops,,36
 Orge,barley,0500010,32
 Palmier dattier,datepalm,0161010,30
 Fraisier,strawberry,0152000,29
@@ -29,7 +29,7 @@ Semences de blé,wheat,0500090,13
 Concombre,cucumber,0232010,12
 Colza,rapeseed,0401060,12
 Légumineuses,legumes,0260020 0300010 0300030,11
-Arboriculture - Vigne,grape,0151010 0151020,9
+Arboriculture - Vigne,fruit_trees|grape,0151010 0151020,9
 P.de terre,potato,0211000,9
 Cultures Ornementales,ornamental,,9
 Petit pois,pea,0260040,9
@@ -63,11 +63,11 @@ Fraise,strawberry,0152000,4
 Oignon,onion,0220020,4
 Pomme de Terre,potato,0211000,4
 souris domestiques,rodents,,4
-Vigne de table,grape,0151010 0151020,3
+Vigne de table,grape,0151010,3
 Melon sous serre,melon,0233010,3
 ail,garlic,0220010,3
 P de Terre,potato,0211000,3
-Pois chiche,pea,0260040,3
+Pois chiche,chickpea,0300990,3
 COLZA,rapeseed,0401060,3
 Fenugrec,fenugreek,,3
 tendre,wheat,0500090,3
@@ -105,7 +105,7 @@ Céréales (Blés),wheat,0500090,2
 ex Nacer),,,2
 Tomate transplantée,tomato,0231010,2
 Ail,garlic,0220010,2
-curatif),rodents,,2
+curatif),,,2
 CONCOMBRE,cucumber,0232010,2
 oignon,onion,0220020,2
 fénugrec,fenugreek,,2
@@ -115,14 +115,14 @@ d’app,,,2
 Laitue,lettuce,0251020,2
 par cycle,,,2
 piment,pepper,0231020,2
-Vigne de cuve,grape,0151010 0151020,2
+Vigne de cuve,grape,0151020,2
 cucurbitacées,cucurbits,0232010 0232030 0233010 0233030,2
 p.de terre,potato,0211000,2
 Pastèque,watermelon,0233030,2
 SERRE,vegetables,,2
 P. de terre de conservation,potato,0211000,1
 Persistance d'action,,,1
-Semences de céréales,wheat,0500090,1
+Semences de céréales,cereals,0500090 0500010 0500050,1
 fraisier,strawberry,0152000,1
 Cultures sous serre,vegetables,,1
 Pomme de terre de conservation,potato,0211000,1
@@ -130,8 +130,8 @@ Cultures Maraichères sous serre,vegetables,,1
 ou trempage)Vigne,grape,0151010 0151020,1
 surfaces,,,1
 Grains de Céreales,cereals,0500090 0500010 0500050,1
-noisette,nuts,0120060 0120090,1
-pignon,nuts,0120060 0120090,1
+noisette,nuts,0120060,1
+pignon,nuts,0120090,1
 cacao,,,1
 ect…,,,1
 C.maraîchères,vegetables,,1
@@ -145,7 +145,7 @@ PASTEQUE SOUS SERRE,watermelon,0233030,1
 Grandes cultures,cereals,0500090 0500010 0500050,1
 Piments,pepper,0231020,1
 Arbres fruitiers à pépins,fruit_trees,,1
-Citronnier,citrus,0110020 0110030 0110050,1
+Citronnier,citrus,0110030,1
 Type,,,1
 C. maraichères,vegetables,,1
 dattier,datepalm,0161010,1
@@ -160,7 +160,7 @@ ml eau,,,1
 trai,,,1
 Septoriose,,,1
 Semence d'orge,barley,0500010,1
-Arbo+ Vigne,grape,0151010 0151020,1
+Arbo+ Vigne,fruit_trees|grape,0151010 0151020,1
 C. ornementales,ornamental,,1
 caries,,,1
 jours-DAR,,,1
@@ -185,7 +185,7 @@ Cuivre,,,1
 Helminthosporium solani,,,1
 jours. DAR,,,1
 Semenced'orge,barley,0500010,1
-Substrat(pépiniére),fruit_trees,,1
+Substrat(pépiniére),ornamental,,1
 Colza (variétés clearfield),rapeseed,0401060,1
 vivaces,,,1
 annuelles,,,1
@@ -193,7 +193,7 @@ mauvaises herbes,,,1
 suivantes,,,1
 PECHER,peach,0140030,1
 Céréales à pailles,cereals,0500090 0500010 0500050,1
-Pois-chiche,pea,0260040,1
+Pois-chiche,chickpea,0300990,1
 précoce,,,1
 N,,,1
 B,,,1

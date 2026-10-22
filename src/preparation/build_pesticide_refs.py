@@ -100,22 +100,30 @@ BIO = re.compile(r"(?:copper|sulphur|paraffin oil|pyrethrins|spinosad|azadiracht
                  r"putrescine|trimethylamine|hydrolysed proteins|lime sulphur|potassium hydrogen carbonate|"
                  r"sodium hydrogen carbonate|kaolin|ferric phosphate|cerevisane|thymol|pine oil|nucleopolyhedrovirus)", re.I)
 
-# crop text -> (project crop code, EU commodity codes). Order matters: first match wins.
+# crop text -> (project crop code, EU commodity codes). Order matters: first match wins. A crop "a|b" covers both
+# ("Arbo + Vigne"). Reviewed 2026-10-22: short words are matched whole (\b) where they hide in others
+# ("rat" in "curatif", "pepin" in "pepiniere", "mais" the conjunction).
 CROPS = [
-    (r"semence.*(ble|cereal)|ble.*semence", "wheat", ["0500090"]),
-    (r"semence.*(pomme de terre|p\.? ?de terre)", "potato", ["0211000"]),
+    (r"arbo.*vigne|arboriculture.*vigne", "fruit_trees|grape", ["0151010", "0151020"]),
+    (r"semence.*cereal|cereal.*semence", "cereals", ["0500090", "0500010", "0500050"]),
+    (r"semence.*\bble|\bble.*semence", "wheat", ["0500090"]),
+    (r"semence.*orge", "barley", ["0500010"]),
+    (r"semence.*(pomme de terre|p\s*\.?\s*de\s*terre)", "potato", ["0211000"]),
     (r"tomate", "tomato", ["0231010"]),
     (r"poivron|piment", "pepper", ["0231020"]),
     (r"aubergine", "eggplant", ["0231030"]),
-    (r"pomme de terre|p\s*\.?\s*de\s*terre|pdt", "potato", ["0211000"]),
+    (r"pomme de terre|p\s*\.?\s*de\s*terre|\bpdt\b", "potato", ["0211000"]),
     (r"co[n]?combre", "cucumber", ["0232010"]),
     (r"courgette|courge", "squash", ["0232030"]),
     (r"pasteque", "watermelon", ["0233030"]),
     (r"melon", "melon", ["0233010"]),
     (r"cucurbit", "cucurbits", ["0232010", "0232030", "0233010", "0233030"]),
     (r"fraisier|fraise|frasier", "strawberry", ["0152000"]),
-    (r"agrume|oranger|citronnier|mandarinier|clementin|maltaise", "citrus", ["0110020", "0110030", "0110050"]),
-    (r"olivier|olive", "olive", ["0402010", "0161030"]),
+    (r"citronnier|citron", "citrus", ["0110030"]),
+    (r"agrume|oranger|mandarinier|clementin|maltaise", "citrus", ["0110020", "0110030", "0110050"]),
+    (r"olivier|olive|oliver", "olive", ["0402010", "0161030"]),
+    (r"vigne de table|raisin de table", "grape", ["0151010"]),
+    (r"vigne de cuve|raisin de cuve", "grape", ["0151020"]),
     (r"vigne|raisin", "grape", ["0151010", "0151020"]),
     (r"pommier", "apple", ["0130010"]),
     (r"poir+ier", "pear", ["0130020"]),
@@ -125,19 +133,22 @@ CROPS = [
     (r"prunier", "plum", ["0140040"]),
     (r"amandier|amande", "almond", ["0120010"]),
     (r"pistach", "pistachio", ["0120100"]),
+    (r"noisett", "nuts", ["0120060"]),
+    (r"pignon", "nuts", ["0120090"]),
     (r"grenadier|grenade", "pomegranate", ["0163050"]),
     (r"figuier", "fig", ["0161020"]),
+    (r"cactus|figue de barbarie", "prickly_pear", ["0162040"]),
     (r"palmier|datt", "datepalm", ["0161010"]),
     (r"ble dur|ble tendre|\bbles?\b|^tendre$", "wheat", ["0500090"]),
-    (r"orge", "barley", ["0500010"]),
+    (r"\borge\b", "barley", ["0500010"]),
     (r"avoine", "oat", ["0500050"]),
     (r"triticale", "triticale", ["0500990"]),
-    (r"mais", "corn", ["0500030"]),
+    (r"\bmais\b", "corn", ["0500030"]),
     (r"cereale|grandes cultures", "cereals", ["0500090", "0500010", "0500050"]),
     (r"feverole|fevrole|feve", "faba_bean", ["0260020", "0300010"]),
+    (r"pois.?chiche", "chickpea", ["0300990"]),
     (r"petit pois|\bpois\b", "pea", ["0260040"]),
     (r"haricot", "bean", ["0260010"]),
-    (r"pois chiche", "chickpea", ["0300990"]),
     (r"lentille", "lentil", ["0300020"]),
     (r"legum\w*neuse", "legumes", ["0260020", "0300010", "0300030"]),
     (r"fenugrec", "fenugreek", []),
@@ -149,72 +160,81 @@ CROPS = [
     (r"artichaut", "artichoke", ["0270050"]),
     (r"carotte", "carrot", ["0213020"]),
     (r"laitue|salade", "lettuce", ["0251020"]),
-    (r"chou", "cabbage", ["0242020"]),
+    (r"\bchoux?\b", "cabbage", ["0242020"]),
     (r"fenouil", "fennel", ["0270040"]),
     (r"tabac", "tobacco", []),
-    (r"maraich|legume|\bserres?\b", "vegetables", []),
-    (r"noisett|pignon", "nuts", ["0120060", "0120090"]),
-    (r"cactus|figue de barbarie", "prickly_pear", ["0162040"]),
-    (r"arbo|arbres? fruitier|fruitier|rosacee|pepin|noyau", "fruit_trees", []),
-    (r"ornement|gazon|pepiniere|forest|foret|rosier", "ornamental", []),
+    (r"maraich|\blegumes?\b|\bserres?\b", "vegetables", []),
+    (r"ornement|gazon|pepiniere|substrat|forest|foret|rosier", "ornamental", []),
+    (r"\barbo|arbres? fruitier|fruitier|rosacee|\bpepins?\b|noyau", "fruit_trees", []),
+    (r"toutes cultures", "all_crops", []),
     (r"criquet|acridien", "non_crop", []),
-    (r"toutes cultures|sol nu|non cultiv|bord|chemin|desherbage total|zones? non", "non_crop", []),
-    (r"stock|grain|denree|magasin|silo|entrepot", "stored_products", []),
-    (r"rat|souris|mulot|rongeur|campagnol", "rodents", []),
+    (r"sol nu|non cultiv|\bbords?\b|chemin|desherbage total|zones? non", "non_crop", []),
+    (r"stock|\bgrains?\b|denree|magasin|silo|entrepot", "stored_products", []),
+    (r"\brats?\b|souris|mulot|rongeur|campagnol", "rodents", []),
 ]
-# group crops cover the project crops below when matching targets to image classes
+# group crops cover the project crops below when matching targets to image classes. "Cereales" in the Tunisian
+# list means small-grain cereals (wheat, barley, oat): not maize.
 GROUPS = {"vegetables": ["tomato", "pepper", "potato", "squash", "cucumber", "melon", "eggplant"],
           "cucurbits": ["squash", "cucumber", "melon", "watermelon"],
-          "fruit_trees": ["apple", "pear", "peach", "cherry", "apricot", "plum"],
-          "cereals": ["wheat", "barley", "oat", "corn"]}
+          "fruit_trees": ["apple", "pear", "peach", "cherry", "apricot", "plum", "almond"],
+          "cereals": ["wheat", "barley", "oat"]}
 
-# (crops, regex on the target, unified_class, relation): the target written in the list -> image class
+# (crops, regex on the target, unified_class, relation, exclusion regex): the target written in the list -> image
+# class. relation: direct = the pest/disease of the class; vecteur = insect spreading the virus of the class;
+# proche = same symptom family, other pathogen (fallback); "groupe" is added when the usage names a crop group
+# ("Arbo", "Cultures maraicheres") rather than the crop itself. Reviewed 2026-10-22:
+#   - no aphid -> tomato mosaic virus: ToMV spreads by contact and seed, not by aphids;
+#   - noctuelles defoliatrices (Spodoptera) eat leaves: the fruitworm class is Helicoverpa;
+#   - Aculops lycopersici (russet mite) is not the spider mite of the class;
+#   - Leveillula taurica is the powdery mildew of Solanaceae, not of cucurbits.
 TARGETS = [
-    (["tomato"], r"mildiou|phytophthora infestans", "tomato__late_blight", "direct"),
-    (["tomato"], r"alternari", "tomato__early_blight", "direct"),
-    (["tomato"], r"septori", "tomato__septoria_leaf_spot", "direct"),
-    (["tomato"], r"cladospori|fulvia|passalora", "tomato__leaf_mold", "direct"),
-    (["tomato"], r"acarien|tetranyque|tetranychus", "tomato__spider_mites", "direct"),
-    (["tomato"], r"tuta|mineuse", "tomato__leaf_miner", "direct"),
-    (["tomato"], r"noctuelle|helicoverpa|heliothis|chenille", "tomato__fruitworm", "direct"),
-    (["tomato"], r"bacteri|xanthomonas|pseudomonas", "tomato__bacterial_spot", "direct"),
-    (["tomato"], r"anthracnose|colletotrichum", "tomato__anthracnose", "direct"),
-    (["tomato"], r"botrytis|pourriture grise|moisissure", "tomato__mold", "direct"),
-    (["tomato"], r"corynespora", "tomato__target_spot", "direct"),
-    (["tomato"], r"mouche blanche|aleurode|bemisia", "tomato__yellow_leaf_curl_virus", "vecteur"),
-    (["tomato"], r"puceron", "tomato__mosaic_virus", "vecteur"),
-    (["potato"], r"mildiou|phytophthora infestans", "potato__late_blight", "direct"),
-    (["potato"], r"alternari", "potato__early_blight", "direct"),
-    (["apple"], r"tavelure|venturia", "apple__scab", "direct"),
-    (["apple"], r"rouille|gymnosporangium", "apple__rust", "direct"),
-    (["apple"], r"black.?rot|pourriture noire|botryosphaeria", "apple__black_rot", "direct"),
-    (["cherry"], r"oidium", "cherry__powdery_mildew", "direct"),
-    (["peach"], r"bacteri|xanthomonas", "peach__bacterial_spot", "direct"),
-    (["pepper"], r"bacteri|xanthomonas", "pepper__bacterial_spot", "direct"),
-    (["grape"], r"black.?rot|guignardia", "grape__black_rot", "direct"),
-    (["grape"], r"esca", "grape__esca", "direct"),
-    (["grape"], r"isariopsis|pseudocercospora", "grape__leaf_blight", "direct"),
-    (["olive"], r"oeil de paon|cycloconium|spilocaea|venturia oleaginea", "olive__peacock_spot", "direct"),
-    (["olive"], r"tuberculose|savastanoi", "olive__knot_disease", "direct"),
-    (["olive"], r"phytopte|aculus|eriophy|acarien", "olive__aculus_olearius", "direct"),
-    (["citrus"], r"chancre|xanthomonas", "citrus__canker", "direct"),
-    (["citrus"], r"phyllosticta|guignardia|taches? noires?|black spot|cbs", "citrus__black_spot", "direct"),
-    (["citrus"], r"elsinoe|tavelure", "citrus__scab", "direct"),
-    (["citrus"], r"psylle|diaphorina|trioza", "orange__citrus_greening", "vecteur"),
-    (["datepalm"], r"parlatoria|cochenille", "datepalm__parlatoria_scale", "direct"),
-    (["datepalm"], r"bayoud|fusarium", "datepalm__fusarium_wilt", "direct"),
-    (["datepalm"], r"thielaviopsis|black scorch", "datepalm__black_scorch", "direct"),
-    (["datepalm"], r"graphiola|taches? foliaires?|faux charbon", "datepalm__leaf_spots", "direct"),
-    (["datepalm"], r"diplodia|pourriture du rachis", "datepalm__rachis_blight", "direct"),
-    (["wheat"], r"rouille", "wheat__leaf_rust", "direct"),
-    (["corn"], r"rouille|puccinia", "corn__common_rust", "direct"),
-    (["corn"], r"helminthospori|exserohilum", "corn__northern_leaf_blight", "direct"),
-    (["corn"], r"cercospor", "corn__gray_leaf_spot", "direct"),
-    (["squash", "cucumber", "melon", "watermelon"], r"oidium", "squash__powdery_mildew", "direct"),
-    (["pomegranate"], r"alternari", "pomegranate__alternaria_spot", "direct"),
-    (["pomegranate"], r"anthracnose|colletotrichum", "pomegranate__anthracnose", "direct"),
-    (["pomegranate"], r"cercospor", "pomegranate__cercospora_spot", "direct"),
-    (["pomegranate"], r"bacteri|xanthomonas", "pomegranate__bacterial_blight", "direct"),
+    (["tomato"], r"mildiou|phytophthora infestans", "tomato__late_blight", "direct", None),
+    (["tomato"], r"alternari", "tomato__early_blight", "direct", None),
+    (["tomato"], r"septori", "tomato__septoria_leaf_spot", "direct", None),
+    (["tomato"], r"cladospori|fulvia|passalora", "tomato__leaf_mold", "direct", None),
+    (["tomato"], r"acarien|tetranyque|tetranychus", "tomato__spider_mites", "direct", r"aculops|eriophy|bronz"),
+    (["tomato"], r"tuta|mineuse", "tomato__leaf_miner", "direct", None),
+    (["tomato"], r"noctuelle|helicoverpa|heliothis", "tomato__fruitworm", "direct", r"defoliat|asparagus|spodoptera"),
+    (["tomato"], r"bacteri|xanthomonas|pseudomonas", "tomato__bacterial_spot", "direct", None),
+    (["tomato"], r"anthracnose|colletotrichum", "tomato__anthracnose", "direct", None),
+    (["tomato"], r"botrytis|pourriture grise|moisissure", "tomato__mold", "direct", None),
+    (["tomato"], r"corynespora", "tomato__target_spot", "direct", None),
+    (["tomato"], r"mouche blanche|aleurode|bemisia", "tomato__yellow_leaf_curl_virus", "vecteur", None),
+    (["potato"], r"mildiou|phytophthora infestans", "potato__late_blight", "direct", None),
+    (["potato"], r"alternari", "potato__early_blight", "direct", None),
+    (["apple"], r"tavelure|venturia", "apple__scab", "direct", None),
+    (["apple"], r"rouille|gymnosporangium", "apple__rust", "direct", None),
+    (["apple"], r"black.?rot|pourriture noire|botryosphaeria", "apple__black_rot", "direct", None),
+    (["cherry"], r"oidium", "cherry__powdery_mildew", "direct", r"grappe"),
+    (["peach"], r"bacteri|xanthomonas", "peach__bacterial_spot", "direct", None),
+    (["pepper"], r"bacteri|xanthomonas", "pepper__bacterial_spot", "direct", None),
+    (["grape"], r"black.?rot|guignardia", "grape__black_rot", "direct", None),
+    (["grape"], r"esca", "grape__esca", "direct", None),
+    (["grape"], r"isariopsis|pseudocercospora", "grape__leaf_blight", "direct", None),
+    (["olive"], r"oeil de paon|cycloconium|spilocaea|venturia oleaginea", "olive__peacock_spot", "direct", None),
+    (["olive"], r"tuberculose|savastanoi", "olive__knot_disease", "direct", None),
+    (["olive"], r"phytopte|aculus|eriophy|acarien", "olive__aculus_olearius", "direct", None),
+    (["citrus"], r"chancre|xanthomonas", "citrus__canker", "direct", None),
+    (["citrus"], r"phyllosticta|guignardia|taches? noires?|black spot|cbs", "citrus__black_spot", "direct", None),
+    (["citrus"], r"elsinoe|tavelure", "citrus__scab", "direct", None),
+    (["citrus"], r"psylle|diaphorina|trioza", "orange__citrus_greening", "vecteur", None),
+    (["datepalm"], r"parlatoria|cochenille", "datepalm__parlatoria_scale", "direct", None),
+    (["datepalm"], r"bayoud|fusarium", "datepalm__fusarium_wilt", "direct", None),
+    (["datepalm"], r"thielaviopsis|black scorch", "datepalm__black_scorch", "direct", None),
+    (["datepalm"], r"graphiola|taches? foliaires?|faux charbon", "datepalm__leaf_spots", "direct", None),
+    (["datepalm"], r"dessechement foliaire|alternaria", "datepalm__leaf_spots", "proche", None),
+    (["datepalm"], r"diplodia|pourriture du rachis", "datepalm__rachis_blight", "direct", None),
+    (["strawberry"], r"diplocarpon|brulure", "strawberry__leaf_scorch", "direct", None),
+    (["strawberry"], r"taches? pourpres", "strawberry__leaf_scorch", "proche", None),
+    (["wheat"], r"rouille", "wheat__leaf_rust", "direct", r"rouille jaune|rouille noire"),
+    (["corn"], r"rouille|puccinia", "corn__common_rust", "direct", None),
+    (["corn"], r"helminthospori|exserohilum", "corn__northern_leaf_blight", "direct", None),
+    (["corn"], r"cercospor", "corn__gray_leaf_spot", "direct", None),
+    (["squash", "cucumber", "melon", "watermelon"], r"oidium", "squash__powdery_mildew", "direct", r"leveillula"),
+    (["pomegranate"], r"alternari", "pomegranate__alternaria_spot", "direct", None),
+    (["pomegranate"], r"anthracnose|colletotrichum", "pomegranate__anthracnose", "direct", None),
+    (["pomegranate"], r"cercospor", "pomegranate__cercospora_spot", "direct", None),
+    (["pomegranate"], r"bacteri|xanthomonas", "pomegranate__bacterial_blight", "direct", None),
 ]
 
 
@@ -373,10 +393,13 @@ def main():
     # 4. targets -> image classes
     rows = []
     for r in use.itertuples():
-        crops = GROUPS.get(r.crop, [r.crop]) if isinstance(r.crop, str) else []
+        named = r.crop.split("|") if isinstance(r.crop, str) else []
+        crops = {c for n in named for c in GROUPS.get(n, [n])}
         t = plain(r.cible)
-        for tcrops, rx, cls, rel in TARGETS:
-            if set(crops) & set(tcrops) and re.search(rx, t):
+        for tcrops, rx, cls, rel, excl in TARGETS:
+            if crops & set(tcrops) and re.search(rx, t) and not (excl and re.search(excl, t)):
+                if rel == "direct" and not set(named) & set(tcrops):
+                    rel = "groupe"  # the usage names a crop group ("Arbo"), not the crop of the class
                 rows.append({"unified_class": cls, "relation": rel, "product_id": r.product_id,
                              "usage_idx": r.usage_idx, "nom_commercial": r.nom_commercial, "type": r.type,
                              "substances_ue": r.substances_ue, "culture": r.culture, "cible": r.cible, "dose": r.dose,

@@ -58,7 +58,7 @@ CROP_FR = {
     "rapeseed": "Colza", "sunflower": "Tournesol", "onion": "Oignon", "garlic": "Ail", "artichoke": "Artichaut",
     "carrot": "Carotte", "lettuce": "Laitue", "cabbage": "Chou", "fennel": "Fenouil", "tobacco": "Tabac",
     "vegetables": "Cultures maraîchères", "fruit_trees": "Arbres fruitiers", "ornamental": "Ornement / Forêt",
-    "non_crop": "Zones non cultivées", "stored_products": "Denrées stockées", "rodents": "Rongeurs (locaux, champs)",
+    "non_crop": "Zones non cultivées", "all_crops": "Toutes cultures", "stored_products": "Denrées stockées", "rodents": "Rongeurs (locaux, champs)",
 }
 NUM = r"\d+(?:[.,]\d+)?"
 UNIT = {"cc": "ml", "ml": "ml", "cl": "cl", "l": "l", "litre": "l", "litres": "l", "lt": "l", "g": "g", "gr": "g",
@@ -174,7 +174,7 @@ def pesticides():
                     "id": r.product_id, "texte": f"{r.culture} : {r.cible} : {r.dose}"} for r in use[bad].itertuples())
     note("pesticides_usages", "rejet : culture non reconnue (fragment de texte)", bad.sum())
     use = use[~bad].copy()
-    use["culture_fr"] = use["crop"].map(CROP_FR)
+    use["culture_fr"] = use["crop"].map(lambda c: " + ".join(CROP_FR.get(x, x) for x in c.split("|")))
     use["sous_serre"] = use["culture_brut"].map(plain).str.contains(r"serre|s/s|abri", na=False)
     dose = pd.DataFrame([parse_dose(f"{d} {r}") for d, r in zip(use["dose"], use["remarques"].fillna(""))],
                         index=use.index)
