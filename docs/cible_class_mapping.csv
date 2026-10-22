@@ -1,16 +1,15 @@
 unified_class,relation,cible_norm,n_usages
-apple__scab,direct,"bacteriose, coryneum, chancre cloque, feu bacterien, tavelure, septoriose",14
 apple__scab,direct,tavelure,27
 apple__scab,direct,tavelure (venturia inaequalis ),1
 apple__scab,direct,tavelure(venturia inaequalis ),2
 apple__scab,direct,tavelure(venturia inaequalis),1
 apple__scab,direct,tavelure(venturia inaequalis) + oidium(podosphaeraleucotricha),1
 apple__scab,direct,tavelure;oidium,1
-cherry__powdery_mildew,direct,oidium,1
-cherry__powdery_mildew,direct,oidium (stade floraison a la fermeture de la grappe),2
+apple__scab,groupe,"bacteriose, coryneum, chancre cloque, feu bacterien, tavelure, septoriose",14
+cherry__powdery_mildew,groupe,oidium,11
 citrus__black_spot,direct,black spot-maladies des taches noires des agrumes (phyllostictacitricarpa),1
-corn__common_rust,direct,"septoriose, rouille, oidium, fusarium",1
-corn__common_rust,direct,"septoriose, rouilles a la",1
+datepalm__leaf_spots,proche,"dessechement foliaire(alternariamaliet ,alternariaarborescens)",1
+datepalm__leaf_spots,proche,dessechement foliaire(alternariamalietalternariaarborescens),2
 grape__black_rot,direct,black-rot,2
 grape__black_rot,direct,"mildiou, black-rot, bacteriose",12
 grape__black_rot,direct,"mildiou, black-rot,bacteriose",2
@@ -22,15 +21,15 @@ olive__peacock_spot,direct,oeil de paon (tavelure),1
 olive__peacock_spot,direct,oeil de paon( spilocaeaoleagina),2
 olive__peacock_spot,direct,oeil de paon(spilocaeaoleagina)),1
 olive__peacock_spot,direct,oeil de paon(spilocaeaoleaginum),1
-peach__bacterial_spot,direct,"bacteriose, coryneum, chancre cloque, feu bacterien, tavelure, septoriose",14
+peach__bacterial_spot,groupe,"bacteriose, coryneum, chancre cloque, feu bacterien, tavelure, septoriose",14
 potato__late_blight,direct,mildiou,57
 potato__late_blight,direct,mildiou (phytophtora infestans),1
 potato__late_blight,direct,mildiou (stade de nouaison),1
-squash__powdery_mildew,direct,"mildiou, oidium",1
-squash__powdery_mildew,direct,oidium,22
-squash__powdery_mildew,direct,oidium (leveillulataurica),1
+squash__powdery_mildew,direct,oidium,10
 squash__powdery_mildew,direct,oidium (sphaerothecafuliginea),2
-squash__powdery_mildew,direct,oidium(leveillulataurica),1
+squash__powdery_mildew,groupe,"mildiou, oidium",1
+squash__powdery_mildew,groupe,oidium,12
+strawberry__leaf_scorch,proche,"maladie des taches pourpres, rouges et angulaires",14
 tomato__bacterial_spot,direct,bacteriose,1
 tomato__bacterial_spot,direct,"bacteriose, mildiou",1
 tomato__bacterial_spot,direct,"mildiou, bacteriose",14
@@ -39,12 +38,9 @@ tomato__early_blight,direct,alternaria(alternariasolani),1
 tomato__early_blight,direct,alternariose(alternariasolani),1
 tomato__fruitworm,direct,"acariens, noctuelles",1
 tomato__fruitworm,direct,noctuelle,8
-tomato__fruitworm,direct,noctuelle defoliatrice,3
-tomato__fruitworm,direct,noctuelle(asparagus caterpillar),1
-tomato__fruitworm,direct,"noctuelle, pucerons",4
-tomato__fruitworm,direct,noctuelles,22
-tomato__fruitworm,direct,noctuelles (chenilles defoliatrices),1
-tomato__fruitworm,direct,"pucerons, tordeuse, altises, noctuelles defoliatrice",2
+tomato__fruitworm,direct,noctuelles,21
+tomato__fruitworm,groupe,"noctuelle, pucerons",4
+tomato__fruitworm,groupe,noctuelles,1
 tomato__late_blight,direct,"bacteriose, mildiou",1
 tomato__late_blight,direct,mildiou,23
 tomato__late_blight,direct,mildiou (phytophthora infestan),2
@@ -57,28 +53,24 @@ tomato__late_blight,direct,mildiou(phytophtora infestans),4
 tomato__late_blight,direct,"mildiou, bacteriose",14
 tomato__late_blight,direct,"mildiou, oidium",1
 tomato__leaf_miner,direct,(tutaabsoluta),2
-tomato__leaf_miner,direct,"acariens, mouches mineuse, mouche blanche",1
 tomato__leaf_miner,direct,mineuse (tutaabsoluta),1
 tomato__leaf_miner,direct,mouche blanche(bemisiatabaci); tuta absoluta,1
 tomato__leaf_miner,direct,mouches mineuses,8
 tomato__leaf_miner,direct,tuta absoluta,22
 tomato__leaf_miner,direct,tutaabsoluta,39
+tomato__leaf_miner,groupe,"acariens, mouches mineuse, mouche blanche",1
 tomato__mold,direct,botrytis,7
 tomato__mold,direct,botytiscinerea(pourriture grise),1
 tomato__mold,direct,pourriture grise (botrytis cinerea),2
 tomato__mold,direct,pourriture grise(botrytis cinerea),5
-tomato__mosaic_virus,vecteur,"noctuelle, pucerons",4
-tomato__mosaic_virus,vecteur,pucerons,5
-tomato__mosaic_virus,vecteur,"pucerons, mouches blanches",1
-tomato__mosaic_virus,vecteur,"pucerons, tordeuse, altises, noctuelles defoliatrice",2
-tomato__spider_mites,direct,acariens,16
+tomato__spider_mites,direct,acariens,15
 tomato__spider_mites,direct,"acariens ""tetranychus urticae""",1
 tomato__spider_mites,direct,acariens rouges,5
 tomato__spider_mites,direct,"acariens""tetranychusurticae""",1
-tomato__spider_mites,direct,acariens(aculopslycopersici),1
-tomato__spider_mites,direct,"acariens, mouches mineuse, mouche blanche",1
 tomato__spider_mites,direct,"acariens, noctuelles",1
 tomato__spider_mites,direct,"mouches blanches, acariens",1
+tomato__spider_mites,groupe,acariens,1
+tomato__spider_mites,groupe,"acariens, mouches mineuse, mouche blanche",1
 tomato__yellow_leaf_curl_virus,vecteur,"acariens, mouches mineuse, mouche blanche",1
 tomato__yellow_leaf_curl_virus,vecteur,aleurodes;(mouches blanches),1
 tomato__yellow_leaf_curl_virus,vecteur,mouche blanche,10
@@ -100,5 +92,5 @@ wheat__leaf_rust,direct,rouilles,6
 wheat__leaf_rust,direct,"septoriose(septoriatritici) ,rouille",1
 wheat__leaf_rust,direct,"septoriose, rouille",2
 wheat__leaf_rust,direct,"septoriose, rouille brune",2
-wheat__leaf_rust,direct,"septoriose, rouille, oidium, fusarium",1
-wheat__leaf_rust,direct,"septoriose, rouilles a la",1
+wheat__leaf_rust,groupe,"septoriose, rouille, oidium, fusarium",1
+wheat__leaf_rust,groupe,"septoriose, rouilles a la",1

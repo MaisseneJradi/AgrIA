@@ -3,13 +3,13 @@ pesticides_produits,"texte normalisé (espaces, apostrophes, noms latins)",336
 pesticides_produits,societe: graphies fusionnées (104 -> 54),119
 pesticides_produits,fabricant: graphies fusionnées (354 -> 253),286
 pesticides_usages,"texte normalisé (espaces, apostrophes, noms latins)",693
-pesticides_usages,rejet : culture non reconnue (fragment de texte),50
+pesticides_usages,rejet : culture non reconnue (fragment de texte),52
 pesticides_usages,dose découpée (min / max / unité / base),1681
-pesticides_usages,doublons supprimés,39
+pesticides_usages,doublons supprimés,17
 substances,"texte normalisé (espaces, apostrophes, noms latins)",88
 substances,CAS absent ('No CAS allocated'...) vidé,47
 eu_mrl,LMR non numérique ('No MRL required'...) mise à vide,10545
-usage_mrl,"texte normalisé (espaces, apostrophes, noms latins)",651
+usage_mrl,"texte normalisé (espaces, apostrophes, noms latins)",646
 classe_traitements,"texte normalisé (espaces, apostrophes, noms latins)",60
 engrais_agriclic,"texte normalisé (espaces, apostrophes, noms latins)",302
 engrais_agrishop,"texte normalisé (espaces, apostrophes, noms latins)",231

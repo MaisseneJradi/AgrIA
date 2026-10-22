@@ -1,0 +1,11 @@
+class,niveau,n_cultures,culture_dominante,part_dominante_%,cultures_vues,n_train_reelles
+K_deficiency,fiable,11,pepper,20,ash_gourd bitter_gourd bottle_gourd coffee cucumber datepalm eggplant pepper rice snake_gourd tomato,1200
+Mg_deficiency,fiable,3,pepper,59,coffee datepalm pepper,1009
+N_deficiency,fiable,12,rice,22,ash_gourd bitter_gourd bottle_gourd coffee cucumber eggplant pepper rice ridge_gourd snake_gourd tomato wheat,1200
+healthy,fiable,19,tomato,14,apple ash_gourd bitter_gourd bottle_gourd cherry coffee corn cucumber datepalm eggplant grape peach pepper potato ridge_gourd snake_gourd strawberry tomato wheat,1200
+Fe_deficiency,limite,2,pepper,94,coffee pepper,639
+Mn_deficiency,limite,2,datepalm,83,coffee datepalm,319
+P_deficiency,limite,3,pepper,61,coffee pepper rice,991
+B_deficiency,mono_culture,1,coffee,100,coffee,68
+Ca_deficiency,mono_culture,1,coffee,100,coffee,113
+Zn_deficiency,mono_culture,1,pepper,100,pepper,600
