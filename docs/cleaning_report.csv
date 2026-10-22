@@ -1,0 +1,24 @@
+table,etape,lignes
+pesticides_produits,"texte normalisé (espaces, apostrophes, noms latins)",336
+pesticides_produits,societe: graphies fusionnées (104 -> 54),119
+pesticides_produits,fabricant: graphies fusionnées (354 -> 253),286
+pesticides_usages,"texte normalisé (espaces, apostrophes, noms latins)",693
+pesticides_usages,rejet : culture non reconnue (fragment de texte),50
+pesticides_usages,dose découpée (min / max / unité / base),1681
+pesticides_usages,doublons supprimés,39
+substances,"texte normalisé (espaces, apostrophes, noms latins)",88
+substances,CAS absent ('No CAS allocated'...) vidé,47
+eu_mrl,LMR non numérique ('No MRL required'...) mise à vide,10545
+usage_mrl,"texte normalisé (espaces, apostrophes, noms latins)",651
+classe_traitements,"texte normalisé (espaces, apostrophes, noms latins)",60
+engrais_agriclic,"texte normalisé (espaces, apostrophes, noms latins)",302
+engrais_agrishop,"texte normalisé (espaces, apostrophes, noms latins)",231
+engrais_catalogue,même produit chez agriclic et agrishop (relié),66
+engrais_catalogue,distributeur: graphies fusionnées (7 -> 7),110
+engrais_catalogue,fabricant: graphies fusionnées (13 -> 13),92
+engrais_usages,"texte normalisé (espaces, apostrophes, noms latins)",80
+engrais_usages,dose découpée (min / max / unité / base),158
+carence_engrais,agrishop : produits retenus seulement si le nutriment est dans le nom (pas la description),79
+pesticides_agrishop,produits vendus sans homologation retrouvée dans la liste DGSVCIA,26
+semences,"texte normalisé (espaces, apostrophes, noms latins)",162
+semences,espèce / variété / marque lues dans le nom,27

@@ -27,8 +27,10 @@ potato__late_blight,direct,mildiou,57
 potato__late_blight,direct,mildiou (phytophtora infestans),1
 potato__late_blight,direct,mildiou (stade de nouaison),1
 squash__powdery_mildew,direct,"mildiou, oidium",1
-squash__powdery_mildew,direct,oidium,21
+squash__powdery_mildew,direct,oidium,22
+squash__powdery_mildew,direct,oidium (leveillulataurica),1
 squash__powdery_mildew,direct,oidium (sphaerothecafuliginea),2
+squash__powdery_mildew,direct,oidium(leveillulataurica),1
 tomato__bacterial_spot,direct,bacteriose,1
 tomato__bacterial_spot,direct,"bacteriose, mildiou",1
 tomato__bacterial_spot,direct,"mildiou, bacteriose",14

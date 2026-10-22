@@ -50,6 +50,15 @@ def despace(s):
     return re.sub(r"(?<!\S)(?:\S ){2,}\S(?!\S)", lambda m: m.group(0).replace(" ", ""), s).strip()
 
 
+def join_words(ws):
+    """Words of one cell line, left to right. Touching words are glued: a capital slightly raised in the PDF comes
+    out as its own word ('A' + 'LPHATOP' -> 'ALPHATOP', not 'A LPHATOP')."""
+    out = ws[0]["text"]
+    for prev, w in zip(ws, ws[1:]):
+        out += ("" if w["x0"] - prev["x1"] < 0.5 else " ") + w["text"]
+    return out
+
+
 def lines_of(words, tol=2.5):
     """Group words into text lines by their top coordinate."""
     out = []
@@ -98,9 +107,9 @@ def page_events(page, pno):
                 per = {}
                 for w in l:
                     col = max((c for c in edges if edges[c] <= w["x0"] + 1), key=edges.get, default="num")
-                    per.setdefault(col, []).append(w["text"])
-                for c, t in per.items():
-                    cells[c].append(despace(" ".join(t)))
+                    per.setdefault(col, []).append(w)
+                for c, ws in per.items():
+                    cells[c].append(despace(join_words(ws)))
             green = sum(w["non_stroking_color"] == GREEN for w in band) > len(band) / 2
             events.append((a, "band", (cells, green)))
     return sorted(events, key=lambda e: (e[0], e[1] != "section"))
