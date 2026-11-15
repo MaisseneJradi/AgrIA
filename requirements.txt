@@ -6,3 +6,10 @@ pdfplumber
 Pillow
 chromadb
 kaggle
+scikit-learn
+tqdm
+# PyTorch: everything runs locally. With an NVIDIA GPU, install the CUDA build first:
+#   pip install torch==2.8.0 torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cu126
+# Without a GPU, the lines below install the CPU build.
+torch==2.8.0
+torchvision==0.23.0
