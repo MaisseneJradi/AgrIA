@@ -82,15 +82,15 @@ AgrIA/
 │   └── app/              Étape 4 : interface
 ├── tests/                un dossier de tests par module
 ├── docs/                 ✅ rapports, figures, tables de correspondance
-├── data/                 ✅ hors Git, partagé par Drive
-└── models/               hors Git, partagé par Drive
+├── data/                 ✅ hors Git, archive partagée par Drive, copiée sur chaque machine
+└── models/               hors Git, archive partagée par Drive, copiée sur chaque machine
 ```
 
 ---
 
 ## 3. Données disponibles
 
-Le dossier `data/` n'est **pas sur GitHub**. Il est partagé par Google Drive à l'étape 1.
+Le dossier `data/` n'est **pas sur GitHub**. Il est partagé par Google Drive à l'étape 1, puis copié dans le dépôt de chaque membre. **Tout s'exécute en local** (GPU NVIDIA si disponible, sinon CPU), pas sur Colab.
 
 | Besoin | Fichier | Contenu |
 |---|---|---|
@@ -173,21 +173,21 @@ POST /diagnose
 **Objectif :** n'importe quel membre peut entraîner un modèle avec une seule commande.
 
 1. **Partager les données.** Déposer `data/processed/` sur Google Drive, sous forme d'archive, avec les droits pour l'équipe.
-2. **Rendre les données lisibles sur Colab.** Les chemins des manifests et de `balanced/*_train.csv` utilisent `\` (Windows) et ne fonctionnent pas tels quels sous Linux. Les convertir à la lecture dans `dataset.py`, sans modifier les fichiers.
+2. **Rendre les données lisibles sur toute machine.** Les chemins des manifests et de `balanced/*_train.csv` utilisent `\` (Windows) et ne fonctionnent pas tels quels sous Linux ou macOS. Les convertir à la lecture dans `dataset.py`, sans modifier les fichiers.
 3. **Écrire `src/vision/dataset.py`** : lecture des CSV, transformations et normalisation identiques partout, sans augmentation supplémentaire qui change les teintes.
 4. **Écrire `src/vision/train.py`** : `python src/vision/train.py --task routing --model efficientnet_b0`. Il doit gérer le modèle préentraîné, les poids de classes, l'arrêt anticipé et la graine fixe.
 5. **Écrire `src/vision/evaluate.py`** : exactitude, macro-F1, matrice de confusion, scores par classe, par culture et sur `test_field`.
 6. **Écrire `src/vision/predict.py`** selon le contrat ci-dessus.
 7. **Entraîner et évaluer le routeur** : c'est le test de toute la chaîne.
-8. **Mettre à jour `requirements.txt`** (`torch`, `torchvision`, `timm`, `scikit-learn`) et écrire un notebook Colab court dans `notebooks/`.
+8. **Mettre à jour `requirements.txt`** (`torch`, `torchvision`, `scikit-learn`, `tqdm`) avec la commande d'installation de PyTorch pour GPU NVIDIA (CUDA 12.6).
 
 **Attention :** 92 % des fruits du routeur sont des grenades. Regarder le score sur les fruits de tomate et d'agrumes, pas seulement le score global.
 
 **Livré quand :**
-- [ ] Nourhene ouvre le notebook et relance l'entraînement du routeur sans aide.
-- [ ] `models/routing/` contient `model.pt`, `labels.json`, `metrics.json`.
-- [ ] `predict("routing", "photo.jpg")` renvoie le format du contrat.
-- [ ] Les scores du routeur sont notés dans `docs/results_routing.md`.
+- [ ] Nourhene relance l'entraînement du routeur sur sa machine, sans aide, avec une seule commande.
+- [x] `models/routing/` contient `model.pt`, `labels.json`, `metrics.json`.
+- [x] `predict("routing", "photo.jpg")` renvoie le format du contrat.
+- [x] Les scores du routeur sont notés dans `docs/results_routing.md`.
 
 ### Étape 2 · Nourhene : modèles de diagnostic
 
@@ -256,7 +256,7 @@ POST /diagnose
 ## 6. Règles de passage entre les étapes
 
 1. Le responsable coche sa liste « Livré quand » dans ce fichier.
-2. Le membre suivant vérifie lui-même la livraison, sur sa machine ou sur Colab.
+2. Le membre suivant vérifie lui-même la livraison, sur sa machine.
 3. S'il bloque, il renvoie un problème précis. Le responsable précédent corrige avant la suite.
 4. Si un résultat montre un problème de données, on revient à la préparation, puis on note la décision dans ce fichier.
 
