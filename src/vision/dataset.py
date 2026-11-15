@@ -34,11 +34,12 @@ def local_path(p):
     return str(ROOT.joinpath(*p.replace("\\", "/").split("/")))
 
 
-def load_split(task, split):
-    """Rows (path, class, crop, source) of one split. split: train, val, test or test_field."""
+def load_split(task, split, balanced=True):
+    """Rows (path, class, crop, source) of one split. split: train, val, test or test_field.
+    balanced=False gives the raw train split of the manifest (no balancing, no augmented copies: hypothesis H3)."""
     if task not in TASKS:
         raise ValueError(f"unknown task {task!r}, expected one of {TASKS}")
-    if split == "train" and task != "routing":
+    if split == "train" and task != "routing" and balanced:
         df = pd.read_csv(PROC / "balanced" / f"{task}_train.csv")
     else:
         df = pd.read_csv(PROC / f"{task}_manifest.csv")
@@ -75,8 +76,8 @@ def make_transform(train):
 class ManifestDataset(Dataset):
     """(image tensor, class index) pairs of one task and split."""
 
-    def __init__(self, task, split, classes=None, limit=None, seed=42):
-        self.df = load_split(task, split)
+    def __init__(self, task, split, classes=None, limit=None, seed=42, balanced=True):
+        self.df = load_split(task, split, balanced)
         if limit and len(self.df) > limit:  # quick runs: a stratified-looking random sample
             self.df = self.df.sample(limit, random_state=seed).reset_index(drop=True)
         self.classes = classes or class_names(task)

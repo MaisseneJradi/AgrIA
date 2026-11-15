@@ -25,7 +25,7 @@ from models import build  # noqa: E402
 
 
 def load_model(folder, device):
-    ckpt = torch.load(os.path.join(folder, "model.pt"), map_location=device)
+    ckpt = torch.load(os.path.join(folder, "model.pt"), map_location="cpu")  # opens on machines without a GPU too
     net = build(ckpt["arch"], len(ckpt["classes"]), pretrained=False)
     net.load_state_dict(ckpt["state_dict"])
     return net.to(device).eval(), ckpt["classes"]

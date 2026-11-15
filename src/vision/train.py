@@ -3,8 +3,10 @@
 Usage:
   python src/vision/train.py --task routing                              full run, efficientnet_b0
   python src/vision/train.py --task routing --limit 500 --epochs 1      quick check of the whole chain
-  python src/vision/train.py --task diseases --model vit_b_16 --batch 16
+  python src/vision/train.py --task diseases --model vit_b_16 --batch 16 --lr 5e-5
+  python src/vision/train.py --task diseases --train-set raw --out models/diseases_raw      without balancing (H3)
 Options: --epochs (20) --batch (32) --lr (3e-4) --patience (4) --workers (4) --limit (none) --out (models/<task>)
+         --train-set balanced (default: balanced set + class weights) | raw (manifest train split, plain loss)
 
 Pretrained backbone, AdamW with a cosine schedule, cross-entropy weighted by class, mixed precision on GPU,
 early stopping on the validation macro-F1 (rare classes count as much as common ones). Seed 42 everywhere.
@@ -69,13 +71,15 @@ def main():
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--limit", type=int, default=None, help="use only N images per split (quick check)")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--train-set", choices=["balanced", "raw"], default="balanced")
     args = ap.parse_args()
     out = args.out or str(ROOT / "models" / args.task)
 
     seed_everything()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     classes = class_names(args.task)
-    train_ds = ManifestDataset(args.task, "train", classes, limit=args.limit)
+    balanced = args.train_set == "balanced"
+    train_ds = ManifestDataset(args.task, "train", classes, limit=args.limit, balanced=balanced)
     val_ds = ManifestDataset(args.task, "val", classes, limit=args.limit)
     g = torch.Generator().manual_seed(SEED)
     train_dl = DataLoader(train_ds, args.batch, shuffle=True, num_workers=args.workers, pin_memory=True,
@@ -83,10 +87,11 @@ def main():
     val_dl = DataLoader(val_ds, args.batch * 2, num_workers=args.workers, pin_memory=True,
                         persistent_workers=args.workers > 0)
     print(f"{args.task}: {len(classes)} classes, train {len(train_ds)}, val {len(val_ds)} images, "
-          f"{args.model} on {device}" + (f" ({torch.cuda.get_device_name(0)})" if device.type == "cuda" else ""))
+          f"{args.model}, {args.train_set} train set, on {device}" + (f" ({torch.cuda.get_device_name(0)})" if device.type == "cuda" else ""))
 
     net = build(args.model, len(classes)).to(device)
-    loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights(args.task, classes).to(device))
+    weights = class_weights(args.task, classes).to(device) if balanced else None
+    loss_fn = torch.nn.CrossEntropyLoss(weight=weights)
     optimizer = torch.optim.AdamW(net.parameters(), lr=args.lr, weight_decay=0.05)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
     scaler = torch.amp.GradScaler(enabled=device.type == "cuda")

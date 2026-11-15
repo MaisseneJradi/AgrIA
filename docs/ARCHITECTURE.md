@@ -204,9 +204,9 @@ POST /diagnose
 
 **Livré quand :**
 - [ ] `models/diseases/`, `models/deficiency/`, `models/fruits/` sont sur le Drive.
-- [ ] `predict()` fonctionne pour les quatre tâches.
-- [ ] `docs/results_vision.md` donne les scores globaux, par classe, par culture et terrain, avec les hypothèses H1 à H3.
-- [ ] Les seuils de confiance sont justifiés dans ce rapport.
+- [x] `predict()` fonctionne pour les quatre tâches.
+- [x] `docs/results_vision.md` donne les scores globaux, par classe, par culture et terrain, avec les hypothèses H1 à H3.
+- [x] Les seuils de confiance sont justifiés dans ce rapport.
 
 ### Étape 3 · Adem : outils de l'agent
 
@@ -274,3 +274,6 @@ POST /diagnose
 | Validation des 88 termes en darija | Adem | À faire à l'étape 3 |
 | Jeu de test de l'agent | Maissene | À importer avant l'étape 4 |
 | Photos de terrain tunisiennes | Équipe | En continu, si possible |
+| Seuil des maladies dans l'agent : 0,5 (calibré en laboratoire) ou 0,9 (recommandé, voir `results_vision.md`) | Équipe | À décider avant l'étape 4 |
+| Ajouter le jeu d'entraînement PlantDoc (photos de terrain) pour améliorer H1 | Équipe | À décider (exactitude terrain 61,8 % contre 90 % visé) |
+| Fruits : modèle brut (choisi par la validation) ou équilibré (meilleur sur les classes rares) | Équipe | Brut par défaut |
