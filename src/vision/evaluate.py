@@ -49,7 +49,7 @@ def group_scores(df, col):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--task", required=True, choices=["routing", "diseases", "deficiency", "fruits"])
+    ap.add_argument("--task", required=True, choices=["routing", "diseases", "deficiency", "fruits", "leaf"])
     ap.add_argument("--model-dir", default=None)
     ap.add_argument("--splits", nargs="+", default=None)
     ap.add_argument("--batch", type=int, default=64)

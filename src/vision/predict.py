@@ -42,17 +42,29 @@ def _get(task):
     return _CACHE[task]
 
 
+def class_names(task):
+    return list(_get(task)[1])
+
+
 @torch.no_grad()
-def predict(task, image_path):
+def predict(task, image_path, allowed=None):
+    """allowed: optional list of classes the answer must be among (e.g. the classes of the crop the farmer named).
+    Probabilities are then renormalised over these classes, and "mass" tells how much of the model's belief they
+    held before (a small mass = the photo does not look like that crop to the model)."""
     net, classes, threshold = _get(task)
     with Image.open(image_path) as im:
         x = _TRANSFORM(im.convert("RGB")).unsqueeze(0).to(_DEVICE)
     probs = torch.softmax(net(x).float(), 1)[0].cpu()
-    top = probs.topk(min(3, len(classes)))
+    mass = 1.0
+    if allowed:
+        keep = torch.tensor([c in set(allowed) for c in classes])
+        mass = float(probs[keep].sum())
+        probs = torch.where(keep, probs, torch.zeros_like(probs)) / max(mass, 1e-9)
+    top = probs.topk(min(3, int((probs > 0).sum()) or 1, len(classes)))
     confidence = float(top.values[0])
     return {"task": task, "class": classes[int(top.indices[0])], "confidence": round(confidence, 4),
             "top3": [[classes[int(i)], round(float(p), 4)] for p, i in zip(top.values, top.indices)],
-            "reliable": confidence >= threshold}
+            "reliable": confidence >= threshold, "mass": round(mass, 4)}
 
 
 if __name__ == "__main__":

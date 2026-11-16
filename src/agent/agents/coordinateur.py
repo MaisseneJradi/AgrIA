@@ -100,7 +100,8 @@ def finaliser(d):
     b, diag = d["brouillon"], d.get("diagnostic") or {}
     reponse = {
         "issue": d.get("issue"), "texte": b["texte"], "langue": b.get("langue", "fr"),
-        "diagnostic": {k: diag.get(k) for k in ("task", "classe", "nom", "confiance", "fiable", "raisons_doute")}
+        "diagnostic": {k: diag.get(k) for k in ("routing", "task", "classe", "nom", "confiance", "fiable",
+                                                 "raisons_doute", "top3", "autre_modele", "choix_du_modele")}
         if diag.get("classe") else None,
         "produits": b["produits"], "engrais": b["engrais"], "avertissements": b.get("avertissements", []),
         "questions": d.get("questions", []) if d.get("issue") == "question" else [],

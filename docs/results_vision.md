@@ -130,7 +130,7 @@ Ces chiffres viennent du jeu de test. Ils ne peuvent donc pas servir à fixer le
 
 ## 7. Suite proposée (retour à la préparation, boucle CRISP-DM)
 
-1. **Mieux exploiter les photos de terrain.** Le jeu d'entraînement PlantDoc (1 911 photos de terrain après filtrage des classes) est déjà dans le train, mais il ne pèse que 4,8 % des images, contre 83 % pour PlantVillage, et aucune photo de terrain ne sert à la validation. Essais en cours : validation de terrain, suréchantillonnage et augmentations « terrain » (voir la section 9). À plus long terme, collecter des photos tunisiennes, surtout pour l'olivier, le palmier, les agrumes et la tomate.
+1. **Mieux exploiter les photos de terrain.** Le jeu d'entraînement PlantDoc (1 911 photos de terrain après filtrage des classes) est déjà dans le train, mais il ne pèse que 4,8 % des images, contre 83 % pour PlantVillage, et aucune photo de terrain ne sert à la validation. Essais faits : validation de terrain, suréchantillonnage et augmentations « terrain » (section 9) ; modèle « feuille » carence/maladie (section 10). À plus long terme, collecter des photos tunisiennes, surtout pour l'olivier, le palmier, les agrumes et la tomate.
 2. **Augmentations sans changement de couleur** : rotations, flou, recadrages plus forts, fonds variés. Elles rapprochent les photos de laboratoire des photos de terrain sans toucher aux symptômes.
 3. **Recalibrer les seuils** sur une validation de photos de terrain, séparée des 199 photos de test.
 4. **Carences** : obtenir des poivrons sains de la même source que les poivrons carencés, pour casser la confusion entre poivron sain et carence en zinc.
@@ -146,3 +146,40 @@ python src/vision/report_vision.py      # tous les tableaux de H1 à H3
 ```
 
 Fichiers produits, hors Git, dans chaque dossier `models/<nom>/` : `model.pt`, `labels.json`, `metrics.json` (seuil compris), `calibration.json`, `eval_*.json`, `confusion_*.csv`, `predictions_*.csv`. Journaux d'entraînement : `models/logs/`.
+
+## 9. Essais sur les photos de terrain (H1)
+
+PlantDoc train (1 911 photos de terrain) était déjà dans l'entraînement, mais ne pesait que 4,8 % des images, sans validation de terrain. Trois leviers ont été essayés sur le modèle des maladies (EfficientNet-B0, jeu brut), sans nouvelle donnée :
+- **validation de terrain** : 287 photos PlantDoc (15 % du train, 24 classes) mises de côté à la lecture (`--field-val`) ; l'époque est choisie sur la moyenne des macro-F1 laboratoire et terrain ;
+- **suréchantillonnage** des photos de terrain ×5 (`--field-weight 5`) ;
+- **augmentations « terrain »** sans changement de couleur : recadrage fort, rotation, perspective, léger flou (`--aug field`).
+
+| Modèle | Validation terrain (287) | **Test terrain (199)** | Test laboratoire |
+|---|---|---|---|
+| retenu à l'étape 2 (`diseases_raw`) | — | 61,8 % | 99,0 % |
+| essai 1 : validation de terrain seule (`diseases_fval_base`, époque 18) | 68,6 % | 60,8 % | 99,4 % |
+| essai 2 : + suréchantillonnage ×5 + augmentations (`diseases_fval_w5aug`) | 67,9 % | **63,3 %** | 98,4 % |
+
+Les essais « suréchantillonnage seul » et « augmentations seules » ont été arrêtés pour libérer le GPU (section 10). Les écarts sur 199 photos restent dans le bruit (± 3,4 points) : aucun levier ne rapproche des 90 % visés. **La suite passe par des photos de terrain tunisiennes** (journal de l'application, `data/journal/`).
+
+## 10. Un modèle « feuille » qui sépare carence et maladie
+
+**Problème vu dans l'application.** Les deux modèles des feuilles ne savent pas départager : le modèle des carences n'a jamais vu de feuille malade (septoriose et chancre classés « carence en potassium » à 96-98 %), le modèle des maladies n'a jamais vu de carence (carence en magnésium classée « moisissure des feuilles » à 100 %).
+
+**Solution.** Une tâche `leaf` (src/vision/dataset.py) : les 51 classes de maladies et les 9 carences dans un même modèle, construite à la lecture sans modifier les manifests. Les feuilles saines du jeu des carences rejoignent la classe saine de leur culture ; **1 938 images du jeu des carences, déjà présentes dans le jeu des maladies** (même md5 ou dhash), sont écartées pour qu'aucune photo ne soit à la fois en entraînement et en test. 60 classes, 48 001 images d'entraînement. Réglages de l'essai 2, patience 8 : meilleure époque 14 sur 20 (`models/leaf`, copie de `models/leaf_v2`).
+
+| Test laboratoire (9 532 images) | Anciens modèles séparés | Modèle feuille |
+|---|---|---|
+| carences reconnues comme carences | impossible à départager | **97,0 %** |
+| maladies reconnues comme maladies | impossible à départager | **98,9 %** |
+| carences : classe exacte | 86,4 % | **89,4 %** |
+| maladies : classe exacte | **99,0 %** | 98,2 % |
+| photos de terrain (199 maladies) | **61,8 %** | 59,3 % |
+
+Sur le terrain, le modèle feuille est trop sûr de lui (au-dessus de 0,9 : 77 % de réponses justes, contre 89 % pour le modèle des maladies). **Choix retenu dans l'agent Diagnostic** : le modèle feuille décide du *type* de problème (somme de ses probabilités de carence, face aux classes de la culture indiquée), puis :
+- carence → la carence du modèle feuille (le meilleur sur les carences) ;
+- maladie → le modèle des maladies limité à la culture (le meilleur et le mieux calibré sur le terrain).
+
+Une première version, arrêtée trop tôt (époque 2 sur 6, patience 4, `models/leaf_v1`), était moins bonne sur les classes exactes (carences 78,8 %) ; elle n'a pas été utilisée. Le seuil du modèle feuille est calibré sur la validation complète (0,71) ; les seuils de l'agent (0,9 maladie, 0,95 carence) restent ceux qui décident.
+
+**Limite.** Les carences du jeu d'entraînement viennent surtout du poivron, du riz, du palmier et du café (6 à 8 images par carence pour la tomate) : sur des photos de carence de la tomate, le modèle voit encore une maladie. Il faudra des photos de carences sur les cultures tunisiennes.

@@ -41,9 +41,12 @@ def _crop_names():
         "SELECT lien, concept FROM lexique WHERE type = 'culture' AND lien IS NOT NULL")}
 
 
+CROP_NAMES = {"citrus": "agrumes", "datepalm": "palmier dattier"}  # clearer than the lexicon concept
+
+
 def crop_name(code):
-    """French name of a crop code: tomato -> tomate, datepalm -> palmier."""
-    return _crop_names().get(code, code) if code else code
+    """French name of a crop code: tomato -> tomate, citrus -> agrumes."""
+    return CROP_NAMES.get(code) or _crop_names().get(code, code) if code else code
 
 
 def class_name(cls):

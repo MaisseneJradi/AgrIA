@@ -236,3 +236,6 @@ __marimo__/
 
 # Trained models (shared outside Git)
 models/
+
+# Test-mode journal of the API: photos and answers of the tester (private, never in Git)
+data/journal/
