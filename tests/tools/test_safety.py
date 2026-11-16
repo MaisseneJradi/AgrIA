@@ -14,7 +14,7 @@ class TestSafety(unittest.TestCase):
         self.assertTrue(any(word in x for x in r["raisons"]), r["raisons"])
 
     def test_registered_answer_passes(self):
-        r = check_answer(dict(BASE, produits=[GOOD], texte="Traitez avec CIMOXATE C WG à 3 kg/ha."))
+        r = check_answer(dict(BASE, produits=[GOOD], texte="Traitez avec CIMOXATE C WG, dose 3 kg/ha (300 g/hl)."))
         self.assertTrue(r["valide"], r["raisons"])
         self.assertEqual(r["produits_verifies"][0]["product_id"], "homo-fon-092")
 
@@ -32,6 +32,11 @@ class TestSafety(unittest.TestCase):
 
     def test_blocks_wrong_dose(self):
         self.assertBlocked(dict(BASE, produits=[dict(GOOD, dose="5 kg/ha")]), "dose")
+
+    def test_blocks_dose_changed_in_the_text(self):
+        self.assertBlocked(dict(BASE, produits=[GOOD], texte="CIMOXATE C WG : 3 كغ/هكتار (300 جم/لتر)"), "modifiée")
+        shuffled = "3 kg/ha (300 g/hl) : CYCLO MAX SC\nCIMOXATE C WG : 300 cc/hl"  # dose moved to another product
+        self.assertBlocked(dict(BASE, produits=[GOOD], texte=shuffled), "séparée")
 
     def test_blocks_wrong_or_invented_dar(self):
         self.assertBlocked(dict(BASE, produits=[dict(GOOD, dar_jours=7)]), "délai")

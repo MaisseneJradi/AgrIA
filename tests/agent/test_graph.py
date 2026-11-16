@@ -6,7 +6,7 @@ from unittest import mock
 os.environ.setdefault("AGRIA_DEVICE", "cpu")  # leave the GPU to trainings
 
 from src.agent.graph import diagnose  # noqa: E402
-from src.agent.llm import TemplateLLM  # noqa: E402
+from src.agent.redaction import compose  # noqa: E402
 
 P = "data/processed/{}/test/{}/{}.jpg"
 OTHER = P.format("routing", "other", "other_03785")
@@ -68,54 +68,44 @@ class TestAgents(unittest.TestCase):
         r = diagnose(POMEGRANATE, "الرمان فيه بقع", "Gabès")
         self.assertEqual(r["diagnostic"]["task"], "fruits")
 
-    def test_language_without_llm_stays_french_and_says_so(self):
+    def test_arabizi_message_gets_an_arabic_answer_with_arabic_questions(self):
+        r = diagnose(FE_PEPPER, "zitouna msaffra", "Kairouan", culture="olivier", mois=6)  # Fe never seen on olive
+        self.assertEqual(r["langue"], "ar")
+        self.assertIn("هل تلاحظ", r["texte"])  # confirmation questions in Arabic (written in code)
+        self.assertNotIn("Voyez-vous", r["texte"])
+        self.assertTrue(r["verification"]["valide"])
+
+    def test_arabic_answer_facts_written_by_code(self):
         r = diagnose(LATE_BLIGHT, "الطماطم فيها مرض")
-        self.assertEqual(r["langue"], "fr")
-        self.assertTrue(any("indisponible sans LLM" in t["action"] for t in r["trace"]))
+        self.assertEqual(r["langue"], "ar")
+        self.assertIn("التشخيص", r["texte"])
+        self.assertIn("بالفرنسية", r["texte"])  # sheets given as links, not translated
+        self.assertIn("https://", r["texte"])
+        self.assertTrue(r["verification"]["valide"])
+        for p in r["produits"]:  # each dose stays on the line of its product
+            self.assertTrue(any(p["nom"] in line and p["dose"] in line for line in r["texte"].splitlines()))
 
 
-class RogueLLM(TemplateLLM):
-    """An LLM that slips an unregistered product into every answer."""
-    name = "rogue"
-
-    def write(self, task, data):
-        text = super().write(task, data)
-        return text if task == "traduire" else text + "\nVous pouvez aussi pulvériser MITOVER SC."
+def rogue_compose(facts, lang="fr"):
+    """A faulty writer that slips an unregistered product into every answer, even the CRDA one."""
+    return compose(facts, lang) + "\nEssayez MITOVER SC."
 
 
 class TestVerifierLoop(unittest.TestCase):
-    def test_unregistered_product_from_the_llm_ends_at_the_crda(self):
-        rogue = RogueLLM()
-        with mock.patch("src.agent.agents.coordinateur.get_llm", return_value=rogue), \
-                mock.patch("src.agent.agents.linguistique.get_llm", return_value=rogue):
-            r = diagnose(LATE_BLIGHT, "", "Nabeul")
+    def test_unregistered_product_is_always_blocked_and_the_graph_ends(self):
+        with mock.patch("src.agent.agents.linguistique.compose", side_effect=rogue_compose):
+            r = diagnose(LATE_BLIGHT, "الطماطم مريضة", "Nabeul")  # Arabic: the answer is rewritten by linguistique
         blocked = [t for t in r["trace"] if t["agent"] == "Vérificateur" and "bloquée" in t["action"]]
-        self.assertEqual(len(blocked), 3)  # first answer + 2 rewrites, all blocked
-        self.assertEqual(r["issue"], "crda")
+        self.assertEqual(len(blocked), 4)  # first answer + 2 rewrites + the CRDA message, all blocked
+        self.assertNotIn("MITOVER", r["texte"])
+        self.assertIn("CRDA", r["texte"])
         self.assertEqual(r["produits"], [])
-        self.assertIn("CRDA de Nabeul", r["texte"])
-        self.assertNotIn("Vous pouvez aussi pulvériser MITOVER SC", r["texte"].split("CRDA")[0] + "")
+        self.assertTrue(r["verification"].get("secours"))  # fixed last-resort text
+
+    def test_blocked_crda_message_goes_to_the_fixed_text(self):
+        from src.agent.graph import _after_check
+        self.assertEqual(_after_check({"verification": {"valide": False}, "issue": "crda", "essais": 4}), "secours")
 
 
 if __name__ == "__main__":
     unittest.main()
-
-
-class RogueTranslator(TemplateLLM):
-    """An LLM whose translation always adds an unregistered product, even to the CRDA message."""
-    name = "rogue-translator"
-
-    def write(self, task, data):
-        text = super().write(task, data)
-        return text + " Essayez MITOVER SC." if task == "traduire" else text
-
-
-class TestLastResort(unittest.TestCase):
-    def test_graph_always_ends_with_a_safe_text(self):
-        rogue = RogueTranslator()
-        with mock.patch("src.agent.agents.coordinateur.get_llm", return_value=rogue), \
-                mock.patch("src.agent.agents.linguistique.get_llm", return_value=rogue):
-            r = diagnose(LATE_BLIGHT, "الطماطم مريضة", "Nabeul")  # Arabic: the answer goes through translation
-        self.assertNotIn("MITOVER", r["texte"])
-        self.assertIn("CRDA", r["texte"])
-        self.assertTrue(r["verification"].get("secours"))

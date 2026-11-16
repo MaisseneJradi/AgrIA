@@ -26,10 +26,11 @@ SOIL_COLUMNS = {"phh2o_pH": "pH", "sand_%": "sable_pct", "clay_%": "argile_pct",
 OPS = {">=": operator.ge, "<=": operator.le, ">": operator.gt, "<": operator.lt}
 SEEN_OK = "conseil possible, en rappelant que la photo ne remplace pas une analyse de sol ou de feuille"
 MODEL_WARNINGS = {
-    ("Zn_deficiency", "pepper"): "en test, 48 poivrons sains sur 123 ont été classés carence en zinc : confirmer par "
-                                 "les questions avant tout engrais (results_vision.md, H2)",
-    ("Mn_deficiency", None): "hors palmier dattier, le modèle ne reconnaît la carence en manganèse que dans 58 % des "
-                             "cas (results_vision.md, H2)",
+    # measured in step 2 (results_vision.md, H2): 48 healthy peppers out of 123 classed Zn; Mn recall 58 % off date palm
+    ("Zn_deficiency", "pepper"): "sur le poivron, une plante saine peut être prise pour une carence en zinc : "
+                                 "répondez aux questions avant d'acheter un engrais",
+    ("Mn_deficiency", None): "hors palmier dattier, la carence en manganèse est souvent mal reconnue sur photo : "
+                             "répondez aux questions avant d'acheter un engrais",
 }
 
 
