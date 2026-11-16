@@ -4,7 +4,6 @@ matplotlib
 seaborn
 pdfplumber
 Pillow
-chromadb
 kaggle
 scikit-learn
 tqdm
@@ -13,3 +12,4 @@ tqdm
 # Without a GPU, the lines below install the CPU build.
 torch==2.8.0
 torchvision==0.23.0
+langgraph==0.6.11

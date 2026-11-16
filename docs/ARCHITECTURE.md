@@ -1,56 +1,60 @@
-# AgrIA : architecture et répartition du travail
+# AgrIA : architecture et plan de travail
 
-Ce document dit ce que nous construisons, qui fait quoi et dans quel ordre.
+Ce document dit ce que nous construisons et dans quel ordre. Tout le projet est réalisé par Maissene, en local.
 Les données sont prêtes. Il reste à construire les modèles, les outils de l'agent et l'application.
 
-Le travail est **séquentiel** : chaque membre commence quand le précédent a livré ce qui est demandé dans sa section « Livré quand ».
+Le travail est **séquentiel** : une étape commence quand la précédente a coché sa liste « Livré quand ».
 
-| Étape | Responsable | Travail | Reçoit | Livre |
+| Étape | Travail | Reçoit | Livre | État |
 |---|---|---|---|---|
-| 1 | **Maissene** | Socle d'entraînement + routeur | Données préparées | Données partagées, scripts `src/vision/`, routeur entraîné |
-| 2 | **Nourhene** | Modèles de diagnostic | Scripts et données | 3 modèles entraînés, rapport d'évaluation |
-| 3 | **Adem** | Outils de l'agent | Noms de classes, tables propres | Base de données, outils testés, RAG |
-| 4 | **Abd Majid** | Agent, API, application | Modèles + outils | Application de démonstration, évaluation finale |
-
-Les étapes 2 à 4 sont une proposition : l'équipe peut échanger les noms, pas l'ordre des étapes.
+| 1 | Socle d'entraînement + routeur | Données préparées | Scripts `src/vision/`, routeur entraîné | ✅ |
+| 2 | Modèles de diagnostic | Scripts et données | 3 modèles entraînés, rapport d'évaluation | ✅ (essais terrain en cours) |
+| 3 | Outils de l'agent | Noms de classes, tables propres | Base de données, outils testés, RAG | ✅ (88 termes darija à valider) |
+| 4 | Système multi-agents, API, application | Modèles + outils | Application de démonstration, évaluation finale | en cours (6 agents faits, LLM, API, app à faire) |
 
 ---
 
-## 1. Vue d'ensemble
+## 1. Vue d'ensemble : un système multi-agents
+
+AgrIA est un **système de six agents** qui coopèrent autour d'un dossier partagé (`src/agent/state.py`), orchestrés avec LangGraph (`src/agent/graph.py`).
+
+| Agent | Rôle | Outils | LLM |
+|---|---|---|---|
+| **Coordinateur** | planifie le cas, assemble les résultats, fait rédiger la réponse, la réécrit si elle est bloquée (2 fois au plus), sinon oriente vers le CRDA | — | rédaction |
+| **Linguistique** | comprend le message (français, arabe, darija, arabizi) : culture, symptômes, gouvernorat ; traduit la réponse | `normalize_terms`, `crop_code` | traduction |
+| **Diagnostic** | lit la photo (routeur puis modèle maladies, carences ou fruits) ; décide si le diagnostic est fiable, sinon pose des questions | `predict()` | non |
+| **Phytosanitaire** | choisit en code les traitements homologués (dose, DAR, LMR, restrictions) et des conseils des fiches | `get_treatments`, `search_knowledge` | non |
+| **Agronome** | engrais pour une carence (fiabilité selon la culture, sol du gouvernorat) et besoin en eau du mois | `get_fertilizers`, `get_water_need` | non |
+| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **non, règles codées** |
 
 ```mermaid
 flowchart TD
-    U[Agriculteur<br/>photo + message + gouvernorat] --> APP[Application web ou mobile]
-    APP --> API[API]
-    API --> O[Agent orchestrateur]
-
-    O --> R{Routeur<br/>feuille, fruit ou autre}
-    R -->|autre| Q[Demander une autre photo]
-    R -->|feuille| L[Modèle maladies et ravageurs<br/>51 classes]
-    R -->|feuille| D[Modèle carences<br/>10 classes]
-    R -->|fruit| F[Modèle fruits<br/>18 classes]
-
-    L --> C{Confiance suffisante ?}
-    D --> C
-    F --> C
-    C -->|non| E[Poser une question<br/>ou transmettre au CRDA]
-    C -->|oui| T
-
-    subgraph T[Outils de l'agent]
-        T1[Traitements homologués<br/>dose, DAR, LMR]
-        T2[Engrais et règles de carences]
-        T3[Besoins en eau<br/>climat et sol]
-        T4[RAG sur les 76 fiches]
-        T5[Lexique FR, AR, darija]
-    end
-
-    T --> S[Contrôle de sécurité<br/>produit présent dans la liste homologuée]
-    S --> A[Réponse à l'agriculteur]
+    U[Agriculteur<br/>photo + message + gouvernorat] --> API[API]
+    API --> CP[Coordinateur<br/>planifier]
+    CP --> LC[Linguistique<br/>comprendre le message]
+    LC --> DG[Diagnostic<br/>routeur + modèles]
+    DG -->|autre ou pas de photo| CR
+    DG -->|doute : confiance ou culture| CR
+    DG -->|diagnostic fiable| PH[Phytosanitaire<br/>traitements homologués]
+    DG -->|diagnostic fiable| AG[Agronome<br/>engrais et eau]
+    PH --> CR[Coordinateur<br/>rédiger]
+    AG --> CR
+    CR --> LT[Linguistique<br/>traduire]
+    LT --> VE{Vérificateur<br/>check_answer}
+    VE -->|valide| FI[Coordinateur<br/>envoyer la réponse]
+    VE -->|bloquée, moins de 3 essais| CR
+    VE -->|bloquée 3 fois| CD[Coordinateur<br/>orientation CRDA, texte écrit par le code]
+    CD --> LT
+    VE -->|message CRDA bloqué| SE[Texte de secours fixe]
+    SE --> FI
+    FI --> U
 ```
+
+Phytosanitaire et Agronome travaillent **en parallèle**. Chaque agent ajoute une ligne à la trace de la réponse (qui, quoi, durée), ce qui permet d'expliquer chaque réponse.
 
 **Deux principes à ne jamais casser :**
 
-1. **Le LLM ne choisit jamais un produit de lui-même.** Il ne peut citer qu'un produit renvoyé par l'outil de traitements. Le contrôle de sécurité vérifie cela en code, pas par une consigne au LLM.
+1. **Le LLM ne choisit jamais un produit de lui-même.** Les produits et les engrais sont choisis en code par les agents Phytosanitaire et Agronome ; le LLM écrit seulement le texte autour. L'agent Vérificateur contrôle le texte final en code, pas par une consigne au LLM.
 2. **Dans le doute, l'agent ne recommande rien** : il pose une question ou transmet le cas au CRDA.
 
 ---
@@ -64,12 +68,12 @@ AgrIA/
 ├── src/
 │   ├── acquisition/      ✅ inventaire des images
 │   ├── preparation/      ✅ collecte, nettoyage, équilibrage, EDA
-│   ├── vision/           Étape 1 et 2 : entraînement et prédiction
+│   ├── vision/           ✅ Étapes 1 et 2 : entraînement et prédiction
 │   │   ├── dataset.py       lecture des manifests, transformations
 │   │   ├── train.py         entraînement d'une tâche
 │   │   ├── evaluate.py      scores globaux, par classe, par culture, terrain
 │   │   └── predict.py       interface utilisée par l'agent
-│   ├── tools/            Étape 3 : outils de l'agent
+│   ├── tools/            ✅ Étape 3 : outils des agents
 │   │   ├── build_db.py      CSV propres vers base SQLite
 │   │   ├── treatments.py    traitements homologués, dose, DAR, LMR
 │   │   ├── fertilizers.py   engrais et règles de carences
@@ -77,20 +81,24 @@ AgrIA/
 │   │   ├── rag.py           recherche dans les fiches
 │   │   ├── lexicon.py       français, arabe, darija
 │   │   └── safety.py        contrôle de la réponse finale
-│   ├── agent/            Étape 4 : orchestrateur
+│   ├── agent/            Étape 4 : système multi-agents (LangGraph)
+│   │   ├── state.py         dossier partagé entre les agents
+│   │   ├── graph.py         graphe des agents, point d'entrée diagnose()
+│   │   ├── llm.py           LLM de rédaction et de traduction (gabarit sans LLM par défaut)
+│   │   └── agents/          coordinateur, linguistique, diagnostic, specialistes (phyto + agronome), verificateur
 │   ├── api/              Étape 4 : API
 │   └── app/              Étape 4 : interface
 ├── tests/                un dossier de tests par module
 ├── docs/                 ✅ rapports, figures, tables de correspondance
-├── data/                 ✅ hors Git, archive partagée par Drive, copiée sur chaque machine
-└── models/               hors Git, archive partagée par Drive, copiée sur chaque machine
+├── data/                 ✅ hors Git, en local (sauvegarde conseillée sur Drive)
+└── models/               hors Git, en local (sauvegarde conseillée sur Drive)
 ```
 
 ---
 
 ## 3. Données disponibles
 
-Le dossier `data/` n'est **pas sur GitHub**. Il est partagé par Google Drive à l'étape 1, puis copié dans le dépôt de chaque membre. **Tout s'exécute en local** (GPU NVIDIA si disponible, sinon CPU), pas sur Colab.
+Le dossier `data/` n'est **pas sur GitHub**. Il reste sur la machine locale. **Tout s'exécute en local** (GPU NVIDIA si disponible, sinon CPU), pas sur Colab.
 
 | Besoin | Fichier | Contenu |
 |---|---|---|
@@ -118,7 +126,7 @@ Le dossier `data/` n'est **pas sur GitHub**. Il est partagé par Google Drive à
 
 ## 4. Contrats entre les étapes
 
-Ces interfaces permettent à chacun de travailler sans dépendre du code interne des autres. Toute modification se décide avec le membre concerné.
+Ces interfaces séparent les modules : chaque partie se développe et se teste sans dépendre du code interne des autres. Toute modification d'un contrat est notée ici.
 
 ### Modèle vers agent : `src/vision/predict.py`
 
@@ -142,17 +150,21 @@ Chaque modèle est livré dans `models/<tâche>/` avec `model.pt`, `labels.json`
 ```python
 get_treatments(unified_class: str, crop: str | None) -> list[dict]
 # produit, substances, dose, unité, DAR ou None, LMR, relation, restriction
-get_fertilizers(deficiency: str) -> dict
-# produits, teneur, dose, niveau de fiabilité, questions de confirmation
-get_water_need(governorate: str, crop: str, month: int) -> dict
-# ET0, Kc, besoin, pluie, déficit
-search_knowledge(query: str, k: int = 3) -> list[dict]
-# extrait, fiche, lien de la source
+get_fertilizers(deficiency: str, crop: str | None = None, governorate: str | None = None) -> dict
+# produits, teneur, dose, niveau de fiabilité (« hypothese » hors culture vue), questions de confirmation, sol
+get_water_need(governorate: str, crop: str, month: int, forecast: bool = False) -> dict
+# ET0, Kc, besoin, pluie, déficit (mm et m³/ha), prévision 7 jours en option
+search_knowledge(query: str, k: int = 3, classe: str | None = None) -> list[dict]
+# extrait, fiche, section, langue, lien de la source, licence
 normalize_terms(text: str) -> dict
-# cultures et symptômes reconnus en français, arabe, darija, arabizi
+# cultures, maladies, ravageurs, symptômes, organes reconnus en français, arabe, darija, arabizi ; classes possibles
 check_answer(answer: dict) -> dict
-# valide ou bloque la réponse finale
+# answer : task, classe, culture, fiable, hypothese, produits [{nom, dose, dar_jours}], engrais [{nom}], texte
+# -> {valide, raisons (bloquantes), avertissements (à dire), produits_verifies}
 ```
+
+Import : `from src.tools import get_treatments, ...`. Les noms de culture et de gouvernorat sont acceptés en français,
+en arabe ou en arabizi. Détail et règles : `docs/results_tools.md`.
 
 Une liste vide veut dire « aucun produit homologué », jamais une erreur.
 
@@ -166,13 +178,13 @@ POST /diagnose
 
 ---
 
-## 5. Travail de chaque membre
+## 5. Détail des étapes
 
-### Étape 1 · Maissene : socle d'entraînement et routeur
+### Étape 1 · Socle d'entraînement et routeur
 
-**Objectif :** n'importe quel membre peut entraîner un modèle avec une seule commande.
+**Objectif :** entraîner n'importe quel modèle avec une seule commande.
 
-1. **Partager les données.** Déposer `data/processed/` sur Google Drive, sous forme d'archive, avec les droits pour l'équipe.
+1. **Garder les données hors Git.** `data/processed/` reste en local ; une archive de sauvegarde sur Drive est conseillée.
 2. **Rendre les données lisibles sur toute machine.** Les chemins des manifests et de `balanced/*_train.csv` utilisent `\` (Windows) et ne fonctionnent pas tels quels sous Linux ou macOS. Les convertir à la lecture dans `dataset.py`, sans modifier les fichiers.
 3. **Écrire `src/vision/dataset.py`** : lecture des CSV, transformations et normalisation identiques partout, sans augmentation supplémentaire qui change les teintes.
 4. **Écrire `src/vision/train.py`** : `python src/vision/train.py --task routing --model efficientnet_b0`. Il doit gérer le modèle préentraîné, les poids de classes, l'arrêt anticipé et la graine fixe.
@@ -184,12 +196,12 @@ POST /diagnose
 **Attention :** 92 % des fruits du routeur sont des grenades. Regarder le score sur les fruits de tomate et d'agrumes, pas seulement le score global.
 
 **Livré quand :**
-- [ ] Nourhene relance l'entraînement du routeur sur sa machine, sans aide, avec une seule commande.
+- [x] L'entraînement du routeur se relance avec une seule commande.
 - [x] `models/routing/` contient `model.pt`, `labels.json`, `metrics.json`.
 - [x] `predict("routing", "photo.jpg")` renvoie le format du contrat.
 - [x] Les scores du routeur sont notés dans `docs/results_routing.md`.
 
-### Étape 2 · Nourhene : modèles de diagnostic
+### Étape 2 · Modèles de diagnostic
 
 **Objectif :** trois modèles évalués honnêtement, surtout sur le terrain.
 
@@ -203,12 +215,12 @@ POST /diagnose
 **Critères visés :** exactitude d'au moins 90 % sur le terrain, macro-F1 d'au moins 0,85. Si la cible n'est pas atteinte, le rapport le dit et propose une suite, comme le prévoit la boucle CRISP-DM.
 
 **Livré quand :**
-- [ ] `models/diseases/`, `models/deficiency/`, `models/fruits/` sont sur le Drive.
+- [x] `models/diseases/`, `models/deficiency/`, `models/fruits/` existent (sauvegarde hors de la machine conseillée).
 - [x] `predict()` fonctionne pour les quatre tâches.
 - [x] `docs/results_vision.md` donne les scores globaux, par classe, par culture et terrain, avec les hypothèses H1 à H3.
 - [x] Les seuils de confiance sont justifiés dans ce rapport.
 
-### Étape 3 · Adem : outils de l'agent
+### Étape 3 · Outils de l'agent
 
 **Objectif :** des outils fiables, sans LLM, testés un par un.
 
@@ -216,7 +228,7 @@ POST /diagnose
 2. `treatments.py` : traitements par classe et culture, en préférant les liens `direct`, puis `vecteur`, `groupe` et `proche`.
 3. `fertilizers.py` : engrais par carence, avec `regles_carences.json` et le pH du gouvernorat.
 4. `water.py` : besoins en eau à partir de `besoins_eau_mensuels.csv`, prévisions avec `forecast_url()` de `fetch_context_tn.py`.
-5. `rag.py` : index Chroma des fiches, chaque extrait gardant le lien de sa source.
+5. `rag.py` : recherche dans les fiches, chaque extrait gardant le lien de sa source. Choix fait : TF-IDF local (76 fiches, hors ligne, aucun modèle à télécharger) au lieu de Chroma, remplaçable derrière la même fonction.
 6. `lexicon.py` : reconnaissance des termes. Les 88 entrées marquées `a_valider` sont relues avec un locuteur tunisien.
 7. `safety.py` : bloquer toute réponse citant un produit hors de la liste homologuée.
 
@@ -227,21 +239,22 @@ POST /diagnose
 - Respecter les colonnes `restriction` et `autorisation_provisoire`.
 
 **Livré quand :**
-- [ ] Toutes les fonctions du contrat existent et ont des tests dans `tests/tools/`.
-- [ ] Les cas ci-dessus ont chacun leur test.
-- [ ] Un test vérifie que `safety.py` bloque un produit non homologué.
-- [ ] Abd Majid peut appeler chaque outil sans connaître la base.
+- [x] Toutes les fonctions du contrat existent et ont des tests dans `tests/tools/`.
+- [x] Les cas ci-dessus ont chacun leur test.
+- [x] Un test vérifie que `safety.py` bloque un produit non homologué.
+- [x] L'agent peut appeler chaque outil sans connaître la base.
 
-### Étape 4 · Abd Majid : agent, API, application
+### Étape 4 · Système multi-agents, API, application
 
 **Objectif :** une démonstration complète, de la photo à la réponse.
 
 1. **Décider et noter dans ce fichier :** web ou mobile, choix du LLM.
-2. `src/agent/` : orchestrateur qui suit le schéma de la section 1.
-3. `src/api/` : `POST /diagnose`.
-4. `src/app/` : prise de photo, message, gouvernorat, réponse en darija, français ou arabe.
-5. Importer le jeu de test de l'agent préparé par Maissene et mesurer le système complet.
-6. Organiser le pilote : au moins 10 agriculteurs ou conseillers.
+2. ✅ `src/agent/` : les six agents et leur graphe LangGraph (section 1), testés sans LLM (10 tests dans `tests/agent/`, dont un LLM qui glisse un produit non homologué : bloqué puis CRDA).
+3. Brancher le LLM choisi dans `src/agent/llm.py` (rédaction et traduction).
+4. `src/api/` : `POST /diagnose`.
+5. `src/app/` : prise de photo, message, gouvernorat, réponse en darija, français ou arabe.
+6. Importer le jeu de test de l'agent et mesurer le système complet.
+7. Organiser le pilote : au moins 10 agriculteurs ou conseillers.
 
 **Critères visés :** moins de 15 s de la photo à la réponse, 100 % de produits homologués, au moins 70 % de réponses jugées utiles.
 
@@ -253,27 +266,26 @@ POST /diagnose
 
 ---
 
-## 6. Règles de passage entre les étapes
+## 6. Règles entre les étapes
 
-1. Le responsable coche sa liste « Livré quand » dans ce fichier.
-2. Le membre suivant vérifie lui-même la livraison, sur sa machine.
-3. S'il bloque, il renvoie un problème précis. Le responsable précédent corrige avant la suite.
-4. Si un résultat montre un problème de données, on revient à la préparation, puis on note la décision dans ce fichier.
+1. Cocher la liste « Livré quand » de l'étape dans ce fichier avant de passer à la suivante.
+2. Vérifier la livraison en relançant ses commandes depuis un terminal neuf.
+3. Si un résultat montre un problème de données, revenir à la préparation, puis noter la décision dans ce fichier.
 
-**Git :** une branche par étape (`step1-vision-base`, etc.), une pull request relue par le membre suivant, et jamais de données ni de modèles dans Git.
+**Git :** une branche par étape (`step1-vision-base`, etc.), fusionnée dans `main` par une pull request à la fin de l'étape, et jamais de données ni de modèles dans Git.
 
 ---
 
 ## 7. Décisions ouvertes
 
-| Décision | Responsable | État |
-|---|---|---|
-| Application web ou mobile | Abd Majid, avec l'équipe | À décider à l'étape 4 |
-| Choix du LLM | Abd Majid, avec l'équipe | À décider à l'étape 4 |
-| Dates de chaque étape | Équipe | À remplir |
-| Validation des 88 termes en darija | Adem | À faire à l'étape 3 |
-| Jeu de test de l'agent | Maissene | À importer avant l'étape 4 |
-| Photos de terrain tunisiennes | Équipe | En continu, si possible |
-| Seuil des maladies dans l'agent : 0,5 (calibré en laboratoire) ou 0,9 (recommandé, voir `results_vision.md`) | Équipe | À décider avant l'étape 4 |
-| Ajouter le jeu d'entraînement PlantDoc (photos de terrain) pour améliorer H1 | Équipe | À décider (exactitude terrain 61,8 % contre 90 % visé) |
-| Fruits : modèle brut (choisi par la validation) ou équilibré (meilleur sur les classes rares) | Équipe | Brut par défaut |
+| Décision | État |
+|---|---|
+| Application web ou mobile | À décider à l'étape 4 |
+| Choix du LLM | À décider à l'étape 4 |
+| Dates de chaque étape | À remplir |
+| Validation des 88 termes en darija (avec un locuteur tunisien) | À faire à l'étape 3 |
+| Jeu de test de l'agent | À importer avant l'étape 4 |
+| Photos de terrain tunisiennes | En continu, si possible |
+| Seuil des maladies dans l'agent : 0,5 (calibré en laboratoire) ou 0,9 (recommandé, voir `results_vision.md`) | À décider avant l'étape 4 |
+| Améliorer H1 (terrain 61,8 % contre 90 % visé) : PlantDoc train est déjà utilisé ; essais de validation de terrain, suréchantillonnage et augmentations | En cours, voir `results_vision.md` section 9 |
+| Fruits : modèle brut (choisi par la validation) ou équilibré (meilleur sur les classes rares) | Brut par défaut |
