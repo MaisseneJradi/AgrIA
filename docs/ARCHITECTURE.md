@@ -10,7 +10,7 @@ Le travail est **séquentiel** : une étape commence quand la précédente a coc
 | 1 | Socle d'entraînement + routeur | Données préparées | Scripts `src/vision/`, routeur entraîné | ✅ |
 | 2 | Modèles de diagnostic | Scripts et données | 3 modèles entraînés, rapport d'évaluation | ✅ (essais terrain en cours) |
 | 3 | Outils de l'agent | Noms de classes, tables propres | Base de données, outils testés, RAG | ✅ (88 termes darija à valider) |
-| 4 | Système multi-agents, API, application | Modèles + outils | Application de démonstration, évaluation finale | en cours (6 agents faits, LLM, API, app à faire) |
+| 4 | Système multi-agents, API, application | Modèles + outils | Application de démonstration, évaluation finale | en cours (6 agents faits ; API et app à faire) |
 
 ---
 
@@ -18,14 +18,16 @@ Le travail est **séquentiel** : une étape commence quand la précédente a coc
 
 AgrIA est un **système de six agents** qui coopèrent autour d'un dossier partagé (`src/agent/state.py`), orchestrés avec LangGraph (`src/agent/graph.py`).
 
-| Agent | Rôle | Outils | LLM |
+| Agent | Rôle | Outils | Fonctionne avec |
 |---|---|---|---|
-| **Coordinateur** | planifie le cas, assemble les résultats, fait rédiger la réponse, la réécrit si elle est bloquée (2 fois au plus), sinon oriente vers le CRDA | — | rédaction |
-| **Linguistique** | comprend le message (français, arabe, darija, arabizi) : culture, symptômes, gouvernorat ; traduit la réponse | `normalize_terms`, `crop_code` | traduction |
-| **Diagnostic** | lit la photo (routeur puis modèle maladies, carences ou fruits) ; décide si le diagnostic est fiable, sinon pose des questions | `predict()` | non |
-| **Phytosanitaire** | choisit en code les traitements homologués (dose, DAR, LMR, restrictions) et des conseils des fiches | `get_treatments`, `search_knowledge` | non |
-| **Agronome** | engrais pour une carence (fiabilité selon la culture, sol du gouvernorat) et besoin en eau du mois | `get_fertilizers`, `get_water_need` | non |
-| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **non, règles codées** |
+| **Coordinateur** | planifie le cas, assemble les résultats, écrit la réponse, la réécrit si elle est bloquée (2 fois au plus), sinon oriente vers le CRDA | `redaction.py` | règles |
+| **Linguistique** | comprend le message (français, arabe, darija, arabizi) : culture, symptômes, gouvernorat ; écrit la réponse en français ou en arabe | `normalize_terms`, `crop_code`, `redaction.py` | lexique + phrases écrites par le code |
+| **Diagnostic** | lit la photo (routeur puis modèle maladies, carences ou fruits) ; décide si le diagnostic est fiable, sinon pose des questions | `predict()` | 4 modèles d'images (EfficientNet-B0) |
+| **Phytosanitaire** | choisit les traitements homologués (dose, DAR, LMR, restrictions) et des conseils des fiches | `get_treatments`, `search_knowledge` | base SQLite + recherche TF-IDF |
+| **Agronome** | engrais pour une carence (fiabilité selon la culture, sol du gouvernorat) et besoin en eau du mois | `get_fertilizers`, `get_water_need` | base SQLite + règles |
+| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **8 règles codées** |
+
+**Pas de LLM.** AgrIA répond en **français ou en arabe** (pas de darija). Toutes les phrases sont écrites par le code (`src/agent/redaction.py`), donc aucun fait (produit, dose, délai) ne peut être inventé ni mal traduit. Un essai avec un petit LLM local (`derja`, Qwen3 4B, Ollama) l'a montré : il changeait des doses (« 300 g/hl » devenu « 300 g/l ») et traduisait mal les termes agricoles. Dans une réponse en arabe, les passages des fiches (français ou anglais) sont remplacés par leurs liens.
 
 ```mermaid
 flowchart TD
@@ -54,7 +56,7 @@ Phytosanitaire et Agronome travaillent **en parallèle**. Chaque agent ajoute un
 
 **Deux principes à ne jamais casser :**
 
-1. **Le LLM ne choisit jamais un produit de lui-même.** Les produits et les engrais sont choisis en code par les agents Phytosanitaire et Agronome ; le LLM écrit seulement le texte autour. L'agent Vérificateur contrôle le texte final en code, pas par une consigne au LLM.
+1. **Aucun produit n'est inventé.** Les produits et les engrais sont choisis en code par les agents Phytosanitaire et Agronome, à partir des listes officielles ; le texte est écrit par le code ; l'agent Vérificateur contrôle le texte final avec des règles codées.
 2. **Dans le doute, l'agent ne recommande rien** : il pose une question ou transmet le cas au CRDA.
 
 ---
@@ -84,7 +86,8 @@ AgrIA/
 │   ├── agent/            Étape 4 : système multi-agents (LangGraph)
 │   │   ├── state.py         dossier partagé entre les agents
 │   │   ├── graph.py         graphe des agents, point d'entrée diagnose()
-│   │   ├── llm.py           LLM de rédaction et de traduction (gabarit sans LLM par défaut)
+│   │   ├── redaction.py     réponse écrite par le code, en français ou en arabe
+│   │   ├── make_validation_sheet.py  classeur de relecture de l'arabe (docs/validation_langue.xlsx)
 │   │   └── agents/          coordinateur, linguistique, diagnostic, specialistes (phyto + agronome), verificateur
 │   ├── api/              Étape 4 : API
 │   └── app/              Étape 4 : interface
@@ -222,7 +225,7 @@ POST /diagnose
 
 ### Étape 3 · Outils de l'agent
 
-**Objectif :** des outils fiables, sans LLM, testés un par un.
+**Objectif :** des outils fiables, à base de règles et de tables, testés un par un.
 
 1. `build_db.py` : charger les tables propres dans une base SQLite.
 2. `treatments.py` : traitements par classe et culture, en préférant les liens `direct`, puis `vecteur`, `groupe` et `proche`.
@@ -248,9 +251,9 @@ POST /diagnose
 
 **Objectif :** une démonstration complète, de la photo à la réponse.
 
-1. **Décider et noter dans ce fichier :** web ou mobile, choix du LLM.
-2. ✅ `src/agent/` : les six agents et leur graphe LangGraph (section 1), testés sans LLM (10 tests dans `tests/agent/`, dont un LLM qui glisse un produit non homologué : bloqué puis CRDA).
-3. Brancher le LLM choisi dans `src/agent/llm.py` (rédaction et traduction).
+1. **Décider et noter dans ce fichier :** web ou mobile.
+2. ✅ `src/agent/` : les six agents et leur graphe LangGraph (section 1), 11 tests dans `tests/agent/`, dont un rédacteur fautif qui glisse un produit non homologué : bloqué 4 fois, puis texte de secours.
+3. ✅ Réponses en français ou en arabe écrites par le code (`src/agent/redaction.py`), sans LLM. Arabe à relire avec `docs/validation_langue.xlsx`.
 4. `src/api/` : `POST /diagnose`.
 5. `src/app/` : prise de photo, message, gouvernorat, réponse en darija, français ou arabe.
 6. Importer le jeu de test de l'agent et mesurer le système complet.
@@ -281,7 +284,7 @@ POST /diagnose
 | Décision | État |
 |---|---|
 | Application web ou mobile | À décider à l'étape 4 |
-| Choix du LLM | À décider à l'étape 4 |
+| Langues et LLM | ✅ réponses en français ou en arabe, écrites par le code ; pas de darija, pas de LLM (essai de `derja` : doses modifiées, termes mal traduits). Arabe à relire avec `docs/validation_langue.xlsx`. |
 | Dates de chaque étape | À remplir |
 | Validation des 88 termes en darija (avec un locuteur tunisien) | À faire à l'étape 3 |
 | Jeu de test de l'agent | À importer avant l'étape 4 |

@@ -17,8 +17,6 @@ from treatments import get_treatments
 from water import get_water_need
 
 MAX_PRODUCTS = 3
-MONTHS = ["", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre",
-          "novembre", "décembre"]
 
 
 def phytosanitaire(d):
@@ -73,8 +71,8 @@ def agronome(d):
         try:
             w = get_water_need(gov, crop, month)
             if w["en_saison"]:
-                out["eau"] = (f"Irrigation en {MONTHS[month]} à {gov} : besoin moyen d'environ {w['deficit_mm']} mm "
-                              f"({w['deficit_m3_ha']} m³/ha), soit {w['deficit_mm_jour']} mm par jour après la pluie.")
+                out["eau"] = {"mois": month, "gouvernorat": gov, "mm": w["deficit_mm"], "m3": w["deficit_m3_ha"],
+                              "mmj": w["deficit_mm_jour"]}
                 notes.append("besoin en eau calculé")
         except ValueError as e:
             notes.append(f"pas de besoin en eau ({e})")

@@ -1,9 +1,9 @@
 """Agent Linguistique: understands the farmer's message (French, Arabic, darija, arabizi) and writes the final answer in
-the farmer's language.
+French or Arabic (a message in darija or arabizi is answered in Arabic).
 
 comprendre: terms of the lexicon, crop, governorate, language of the answer.
-traduire:   French answer -> language of the farmer, by the LLM. Product names, doses and DAR are kept as written
-            (the Vérificateur checks the translated text). Without an LLM the answer stays in French and says so.
+traduire:   the answer written again by code in French or Arabic (src/agent/redaction.py). No LLM: a fact can never
+            be mistranslated. The Vérificateur checks the final text.
 """
 import time
 
@@ -11,9 +11,9 @@ from src.agent import paths  # noqa: F401
 from common import governorate  # src/tools
 from lexicon import crop_code, normalize_terms
 from src.agent.agents.aides import step
-from src.agent.llm import get_llm
+from src.agent.redaction import LANGS, compose
 
-LANGUAGES = {"fr": "fr", "ar": "ar", "arabizi": "darija", "darija": "darija"}
+LANGUAGES = {"fr": "fr", "ar": "ar", "arabizi": "ar", "darija": "ar"}  # answers in French or Arabic only
 
 
 def comprendre(d):
@@ -36,13 +36,12 @@ def comprendre(d):
 
 
 def traduire(d):
+    """The answer written again by code in the farmer's language (French or Arabic): no LLM, no translation."""
     t0 = time.time()
     b = d["brouillon"]
     target = d.get("langue_reponse", "fr")
-    llm = get_llm()
-    text = b["texte"] if target == "fr" else llm.write("traduire", {"texte": b["texte"], "langue": target})
-    done = target == "fr" or llm.name != "template"
-    out = dict(b, texte=text, langue=target if done else "fr")
-    note = "réponse en français" if target == "fr" else (
-        f"traduite en {target}" if done else f"traduction en {target} indisponible sans LLM : réponse en français")
-    return {"brouillon": out, "trace": step("Linguistique", note, t0)}
+    if target == "fr" or target not in LANGS or not b.get("faits"):
+        return {"brouillon": dict(b, langue="fr"), "trace": step("Linguistique", "réponse en français", t0)}
+    text = compose(b["faits"], target)
+    return {"brouillon": dict(b, texte=text, langue=target),
+            "trace": step("Linguistique", "réponse en arabe, écrite par le code", t0)}

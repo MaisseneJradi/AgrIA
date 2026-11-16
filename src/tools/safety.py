@@ -20,6 +20,7 @@ Blocking rules
   5. a product while the diagnosis is not reliable (fiable False): ask confirmation questions first
   6. a deficiency on a crop never seen for it in training, not presented as a hypothesis (H2)
   7. a fertilizer that is not in the catalogue of that deficiency
+  8. a product whose registered dose is not written, as such, on the same line as the product in the text
 Warnings (the answer must mention them): restriction, provisional authorisation, relation vecteur or proche,
 DAR not given by the list, model confusions of fertilizers.py.
 """
@@ -98,6 +99,9 @@ def check_answer(answer):
             continue
         if p.get("dose") and not any(_squash(p["dose"]) == _squash(u["dose"]) for u in usages):
             reasons.append(f"dose de « {p['nom']} » différente de l'homologation ({usages[0]['dose']})")
+        elif p.get("dose") and text and not any(p["nom"] in line and p["dose"] in line for line in text.splitlines()):
+            reasons.append(f"dose de « {p['nom']} » absente, modifiée ou séparée du produit dans le texte "
+                           f"({p['dose']})")
         if "dar_jours" in p and p["dar_jours"] is not None:
             dars = {u["dar_jours"] for u in usages}
             if dars == {None}:

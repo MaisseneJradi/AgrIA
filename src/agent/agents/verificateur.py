@@ -1,5 +1,5 @@
 """Agent Vérificateur: checks the final text, in the farmer's language, with the rules of src/tools/safety.py.
-Code only, no LLM: a language model cannot talk it out of a rule. A blocked answer goes back to the Coordinateur.
+Rules in code: nothing can talk it out of a rule. A blocked answer goes back to the Coordinateur.
 """
 import time
 
