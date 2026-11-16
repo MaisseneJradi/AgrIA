@@ -61,8 +61,12 @@ class TestAgents(unittest.TestCase):
     def test_deficiency_goes_to_the_agronomist(self):
         r = diagnose(FE_PEPPER, "felfel msaffer", "Kairouan", mois=6)
         self.assertEqual(r["diagnostic"]["task"], "deficiency")
-        self.assertTrue(r["engrais"])
-        self.assertEqual(r["produits"], [])
+        self.assertEqual(r["produits"], [])  # never a pesticide for a deficiency
+        if r["diagnostic"]["fiable"]:
+            self.assertTrue(r["engrais"])
+        else:  # below the 0.95 threshold of deficiencies: confirmation questions first, no fertilizer yet
+            self.assertEqual(r["engrais"], [])
+            self.assertTrue(r["questions"])
 
     def test_deficiency_model_never_overrides_a_diseased_leaf(self):
         # without words about a deficiency, the disease model decides (the deficiency model never saw diseased leaves)
