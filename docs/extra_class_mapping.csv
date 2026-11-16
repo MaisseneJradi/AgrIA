@@ -104,3 +104,28 @@ fruits,citrus__canker,citrus,diseased,citrus_fruit/Canker,auto
 fruits,orange__citrus_greening,citrus,diseased,citrus_fruit/Greening,auto
 fruits,citrus__scab,citrus,diseased,citrus_fruit/Scab,auto
 fruits,citrus__healthy,citrus,healthy,citrus_fruit/healthy,auto
+deficiency,healthy,corn,healthy,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Helathy,auto
+deficiency,Mg_deficiency,corn,deficient,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Magnessium,auto
+deficiency,N_deficiency,corn,deficient,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Nitrogen,auto
+deficiency,P_deficiency,corn,deficient,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Phosphorous,auto
+deficiency,K_deficiency,corn,deficient,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Pottasium,auto
+deficiency,Mg_deficiency,tomato,deficient,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Magnesium Deficiency,auto
+deficiency,healthy,tomato,healthy,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Healthy,auto
+deficiency,healthy,tomato,healthy,tomato_village/clean/train/Healthy,train
+deficiency,Mg_deficiency,tomato,deficient,tomato_village/clean/train/Magnesium Deficiency,train
+deficiency,N_deficiency,tomato,deficient,tomato_village/clean/train/Nitrogen Deficiency,train
+deficiency,K_deficiency,tomato,deficient,tomato_village/clean/train/Pottassium Deficiency,train
+deficiency,healthy,tomato,healthy,tomato_village/clean/val/Healthy,val
+deficiency,Mg_deficiency,tomato,deficient,tomato_village/clean/val/Magnesium Deficiency,val
+deficiency,N_deficiency,tomato,deficient,tomato_village/clean/val/Nitrogen Deficiency,val
+deficiency,K_deficiency,tomato,deficient,tomato_village/clean/val/Pottassium Deficiency,val
+deficiency,healthy,tomato,healthy,tomato_village/clean/test/Healthy,test
+deficiency,Mg_deficiency,tomato,deficient,tomato_village/clean/test/Magnesium Deficiency,test
+deficiency,N_deficiency,tomato,deficient,tomato_village/clean/test/Nitrogen Deficiency,test
+deficiency,K_deficiency,tomato,deficient,tomato_village/clean/test/Pottassium Deficiency,test
+deficiency,Fe_deficiency,citrus,deficient,citrusuat/clean/Fe,auto
+deficiency,Mg_deficiency,citrus,deficient,citrusuat/clean/Mg,auto
+deficiency,Mn_deficiency,citrus,deficient,citrusuat/clean/Mn,auto
+deficiency,N_deficiency,citrus,deficient,citrusuat/clean/N,auto
+deficiency,Zn_deficiency,citrus,deficient,citrusuat/clean/Zn,auto
+deficiency,healthy,citrus,healthy,citrusuat/clean/Healthy,auto

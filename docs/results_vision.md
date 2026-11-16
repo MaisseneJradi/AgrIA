@@ -183,3 +183,28 @@ Sur le terrain, le modèle feuille est trop sûr de lui (au-dessus de 0,9 : 77 %
 Une première version, arrêtée trop tôt (époque 2 sur 6, patience 4, `models/leaf_v1`), était moins bonne sur les classes exactes (carences 78,8 %) ; elle n'a pas été utilisée. Le seuil du modèle feuille est calibré sur la validation complète (0,71) ; les seuils de l'agent (0,9 maladie, 0,95 carence) restent ceux qui décident.
 
 **Limite.** Les carences du jeu d'entraînement viennent surtout du poivron, du riz, du palmier et du café (6 à 8 images par carence pour la tomate) : sur des photos de carence de la tomate, le modèle voit encore une maladie. Il faudra des photos de carences sur les cultures tunisiennes.
+
+## 11. Carences des cultures du projet : nouvelles données et modèle feuille v3
+
+Les carences du jeu d'origine venaient surtout du poivron, du riz, du palmier et du café ; sur des photos de carence de la tomate, le modèle voyait une maladie. Quatre jeux publics, uniquement sur des cultures du projet, ont été ajoutés le 16/11/2026 avec `add_source.py` (aucune ligne existante modifiée, 25 lignes dans `docs/extra_class_mapping.csv`) :
+
+| Jeu | Culture | Préparation | Images ajoutées | Licence et citation |
+|---|---|---|---|---|
+| Maize Nutrient Deficiency Dataset (Mendeley 10.17632/34gb2gr7p2.1, Inde, terrain) | maïs | telle quelle | Mg 123, P 113, N 99, K 56, saines 72 | CC BY 4.0 |
+| Tomato Leaf Disease Classification Dataset (Mendeley 10.17632/jttrv2w27r, Bangladesh, fond blanc) | tomate | 17 doublons internes retirés (`clean_duplicates.py`) | Mg 738, saines 369 | CC BY 4.0 (Rachin et Likhon, 2025) |
+| Tomato-Village, variante a (Gehlot, Saxena et Gandhi, *Multimedia Systems*, 2023, 10.1007/s00530-023-01158-y ; Rajasthan) | tomate | `prepare_tomato_village.py` : une image par feuille (le jeu contient les copies augmentées des auteurs : 497 paires miroir/rotation, dont 217 entre train et test) | Mg 431, N 177, K 34, saines 216 | **pas de licence** dans le dépôt : citer les auteurs |
+| CitrusUAT (Zenodo 10.5281/zenodo.8294078, Mexique ; MD5 vérifié) | agrumes | `prepare_citrusuat.py` : photo recadrée sur la feuille avec le masque fourni | Fe 100, Mg 100, Zn 100, N 50, Mn 30, saines 100 | CC BY 4.0 |
+
+Manifest des carences : 13 771 → **16 679 images**, aucun doublon (`check_duplicates.py`). Les règles des carences (`regles_carences.json`) sont recalculées sur le train brut (`deficiency_crop_support.py`) : Mg et N « fiables » sur la tomate et le maïs, Fe et Zn vus sur les agrumes ; les carences de l'olivier, de la vigne, de la pomme de terre et des arbres fruitiers restent des hypothèses (aucun jeu public trouvé).
+
+**Modèle feuille v3** (mêmes réglages que la v2, meilleure époque 18 sur 20, `models/leaf` = copie de `models/leaf_v3`) :
+
+| Test laboratoire | v2 | **v3** |
+|---|---|---|
+| carences classées carences | 97,0 % (1 449) | **97,6 %** (1 724) |
+| carences : bon nutriment | 89,4 % | **91,4 %** |
+| maladies classées maladies | 98,9 % | 98,9 % |
+| maladies : classe exacte | 98,2 % | **98,4 %** |
+| photos de terrain (199 maladies) | 59,3 % | 59,8 % |
+
+Sur les images de test des nouvelles sources, bon nutriment : tomate Mendeley 98,2 %, Tomato-Village 95,7 %, CitrusUAT 98,3 %, maïs 86,7 %. Sur les photos du journal de l'application, une tomate carencée en magnésium est maintenant reconnue (« carence en magnésium », 89 %, avant : « moisissure des feuilles », 100 %) ; la seconde reste vue comme une maladie (part de carence 38 %, avant 11 %).
