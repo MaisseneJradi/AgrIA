@@ -4,6 +4,8 @@ Usage (after evaluate.py has written predictions_val.csv, predictions_test.csv a
   python src/vision/evaluate.py --task diseases --splits val
   python src/vision/calibrate.py --task diseases
 Options: --model-dir (models/<task>) --target (0.98) --floor (0.5)
+         --calib-split val (default) | val_field (field photos held out by train.py --field-val: the threshold is
+         then chosen on real photos, which is what the app receives)
 
 Rule: the threshold is the lowest value, never below --floor, at which the predictions kept on the VALIDATION set are
 right at least --target of the time. Test and test_field never choose anything: they only show what the threshold
@@ -50,6 +52,7 @@ def main():
     ap.add_argument("--model-dir", default=None)
     ap.add_argument("--target", type=float, default=0.98)
     ap.add_argument("--floor", type=float, default=0.5)
+    ap.add_argument("--calib-split", default="val", choices=["val", "val_field"])
     args = ap.parse_args()
     folder = args.model_dir or str(ROOT / "models" / args.task)
 
@@ -60,17 +63,19 @@ def main():
         df = pd.read_csv(path)
         return df["confidence"].to_numpy(), (df["true"] == df["pred"]).to_numpy()
 
-    val = load("val")
+    val = load(args.calib_split)
     if val is None:
-        sys.exit(f"missing {folder}/predictions_val.csv: run evaluate.py --task {args.task} --splits val first")
+        sys.exit(f"missing {folder}/predictions_{args.calib_split}.csv: "
+                 f"run evaluate.py --task {args.task} --splits {args.calib_split} first")
     conf, correct = val
     grid = np.round(np.arange(args.floor, 0.996, 0.005), 3)
     ok = [t for t in grid if correct[conf >= t].mean() >= args.target]
     threshold = float(ok[0]) if ok else float(grid[-1])
 
-    report = {"rule": f"lowest threshold >= {args.floor} with val accuracy of kept predictions >= {args.target}",
+    report = {"rule": f"lowest threshold >= {args.floor} with {args.calib_split} accuracy of kept predictions "
+                      f">= {args.target}",
               "threshold": threshold, "splits": {}}
-    for split in ("val", "test", "test_field"):
+    for split in ("val", "val_field", "test", "test_field"):
         data = load(split)
         if data is None:
             continue

@@ -95,7 +95,7 @@ Rappel du modèle retenu, sur la culture qui domine chaque classe et sur les aut
 
 - L'équilibrage aide un peu les classes les plus rares : tuberculose de l'olivier 0,75 contre 0,50, carence en zinc 0,85 contre 0,69, verdissement des agrumes (fruit) 0,67 contre 0,33. Ces classes comptent très peu d'images de test (3 à 16), et l'effet n'est pas significatif.
 - Sans équilibrage, l'exactitude globale et la validation sont meilleures. Les poids de classes et les copies augmentées poussent le modèle à trop prédire les classes rares.
-- Selon la règle de choix, les modèles bruts sont retenus. Pour les fruits, le modèle équilibré a pourtant une meilleure macro-F1 de test (0,929). Ce choix est fragile parce que la validation des fruits contient très peu d'images par classe rare. Si l'équipe préfère protéger les classes rares, il suffit de copier `models/fruits_balanced/` dans `models/fruits/`.
+- Selon la règle de choix, les modèles bruts sont retenus. Pour les fruits, le modèle équilibré a pourtant une meilleure macro-F1 de test (0,929). Ce choix est fragile parce que la validation des fruits contient très peu d'images par classe rare. Pour protéger plutôt les classes rares, il suffit de copier `models/fruits_balanced/` dans `models/fruits/`.
 
 ## 5. Seuils de confiance (champ `reliable`)
 
@@ -130,7 +130,7 @@ Ces chiffres viennent du jeu de test. Ils ne peuvent donc pas servir à fixer le
 
 ## 7. Suite proposée (retour à la préparation, boucle CRISP-DM)
 
-1. **Ajouter des photos de terrain à l'entraînement.** C'est le levier principal. PlantDoc a aussi un jeu d'entraînement d'environ 2 300 photos avant filtrage des classes (seules ses photos de test, 199 après filtrage, sont utilisées), à ajouter avec `add_source.py` après accord de l'équipe. À plus long terme, collecter des photos tunisiennes, surtout pour l'olivier, le palmier, les agrumes et la tomate.
+1. **Mieux exploiter les photos de terrain.** Le jeu d'entraînement PlantDoc (1 911 photos de terrain après filtrage des classes) est déjà dans le train, mais il ne pèse que 4,8 % des images, contre 83 % pour PlantVillage, et aucune photo de terrain ne sert à la validation. Essais en cours : validation de terrain, suréchantillonnage et augmentations « terrain » (voir la section 9). À plus long terme, collecter des photos tunisiennes, surtout pour l'olivier, le palmier, les agrumes et la tomate.
 2. **Augmentations sans changement de couleur** : rotations, flou, recadrages plus forts, fonds variés. Elles rapprochent les photos de laboratoire des photos de terrain sans toucher aux symptômes.
 3. **Recalibrer les seuils** sur une validation de photos de terrain, séparée des 199 photos de test.
 4. **Carences** : obtenir des poivrons sains de la même source que les poivrons carencés, pour casser la confusion entre poivron sain et carence en zinc.

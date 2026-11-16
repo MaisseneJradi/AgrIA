@@ -21,7 +21,8 @@ from dataset import ROOT, make_transform  # noqa: E402
 from evaluate import load_model  # noqa: E402
 
 DEFAULT_THRESHOLD = 0.6
-_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# AGRIA_DEVICE=cpu forces the CPU (tests while a training uses the GPU, or a server without GPU)
+_DEVICE = torch.device(os.environ.get("AGRIA_DEVICE") or ("cuda" if torch.cuda.is_available() else "cpu"))
 _CACHE = {}
 _TRANSFORM = make_transform(train=False)
 
@@ -35,7 +36,8 @@ def _get(task):
         threshold = DEFAULT_THRESHOLD
         metrics = folder / "metrics.json"
         if metrics.exists():
-            threshold = json.load(open(metrics, encoding="utf-8")).get("threshold", DEFAULT_THRESHOLD)
+            with open(metrics, encoding="utf-8") as f:
+                threshold = json.load(f).get("threshold", DEFAULT_THRESHOLD)
         _CACHE[task] = (net, classes, threshold)
     return _CACHE[task]
 
