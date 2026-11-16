@@ -10,7 +10,7 @@ Le travail est **séquentiel** : une étape commence quand la précédente a coc
 | 1 | Socle d'entraînement + routeur | Données préparées | Scripts `src/vision/`, routeur entraîné | ✅ |
 | 2 | Modèles de diagnostic | Scripts et données | 3 modèles entraînés, rapport d'évaluation | ✅ (essais terrain en cours) |
 | 3 | Outils de l'agent | Noms de classes, tables propres | Base de données, outils testés, RAG | ✅ (88 termes darija à valider) |
-| 4 | Système multi-agents, API, application | Modèles + outils | Application de démonstration, évaluation finale | en cours (6 agents faits ; API et app à faire) |
+| 4 | Système multi-agents, API, application | Modèles + outils | Application de démonstration, évaluation finale | en cours (agents, API et app faits ; jeu de test et mesures finales à faire) |
 
 ---
 
@@ -89,8 +89,8 @@ AgrIA/
 │   │   ├── redaction.py     réponse écrite par le code, en français ou en arabe
 │   │   ├── make_validation_sheet.py  classeur de relecture de l'arabe (docs/validation_langue.xlsx)
 │   │   └── agents/          coordinateur, linguistique, diagnostic, specialistes (phyto + agronome), verificateur
-│   ├── api/              Étape 4 : API
-│   └── app/              Étape 4 : interface
+│   ├── api/              ✅ Étape 4 : API FastAPI (main.py)
+│   └── app/              ✅ Étape 4 : application web responsive (index.html, app.js, style.css)
 ├── tests/                un dossier de tests par module
 ├── docs/                 ✅ rapports, figures, tables de correspondance
 ├── data/                 ✅ hors Git, en local (sauvegarde conseillée sur Drive)
@@ -251,11 +251,11 @@ POST /diagnose
 
 **Objectif :** une démonstration complète, de la photo à la réponse.
 
-1. **Décider et noter dans ce fichier :** web ou mobile.
+1. ✅ Décision : application web responsive (téléphone et ordinateur).
 2. ✅ `src/agent/` : les six agents et leur graphe LangGraph (section 1), 11 tests dans `tests/agent/`, dont un rédacteur fautif qui glisse un produit non homologué : bloqué 4 fois, puis texte de secours.
 3. ✅ Réponses en français ou en arabe écrites par le code (`src/agent/redaction.py`), sans LLM. Arabe à relire avec `docs/validation_langue.xlsx`.
-4. `src/api/` : `POST /diagnose`.
-5. `src/app/` : prise de photo, message, gouvernorat, réponse en darija, français ou arabe.
+4. ✅ `src/api/main.py` (FastAPI) : `POST /diagnose`, `GET /gouvernorats`, `GET /health`, documentation sur `/docs` ; photo supprimée après l'analyse ; 6 tests dans `tests/api/`.
+5. ✅ `src/app/` : application web responsive (téléphone et ordinateur) : photo prise avec l'appareil, message, gouvernorat, culture ; interface et réponse en français ou en arabe (de droite à gauche) ; « Comment AgrIA a décidé » montre la trace des agents. Lancement : `python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000`.
 6. Importer le jeu de test de l'agent et mesurer le système complet.
 7. Organiser le pilote : au moins 10 agriculteurs ou conseillers.
 
@@ -283,7 +283,7 @@ POST /diagnose
 
 | Décision | État |
 |---|---|
-| Application web ou mobile | À décider à l'étape 4 |
+| Application web ou mobile | ✅ application web responsive (téléphone et ordinateur, installable sur l'écran d'accueil), servie par l'API FastAPI |
 | Langues et LLM | ✅ réponses en français ou en arabe, écrites par le code ; pas de darija, pas de LLM (essai de `derja` : doses modifiées, termes mal traduits). Arabe à relire avec `docs/validation_langue.xlsx`. |
 | Dates de chaque étape | À remplir |
 | Validation des 88 termes en darija (avec un locuteur tunisien) | À faire à l'étape 3 |

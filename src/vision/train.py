@@ -68,7 +68,7 @@ def run_epoch(net, loader, device, loss_fn, optimizer=None, scaler=None):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--task", required=True, choices=["routing", "diseases", "deficiency", "fruits"])
+    ap.add_argument("--task", required=True, choices=["routing", "diseases", "deficiency", "fruits", "leaf"])
     ap.add_argument("--model", default="efficientnet_b0")
     ap.add_argument("--epochs", type=int, default=20)
     ap.add_argument("--batch", type=int, default=32)

@@ -64,12 +64,23 @@ class TestAgents(unittest.TestCase):
         self.assertTrue(r["engrais"])
         self.assertEqual(r["produits"], [])
 
+    def test_deficiency_model_never_overrides_a_diseased_leaf(self):
+        # without words about a deficiency, the disease model decides (the deficiency model never saw diseased leaves)
+        r = diagnose(LATE_BLIGHT, "", "Nabeul")
+        self.assertEqual(r["diagnostic"]["task"], "diseases")
+
+    def test_named_crop_restricts_the_diagnosis(self):
+        r = diagnose(LATE_BLIGHT, "", "Nabeul", culture="tomate")
+        # only tomato classes, plus the deficiencies when the single leaf model is used (not tied to a crop)
+        self.assertTrue(all(c.startswith("tomato__") or c.endswith("_deficiency") for c, _ in r["diagnostic"]["top3"]))
+
     def test_fruit_photo_uses_the_fruit_model(self):
         r = diagnose(POMEGRANATE, "الرمان فيه بقع", "Gabès")
         self.assertEqual(r["diagnostic"]["task"], "fruits")
 
     def test_arabizi_message_gets_an_arabic_answer_with_arabic_questions(self):
-        r = diagnose(FE_PEPPER, "zitouna msaffra", "Kairouan", culture="olivier", mois=6)  # Fe never seen on olive
+        # "msafra" (yellow) is a deficiency word of the lexicon: the deficiency model is used; Fe never seen on olive
+        r = diagnose(FE_PEPPER, "zitouna msafra", "Kairouan", culture="olivier", mois=6)
         self.assertEqual(r["langue"], "ar")
         self.assertIn("هل تلاحظ", r["texte"])  # confirmation questions in Arabic (written in code)
         self.assertNotIn("Voyez-vous", r["texte"])

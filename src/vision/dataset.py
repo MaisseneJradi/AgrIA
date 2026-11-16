@@ -24,7 +24,7 @@ from torchvision import transforms
 
 ROOT = Path(__file__).resolve().parents[2]
 PROC = ROOT / "data" / "processed"
-TASKS = ("routing", "diseases", "deficiency", "fruits")
+TASKS = ("routing", "diseases", "deficiency", "fruits", "leaf")
 SIZE = 224
 MEAN, STD = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
 FIELD_SOURCES = ("plantdoc",)  # real field photos (the other sources are lab or close-up photos)
@@ -36,11 +36,43 @@ def local_path(p):
     return str(ROOT.joinpath(*p.replace("\\", "/").split("/")))
 
 
+def _leaf_manifest():
+    """Task "leaf": the 51 disease classes and the 9 deficiencies in one model, so that the model itself tells a
+    deficiency (yellowing, discoloration) from a disease (spots, mould, lesions). Built at read time, nothing is
+    written: diseases manifest + deficiency manifest, where
+      - a healthy leaf of the deficiency set joins the healthy class of its crop (tomato -> tomato__healthy);
+        healthy leaves of crops without a disease class (6 coffee photos) are left out;
+      - an image already in the diseases set (same md5 or dhash) is left out: no photo in train and test at once.
+    No balanced set for this task: train = the raw train split (the retained choice of step 2)."""
+    dis = pd.read_csv(PROC / "diseases_manifest.csv")
+    dfc = pd.read_csv(PROC / "deficiency_manifest.csv")
+    healthy_classes = {c for c in dis["class"].unique() if c.endswith("__healthy")}
+    is_healthy = dfc["class"] == "healthy"
+    dfc.loc[is_healthy, "class"] = dfc.loc[is_healthy, "crop"] + "__healthy"
+    dfc = dfc[~is_healthy | dfc["class"].isin(healthy_classes)]
+    h = pd.read_csv(PROC / "hash_cache.csv")
+    seen_md5 = set(h.loc[h["path"].isin(dis["path"]), "md5"])
+    seen_dh = set(h.loc[h["path"].isin(dis["path"]), "dhash"])
+    dup = set(h.loc[h["md5"].isin(seen_md5) | h["dhash"].isin(seen_dh), "path"])
+    dfc = dfc[~dfc["path"].isin(dup)]
+    return pd.concat([dis, dfc], ignore_index=True)
+
+
+_MANIFESTS = {}
+
+
+def manifest(task):
+    """Whole manifest of a task (cached)."""
+    if task not in _MANIFESTS:
+        _MANIFESTS[task] = _leaf_manifest() if task == "leaf" else pd.read_csv(PROC / f"{task}_manifest.csv")
+    return _MANIFESTS[task].copy()
+
+
 def field_val_paths(task):
     """Field validation set, built at read time (the manifest is never changed): FIELD_VAL_SHARE of the field photos
     of the train split, drawn per class with seed 42. Used to choose the model and its threshold on real photos
     while test_field stays untouched. Empty for tasks without field photos in train."""
-    df = pd.read_csv(PROC / f"{task}_manifest.csv")
+    df = manifest(task)
     df = df[(df["split"] == "train") & df["source"].isin(FIELD_SOURCES)]
     picked = [g.sample(round(FIELD_VAL_SHARE * len(g)), random_state=42) for _, g in df.groupby("class")]
     return set(pd.concat(picked)["path"].map(local_path)) if picked else set()
@@ -53,15 +85,15 @@ def load_split(task, split, balanced=True, field_holdout=False):
     if task not in TASKS:
         raise ValueError(f"unknown task {task!r}, expected one of {TASKS}")
     if split == "val_field":
-        df = pd.read_csv(PROC / f"{task}_manifest.csv")
+        df = manifest(task)
         df = df[df["split"] == "train"].copy()
         df["path"] = df["path"].map(local_path)
         held = field_val_paths(task)
         return df[df["path"].isin(held)].assign(split="val_field").reset_index(drop=True)
-    if split == "train" and task != "routing" and balanced:
+    if split == "train" and task not in ("routing", "leaf") and balanced:
         df = pd.read_csv(PROC / "balanced" / f"{task}_train.csv")
     else:
-        df = pd.read_csv(PROC / f"{task}_manifest.csv")
+        df = manifest(task)
         df = df[df["split"] == split]
     df = df.reset_index(drop=True)
     df["path"] = df["path"].map(local_path)
@@ -72,7 +104,7 @@ def load_split(task, split, balanced=True, field_holdout=False):
 
 def class_names(task):
     """Sorted class names of a task, read from the whole manifest (the order of the model outputs)."""
-    return sorted(pd.read_csv(PROC / f"{task}_manifest.csv")["class"].unique())
+    return sorted(manifest(task)["class"].unique())
 
 
 def class_weights(task, classes):
