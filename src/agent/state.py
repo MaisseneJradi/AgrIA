@@ -1,4 +1,4 @@
-"""The shared case file (« dossier ») that the six agents read and complete, in the LangGraph state.
+"""The shared case file (« dossier ») that the seven agents read and complete, in the LangGraph state.
 
 Each agent writes only its own keys. The trace keeps one line per agent step (who, what, time) so that every answer
 can be explained to the farmer, the supervisor or the jury.
