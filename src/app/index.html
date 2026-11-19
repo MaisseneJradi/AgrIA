@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2f6b3a">
+  <title>AgrIA</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <img src="icon.svg" alt="" width="32" height="32">
+      <div>
+        <h1>AgrIA</h1>
+        <p data-i18n="tagline">Le médecin des plantes</p>
+      </div>
+    </div>
+    <div class="lang" role="group" aria-label="Langue">
+      <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+      <button type="button" data-lang="ar" aria-pressed="false">ع</button>
+    </div>
+  </header>
+
+  <main>
+    <form id="form" class="card" novalidate>
+      <label class="photo" for="photo">
+        <input id="photo" name="photo" type="file" accept="image/*" capture="environment">
+        <img id="preview" alt="" hidden>
+        <span id="photo-hint">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4H9Zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"/></svg>
+          <b data-i18n="photo">Prendre ou choisir une photo</b>
+          <small data-i18n="photoHelp">Une feuille ou un fruit atteint, de près, à la lumière du jour</small>
+        </span>
+      </label>
+
+      <label class="field">
+        <span data-i18n="message">Décrivez le problème (facultatif)</span>
+        <textarea id="message" name="message" rows="2" data-i18n-ph="messagePh" placeholder="Ex. : taches noires sur les feuilles depuis la pluie"></textarea>
+      </label>
+
+      <div class="row">
+        <label class="field">
+          <span data-i18n="gov">Gouvernorat</span>
+          <select id="gouvernorat" name="gouvernorat"><option value="" data-i18n="choose">— choisir —</option></select>
+        </label>
+        <label class="field">
+          <span data-i18n="crop">Culture détectée</span>
+          <select id="culture" name="culture"><option value="" data-i18n="cropAuto">— ajoutez une photo —</option></select>
+          <small id="crop-hint" class="hint" aria-live="polite" hidden></small>
+          <span id="crop-choices" class="chips" hidden></span>
+        </label>
+      </div>
+
+      <button id="submit" class="primary" type="submit" data-i18n="analyse">Analyser</button>
+      <p id="error" class="error" role="alert" hidden></p>
+    </form>
+
+    <section id="loading" class="card loading" hidden aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p data-i18n="loading">Les agents analysent la photo…</p>
+    </section>
+
+    <section id="result" class="card" hidden aria-live="polite">
+      <div class="result-head">
+        <span id="badge" class="badge"></span>
+        <span id="confidence" class="muted"></span>
+      </div>
+      <dl class="summary">
+        <div><dt data-i18n="cropField">Culture</dt><dd id="res-crop">—</dd></div>
+        <div><dt data-i18n="problemField">Maladie détectée</dt><dd id="res-problem">—</dd></div>
+      </dl>
+      <div id="answer" class="answer"></div>
+
+      <details id="products-box" hidden>
+        <summary data-i18n="products">Produits homologués</summary>
+        <div class="table-wrap"><table>
+          <thead><tr><th data-i18n="product">Produit</th><th data-i18n="dose">Dose</th><th data-i18n="dar">Délai avant récolte</th></tr></thead>
+          <tbody id="products"></tbody>
+        </table></div>
+      </details>
+
+      <details id="seen-box" hidden>
+        <summary data-i18n="seen">Ce que le modèle a vu</summary>
+        <ol id="seen" class="trace"></ol>
+      </details>
+
+      <details>
+        <summary data-i18n="how">Comment AgrIA a décidé</summary>
+        <ol id="trace" class="trace"></ol>
+      </details>
+
+      <div id="feedback" class="feedback" hidden>
+        <p data-i18n="fbQuestion">Ce diagnostic est-il correct ?</p>
+        <div class="fb-buttons">
+          <button type="button" class="secondary" data-correct="oui" data-i18n="yes">Oui</button>
+          <button type="button" class="secondary" data-correct="non" data-i18n="no">Non</button>
+        </div>
+        <label class="field" id="fb-truth" hidden>
+          <span data-i18n="fbTruth">Quelle est la bonne réponse ? (plante et maladie)</span>
+          <input id="fb-text" type="text" data-i18n-ph="fbPh" placeholder="Ex. : olivier, œil de paon">
+        </label>
+        <button type="button" id="fb-send" class="primary" data-i18n="fbSend" hidden>Envoyer</button>
+        <p id="fb-done" class="muted" data-i18n="fbThanks" hidden>Merci, c'est enregistré.</p>
+      </div>
+
+      <button id="again" class="secondary" type="button" data-i18n="again">Nouvelle analyse</button>
+    </section>
+
+    <p class="foot" data-i18n="foot">AgrIA ne remplace pas un technicien : en cas de doute, contactez le CRDA. Seuls des produits homologués en Tunisie sont proposés.</p>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

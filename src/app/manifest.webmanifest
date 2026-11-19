@@ -1,0 +1,13 @@
+{
+  "name": "AgrIA – le médecin des plantes",
+  "short_name": "AgrIA",
+  "description": "Diagnostic des plantes et produits homologués en Tunisie, en français ou en arabe.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f1",
+  "theme_color": "#2f6b3a",
+  "lang": "fr",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

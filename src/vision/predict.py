@@ -21,7 +21,8 @@ from dataset import ROOT, make_transform  # noqa: E402
 from evaluate import load_model  # noqa: E402
 
 DEFAULT_THRESHOLD = 0.6
-_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# AGRIA_DEVICE=cpu forces the CPU (tests while a training uses the GPU, or a server without GPU)
+_DEVICE = torch.device(os.environ.get("AGRIA_DEVICE") or ("cuda" if torch.cuda.is_available() else "cpu"))
 _CACHE = {}
 _TRANSFORM = make_transform(train=False)
 
@@ -35,22 +36,46 @@ def _get(task):
         threshold = DEFAULT_THRESHOLD
         metrics = folder / "metrics.json"
         if metrics.exists():
-            threshold = json.load(open(metrics, encoding="utf-8")).get("threshold", DEFAULT_THRESHOLD)
+            with open(metrics, encoding="utf-8") as f:
+                threshold = json.load(f).get("threshold", DEFAULT_THRESHOLD)
         _CACHE[task] = (net, classes, threshold)
     return _CACHE[task]
 
 
+def class_names(task):
+    return list(_get(task)[1])
+
+
 @torch.no_grad()
-def predict(task, image_path):
+def predict(task, image_path, allowed=None):
+    """allowed: optional list of classes the answer must be among (e.g. the classes of the crop the farmer named).
+    Probabilities are then renormalised over these classes, and "mass" tells how much of the model's belief they
+    held before (a small mass = the photo does not look like that crop to the model)."""
     net, classes, threshold = _get(task)
     with Image.open(image_path) as im:
         x = _TRANSFORM(im.convert("RGB")).unsqueeze(0).to(_DEVICE)
     probs = torch.softmax(net(x).float(), 1)[0].cpu()
-    top = probs.topk(min(3, len(classes)))
+    mass = 1.0
+    if allowed:
+        keep = torch.tensor([c in set(allowed) for c in classes])
+        mass = float(probs[keep].sum())
+        probs = torch.where(keep, probs, torch.zeros_like(probs)) / max(mass, 1e-9)
+    top = probs.topk(min(3, int((probs > 0).sum()) or 1, len(classes)))
     confidence = float(top.values[0])
     return {"task": task, "class": classes[int(top.indices[0])], "confidence": round(confidence, 4),
             "top3": [[classes[int(i)], round(float(p), 4)] for p, i in zip(top.values, top.indices)],
-            "reliable": confidence >= threshold}
+            "reliable": confidence >= threshold, "mass": round(mass, 4)}
+
+
+@torch.no_grad()
+def probabilities(task, image_path):
+    """Full probability vector of a model as {class: probability} (task = folder under models/, e.g. "crop_v3a").
+    Used by the model combinations of the agents (src/agent/ensemble.py)."""
+    net, classes, _ = _get(task)
+    with Image.open(image_path) as im:
+        x = _TRANSFORM(im.convert("RGB")).unsqueeze(0).to(_DEVICE)
+    probs = torch.softmax(net(x).float(), 1)[0].cpu().tolist()
+    return dict(zip(classes, probs))
 
 
 if __name__ == "__main__":
