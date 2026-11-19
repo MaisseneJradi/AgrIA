@@ -20,17 +20,19 @@ def comprendre(d):
     t0 = time.time()
     terms = normalize_terms(d.get("message") or "")
     lang = LANGUAGES.get(d.get("langue") or "", None) or LANGUAGES.get(terms["langue"] or "", "fr")
-    crop = None
+    crop, source = None, None
     if d.get("culture"):
-        crop = crop_code(d["culture"])
+        crop, source = crop_code(d["culture"]), "agriculteur"
     elif terms["cultures"]:
         crop = terms["cultures"][0]["lien"][0] if terms["cultures"][0]["lien"] else None
+        source = "message" if crop else None
     try:
         gov = governorate(d["gouvernorat"]) if d.get("gouvernorat") else None
     except ValueError:
         gov = None
     found = [e["concept"] for g in ("cultures", "maladies", "ravageurs", "symptomes") for e in terms[g]]
-    return {"termes": terms, "langue_reponse": lang, "culture_code": crop, "gouvernorat_officiel": gov,
+    return {"termes": terms, "langue_reponse": lang, "culture_code": crop, "culture_source": source,
+            "gouvernorat_officiel": gov,
             "trace": step("Linguistique", f"message compris ({terms['langue'] or 'vide'}) : "
                                          f"{', '.join(found) or 'aucun terme agricole'}", t0)}
 

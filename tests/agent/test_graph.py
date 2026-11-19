@@ -16,7 +16,8 @@ HEALTHY = P.format("diseases", "tomato__healthy", "tomato__healthy_01351")
 FE_PEPPER = P.format("deficiency", "Fe_deficiency", "Fe_deficiency_00957")
 POMEGRANATE = P.format("fruits", "pomegranate__anthracnose", "pomegranate__anthracnose_00991")
 
-AGENTS = {"Coordinateur", "Linguistique", "Diagnostic", "Phytosanitaire", "Agronome", "Vérificateur"}
+AGENTS = {"Coordinateur", "Linguistique", "Identification", "Diagnostic", "Phytosanitaire", "Agronome",
+          "Vérificateur"}
 
 
 def agents_of(r):
@@ -30,7 +31,7 @@ class TestAgents(unittest.TestCase):
         self.assertEqual(r["diagnostic"]["classe"], "tomato__late_blight")
         self.assertTrue(r["produits"])
         self.assertTrue(r["verification"]["valide"])
-        self.assertEqual(agents_of(r), AGENTS)  # the six agents took part
+        self.assertEqual(agents_of(r), AGENTS)  # the seven agents took part
         self.assertTrue(all(p["nom"] in r["texte"] for p in r["produits"]))
         self.assertTrue(r["sources"])
 
@@ -41,13 +42,13 @@ class TestAgents(unittest.TestCase):
         self.assertIn("besoin d'une photo", r["texte"])
 
     def test_no_registered_product_is_said_not_invented(self):
-        r = diagnose(MOSAIC, "", "Sousse")
+        r = diagnose(MOSAIC, "", "Sousse", culture="tomato")
         self.assertEqual(r["produits"], [])
         self.assertIn("Aucun produit", r["texte"])
         self.assertTrue(r["verification"]["valide"])
 
     def test_healthy_plant_gets_no_product_but_water(self):
-        r = diagnose(HEALTHY, "", "Nabeul", mois=5)
+        r = diagnose(HEALTHY, "", "Nabeul", culture="tomato", mois=5)
         self.assertEqual(r["produits"], [])
         self.assertIn("saine", r["texte"])
         self.assertIn("Irrigation", r["texte"])
@@ -77,6 +78,15 @@ class TestAgents(unittest.TestCase):
         r = diagnose(LATE_BLIGHT, "", "Nabeul", culture="tomate")
         # only tomato classes, plus the deficiencies when the single leaf model is used (not tied to a crop)
         self.assertTrue(all(c.startswith("tomato__") or c.endswith("_deficiency") for c, _ in r["diagnostic"]["top3"]))
+
+    def test_crop_not_given_is_proposed_not_imposed(self):
+        r = diagnose(LATE_BLIGHT, "", "Nabeul")  # no crop: the agent proposes "tomato" but asks to confirm it
+        self.assertEqual(r["issue"], "question")
+        self.assertEqual(r["produits"], [])
+        self.assertEqual(r["culture"]["proposee"], "tomato")
+        r = diagnose(LATE_BLIGHT, "", "Nabeul", culture="tomato")  # confirmed by the farmer: full diagnosis
+        self.assertEqual(r["issue"], "conseil")
+        self.assertEqual(r["diagnostic"]["classe"], "tomato__late_blight")
 
     def test_fruit_photo_uses_the_fruit_model(self):
         r = diagnose(POMEGRANATE, "الرمان فيه بقع", "Gabès")

@@ -4,6 +4,9 @@ Run:   python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000
 Open:  http://localhost:8000          the app (phone: http://<IP of the computer>:8000 on the same Wi-Fi)
        http://localhost:8000/docs     interactive documentation, to try /diagnose with a photo
 
+  POST /identify      form-data: photo -> the crop seen on a leaf photo (Identification agent): proposed crop,
+                      confidence, top 3; the app pre-fills its crop field with it, the farmer confirms or corrects
+  GET  /cultures      the 14 crops of AgrIA (code, French, Arabic) for the crop field
   POST /diagnose      form-data: photo (image, optional), message, gouvernorat, culture, langue (fr | ar), mois
                       -> the answer of the agents: issue, texte, langue, diagnostic, produits, engrais,
                          avertissements, questions, sources, verification, trace, duree_s
@@ -33,8 +36,15 @@ from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
 
 from src.agent import paths  # noqa: F401
+from src.agent.agents.identification import recognise
 from src.agent.graph import build, diagnose
 from src.agent.redaction import GOV_AR
+
+CROPS = [("tomato", "Tomate", "طماطم"), ("olive", "Olivier", "زيتون"), ("citrus", "Agrumes", "قوارص"),
+         ("pepper", "Poivron / piment", "فلفل"), ("potato", "Pomme de terre", "بطاطا"), ("grape", "Vigne", "عنب"),
+         ("datepalm", "Palmier dattier", "نخيل التمر"), ("wheat", "Blé", "قمح"), ("corn", "Maïs", "ذرة"),
+         ("apple", "Pommier", "تفاح"), ("peach", "Pêcher", "خوخ"), ("cherry", "Cerisier", "كرز"),
+         ("strawberry", "Fraisier", "فراولة"), ("squash", "Courge", "قرع")]
 
 APP_DIR = Path(__file__).resolve().parents[1] / "app"
 JOURNAL_DIR = Path(__file__).resolve().parents[2] / "data" / "journal"
@@ -56,7 +66,7 @@ def warm_up():
     """Load the graph and the four models once, so the first farmer does not wait for them."""
     build()
     import predict  # src/vision
-    for task in ("routing", "diseases", "deficiency", "fruits", "leaf"):
+    for task in ("routing", "diseases", "deficiency", "fruits", "leaf", "crop"):
         if (Path(predict.ROOT) / "models" / task / "model.pt").exists():
             predict._get(task)
 
@@ -72,6 +82,54 @@ def gouvernorats():
     return [{"fr": fr, "ar": ar} for fr, ar in sorted(GOV_AR.items())]
 
 
+@app.get("/cultures")
+def cultures():
+    return [{"code": c, "fr": fr, "ar": ar} for c, fr, ar in CROPS]
+
+
+def _save_photo(photo):
+    """Uploaded photo -> temporary file path (checked: size, format, readable). The caller deletes it."""
+    data = photo.file.read(MAX_BYTES + 1)
+    if len(data) > MAX_BYTES:
+        raise HTTPException(413, "photo trop lourde (10 Mo au plus)")
+    with tempfile.NamedTemporaryFile(suffix=".img", delete=False) as f:
+        f.write(data)
+        path = f.name
+    try:
+        with Image.open(path) as im:
+            if im.format not in FORMATS:
+                raise HTTPException(415, "format accepté : JPEG, PNG ou WEBP")
+            im.verify()
+    except (UnidentifiedImageError, OSError):
+        os.unlink(path)
+        raise HTTPException(415, "ce fichier n'est pas une image lisible")
+    except HTTPException:
+        os.unlink(path)
+        raise
+    return path
+
+
+@app.post("/identify")
+def identify(photo: UploadFile = File(...)):
+    path = _save_photo(photo)
+    try:
+        with _lock:
+            r = recognise(path)
+    finally:
+        os.unlink(path)
+    names = {c: (fr, ar) for c, fr, ar in CROPS}
+    out = {"feuille": r["feuille"], "routage": r["routage"]["class"]}
+    if "predite" in r:
+        fr, ar = names.get(r["predite"], ("Autre plante", "نبتة أخرى"))
+        out.update(culture=r["predite"], fr=fr, ar=ar, confiance=r["confiance"], sure=r["sure"],
+                   autre_plante=r["autre_plante"], avis=r["avis"], accord=r["accord"], n_avis=r["n_avis"],
+                   vlm=(r["opinions"] or {}).get("vlm"), source_culture=r["source_culture"],
+                   desaccord_vlm=r["desaccord_vlm"],
+                   top3=[{"code": c, "fr": names.get(c, ("Autre plante", ""))[0], "confiance": round(q, 4)}
+                         for c, q in r["top3"]])
+    return out
+
+
 @app.post("/diagnose")
 def diagnose_endpoint(photo: UploadFile = File(None), message: str = Form(""), gouvernorat: str = Form(None),
                       culture: str = Form(None), langue: str = Form(None), mois: int = Form(None)):
@@ -79,22 +137,8 @@ def diagnose_endpoint(photo: UploadFile = File(None), message: str = Form(""), g
         raise HTTPException(422, "langue : 'fr' ou 'ar'")
     if mois is not None and not 1 <= mois <= 12:
         raise HTTPException(422, "mois : de 1 à 12")
-    path = None
+    path = _save_photo(photo) if photo is not None and photo.filename else None
     try:
-        if photo is not None and photo.filename:
-            data = photo.file.read(MAX_BYTES + 1)
-            if len(data) > MAX_BYTES:
-                raise HTTPException(413, "photo trop lourde (10 Mo au plus)")
-            with tempfile.NamedTemporaryFile(suffix=".img", delete=False) as f:
-                f.write(data)
-                path = f.name
-            try:
-                with Image.open(path) as im:
-                    if im.format not in FORMATS:
-                        raise HTTPException(415, "format accepté : JPEG, PNG ou WEBP")
-                    im.verify()
-            except (UnidentifiedImageError, OSError):
-                raise HTTPException(415, "ce fichier n'est pas une image lisible")
         with _lock:
             answer = diagnose(path, message or "", gouvernorat or None, culture or None, langue or None, mois)
         if journal_on():

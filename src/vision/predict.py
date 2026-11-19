@@ -67,5 +67,16 @@ def predict(task, image_path, allowed=None):
             "reliable": confidence >= threshold, "mass": round(mass, 4)}
 
 
+@torch.no_grad()
+def probabilities(task, image_path):
+    """Full probability vector of a model as {class: probability} (task = folder under models/, e.g. "crop_v3a").
+    Used by the model combinations of the agents (src/agent/ensemble.py)."""
+    net, classes, _ = _get(task)
+    with Image.open(image_path) as im:
+        x = _TRANSFORM(im.convert("RGB")).unsqueeze(0).to(_DEVICE)
+    probs = torch.softmax(net(x).float(), 1)[0].cpu().tolist()
+    return dict(zip(classes, probs))
+
+
 if __name__ == "__main__":
     print(json.dumps(predict(sys.argv[1], sys.argv[2]), indent=1))

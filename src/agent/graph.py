@@ -1,4 +1,4 @@
-"""The graph of the six agents (LangGraph) and the entry point used by the API.
+"""The graph of the seven agents (LangGraph) and the entry point used by the API.
 
   from src.agent.graph import diagnose
   diagnose(photo="feuille.jpg", message="tmatem fiha mildiou", gouvernorat="Nabeul")
@@ -6,7 +6,7 @@
       "produits": [...], "engrais": [...], "avertissements": [...], "questions": [...], "sources": [...],
       "verification": {...}, "trace": [...], "duree_s": ...}
 
-  START -> Coordinateur.planifier -> Linguistique.comprendre -> Diagnostic
+  START -> Coordinateur.planifier -> Linguistique.comprendre -> Identification de la culture -> Diagnostic
         -> conseil:              Phytosanitaire + Agronome (in parallel) -> Coordinateur.rediger
         -> question, autre photo: Coordinateur.rediger
   Coordinateur.rediger -> Linguistique.traduire -> Vérificateur
@@ -26,6 +26,7 @@ from langgraph.graph import END, START, StateGraph
 from src.agent import paths  # noqa: F401
 from src.agent.agents.coordinateur import MAX_REWRITES, crda, finaliser, planifier, rediger, secours
 from src.agent.agents.diagnostic import diagnostiquer
+from src.agent.agents.identification import identifier
 from src.agent.agents.linguistique import comprendre, traduire
 from src.agent.agents.specialistes import agronome, phytosanitaire
 from src.agent.agents.verificateur import verifier
@@ -49,6 +50,7 @@ def build():
     g = StateGraph(Dossier)
     g.add_node("planifier", planifier)
     g.add_node("comprendre", comprendre)
+    g.add_node("identifier", identifier)
     g.add_node("diagnostiquer", diagnostiquer)
     g.add_node("phytosanitaire", phytosanitaire)
     g.add_node("agronome", agronome)
@@ -61,7 +63,8 @@ def build():
 
     g.add_edge(START, "planifier")
     g.add_edge("planifier", "comprendre")
-    g.add_edge("comprendre", "diagnostiquer")
+    g.add_edge("comprendre", "identifier")
+    g.add_edge("identifier", "diagnostiquer")
     g.add_conditional_edges("diagnostiquer", _after_diagnosis, ["phytosanitaire", "agronome", "rediger"])
     g.add_edge("phytosanitaire", "rediger")
     g.add_edge("agronome", "rediger")

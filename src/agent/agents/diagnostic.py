@@ -30,6 +30,8 @@ from src.agent.paths import ROOT
 from fertilizers import get_fertilizers  # src/tools
 from predict import class_names, predict  # src/vision
 from src.agent.agents.aides import class_name, crop_name, crop_of_class, step
+from src.agent import ensemble as E
+from src.agent.agents.identification import CROP_QUESTION
 
 AGENT_THRESHOLDS = {"routing": 0.5, "diseases": 0.9, "deficiency": 0.95, "fruits": 0.65}
 MIN_CROP_MASS = 0.2
@@ -70,20 +72,27 @@ def _leaf_model_available():
     return (ROOT / "models" / "leaf" / "model.pt").exists()
 
 
-def _predict_leaf(photo, crop, doubts):
-    """The leaf model sorts deficiency vs disease; returns (task, prediction, why, share of deficiency)."""
-    deficiencies = [c for c in class_names("leaf") if c.endswith("_deficiency")]
-    dfc = predict("leaf", photo, deficiencies)  # mass = total probability of the 9 deficiencies
-    crop_classes = _crop_classes("leaf", crop) if crop else []
-    disease_mass = predict("leaf", photo, crop_classes)["mass"] if crop_classes else 1 - dfc["mass"]
-    share = dfc["mass"] / max(dfc["mass"] + disease_mass, 1e-9)
+def _predict_leaf(d, photo, crop, doubts):
+    """Combination of the leaf, disease and deficiency models and of the VLM (src/agent/ensemble.py).
+    Returns (task, prediction, why, share of deficiency)."""
+    op = d.get("opinions") or E.opinions(photo)
+    share = E.kind_share(op, crop=crop)
+    v = op.get("vlm") or {}
+    seen = f" ; VLM : {v['probleme']} ({v.get('symptomes', '')})" if v.get("probleme") else ""
     if share >= 0.5:
-        # confidence of the deficiency class among all the kinds the farmer's crop allows
-        p = dict(dfc, confidence=round(dfc["confidence"] * share, 4))
-        return "deficiency", p, f"modèle feuille : carence ({share:.0%}), symptômes de jaunissement ou décoloration", share
-    p = _predict_for_crop("diseases", photo, crop, doubts)
-    return "diseases", p, f"modèle feuille : maladie ou feuille saine ({1 - share:.0%}) ; maladie nommée par le " \
-                          f"modèle des maladies", share
+        probs = E.deficiency_probs(op)
+        ranked = E.top(probs, 3)
+        p = {"class": ranked[0][0], "confidence": round(ranked[0][1] * share, 4), "top3": ranked, "reliable": True}
+        return "deficiency", p, f"combinaison : carence ({share:.0%}){seen}", share
+    probs, mass = E.disease_probs(op, crop)
+    if crop and not probs:
+        doubts.append(f"le modèle ne connaît pas les maladies de : {crop_name(crop)}")
+        probs, mass = E.disease_probs(op, None)
+    elif crop and mass is not None and mass < MIN_CROP_MASS:
+        doubts.append(f"la photo ressemble peu à une plante de : {crop_name(crop)}")
+    ranked = E.top(probs, 3)
+    p = {"class": ranked[0][0], "confidence": ranked[0][1], "top3": ranked, "reliable": True, "mass": mass}
+    return "diseases", p, f"combinaison : maladie ou feuille saine ({1 - share:.0%}){seen}", share
 
 
 def _choose_leaf_model(dis, dfc, hints):
@@ -103,7 +112,7 @@ def diagnostiquer(d):
     if not photo:
         return {"issue": "autre_photo", "diagnostic": {"sans_photo": True}, "questions": [],
                 "trace": step("Diagnostic", "pas de photo : en demander une", t0)}
-    route = predict("routing", photo)
+    route = d.get("routage") or predict("routing", photo)  # already run by the Identification agent
     if route["class"] == "other" or not _trusted(route, "routing"):
         return {"issue": "autre_photo", "diagnostic": {"routing": route},
                 "questions": [], "trace": step("Diagnostic", f"routeur : {route['class']} "
@@ -115,7 +124,7 @@ def diagnostiquer(d):
         task, p, why = "fruits", _predict_for_crop("fruits", photo, farmer_crop, crop_doubts), "photo de fruit"
         other = None
     elif _leaf_model_available():
-        task, p, why, share = _predict_leaf(photo, farmer_crop, crop_doubts)
+        task, p, why, share = _predict_leaf(d, photo, farmer_crop, crop_doubts)
         other = {"class": "part de carence (modèle feuille)", "confidence": round(share, 4)}
     else:
         dis = _predict_for_crop("diseases", photo, farmer_crop, crop_doubts)
@@ -127,6 +136,15 @@ def diagnostiquer(d):
 
     cls = p["class"]
     doubts = list(crop_doubts)
+    info = d.get("culture_info") or {}
+    if info.get("contradiction"):
+        doubts.append(f"la photo ressemble à : {crop_name(info['predite'])} ({info['confiance']:.0%}), mais vous "
+                      f"parlez de : {crop_name(farmer_crop)}")
+    if info.get("non_couverte"):
+        doubts.append("cette plante ne fait pas partie des cultures connues d'AgrIA")
+    if info.get("inconnue"):
+        doubts.append(f"culture à confirmer : la photo ressemble à : {crop_name(info['proposee'])} "
+                      f"({info['confiance']:.0%})" if info.get("proposee") else "culture non reconnue sur la photo")
     if not _trusted(p, task):
         doubts.append(_threshold_note(p, task))
     class_crop = crop_of_class(cls)
@@ -142,6 +160,8 @@ def diagnostiquer(d):
         questions = []
         if task == "deficiency" and cls != "healthy":
             questions = get_fertilizers(cls)["questions_confirmation"]
+        if info.get("inconnue") or info.get("contradiction"):
+            questions = [CROP_QUESTION] + questions
         out.update(issue="question", questions=questions + GENERAL_QUESTIONS[:2])
     else:
         out.update(issue="conseil", questions=[])

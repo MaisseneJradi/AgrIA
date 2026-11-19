@@ -52,6 +52,20 @@ class TestApi(unittest.TestCase):
         self.assertEqual(body["langue"], "ar")
         self.assertIn("التشخيص", body["texte"])
 
+    def test_identify_detects_the_crop_of_a_leaf(self):
+        with open(LATE_BLIGHT, "rb") as f:
+            r = self.client.post("/identify", files={"photo": ("feuille.jpg", f, "image/jpeg")})
+        self.assertEqual(r.status_code, 200)
+        body = r.json()
+        self.assertTrue(body["feuille"])
+        self.assertEqual(body["culture"], "tomato")
+        self.assertTrue(body["sure"])
+        self.assertEqual(len(self.client.get("/cultures").json()), 14)
+
+    def test_identify_rejects_a_non_image(self):
+        r = self.client.post("/identify", files={"photo": ("x.jpg", io.BytesIO(b"nope"), "image/jpeg")})
+        self.assertEqual(r.status_code, 415)
+
     def test_message_without_photo_asks_for_one(self):
         r = self.post(photo=None, message="ma tomate a des taches")
         self.assertEqual(r.json()["issue"], "autre_photo")
