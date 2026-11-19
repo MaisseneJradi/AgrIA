@@ -21,7 +21,8 @@ from PIL import Image
 from tqdm import tqdm
 
 PROC = os.path.join("data", "processed")
-TASKS = ["diseases", "deficiency"] + (["fruits"] if os.path.exists(os.path.join(PROC, "fruits_manifest.csv")) else [])
+TASKS = ["diseases", "deficiency"] + [t for t in ("fruits", "crop")
+                                     if os.path.exists(os.path.join(PROC, f"{t}_manifest.csv"))]
 OUT = os.path.join("docs", "duplicates.csv")
 CACHE = os.path.join(PROC, "hash_cache.csv")
 NEAR_MAE, BLACK = 5.0, 25

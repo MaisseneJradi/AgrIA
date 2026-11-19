@@ -12,7 +12,7 @@ these deficiencies on other crops, and no other crop may be added (project rule)
   3. evaluation file: every TEST image with a flag saying whether its crop was seen for its class, so metrics
      can be reported per crop and the bias measured (balanced/deficiency_test_by_crop.csv).
 
-Usage: python src/preparation/deficiency_crop_support.py   (after balance_training.py)
+Usage: python src/preparation/deficiency_crop_support.py   (after any add_source.py of deficiency images)
 Output: docs/deficiency_crop_support.csv, data/processed/knowledge/regles_carences.json,
         data/processed/balanced/deficiency_test_by_crop.csv
 """
@@ -57,8 +57,10 @@ def level(n_crops, share):
 
 def main():
     man = pd.read_csv(os.path.join(PROC, "deficiency_manifest.csv"))
-    bal = pd.read_csv(os.path.join(PROC, "balanced", "deficiency_train.csv"))
-    seen = bal[bal["origin"] == "real"].groupby("class")["crop"].agg(lambda s: s.value_counts().to_dict())
+    # crops seen in the raw train split: the models are trained on it (results_vision.md: raw set retained); this also
+    # counts the sources added later with add_source.py (maize, tomato, citrus in 2026-11)
+    train = man[man["split"] == "train"]
+    seen = train.groupby("class")["crop"].agg(lambda s: s.value_counts().to_dict())
     rows, rules = [], {}
     for cls, crops in seen.items():
         n = sum(crops.values())

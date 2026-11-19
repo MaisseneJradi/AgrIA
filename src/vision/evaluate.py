@@ -25,7 +25,7 @@ from models import build  # noqa: E402
 
 
 def load_model(folder, device):
-    ckpt = torch.load(os.path.join(folder, "model.pt"), map_location=device)
+    ckpt = torch.load(os.path.join(folder, "model.pt"), map_location="cpu")  # opens on machines without a GPU too
     net = build(ckpt["arch"], len(ckpt["classes"]), pretrained=False)
     net.load_state_dict(ckpt["state_dict"])
     return net.to(device).eval(), ckpt["classes"]
@@ -49,7 +49,7 @@ def group_scores(df, col):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--task", required=True, choices=["routing", "diseases", "deficiency", "fruits"])
+    ap.add_argument("--task", required=True, choices=["routing", "diseases", "deficiency", "fruits", "leaf", "crop"])
     ap.add_argument("--model-dir", default=None)
     ap.add_argument("--splits", nargs="+", default=None)
     ap.add_argument("--batch", type=int, default=64)

@@ -104,3 +104,64 @@ fruits,citrus__canker,citrus,diseased,citrus_fruit/Canker,auto
 fruits,orange__citrus_greening,citrus,diseased,citrus_fruit/Greening,auto
 fruits,citrus__scab,citrus,diseased,citrus_fruit/Scab,auto
 fruits,citrus__healthy,citrus,healthy,citrus_fruit/healthy,auto
+deficiency,healthy,corn,healthy,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Helathy,auto
+deficiency,Mg_deficiency,corn,deficient,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Magnessium,auto
+deficiency,N_deficiency,corn,deficient,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Nitrogen,auto
+deficiency,P_deficiency,corn,deficient,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Phosphorous,auto
+deficiency,K_deficiency,corn,deficient,maize_def/Maize Nutrient Deficiency Dataset/Maize Nutrient Deficiency Dataset/Pottasium,auto
+deficiency,Mg_deficiency,tomato,deficient,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Magnesium Deficiency,auto
+deficiency,healthy,tomato,healthy,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Healthy,auto
+deficiency,healthy,tomato,healthy,tomato_village/clean/train/Healthy,train
+deficiency,Mg_deficiency,tomato,deficient,tomato_village/clean/train/Magnesium Deficiency,train
+deficiency,N_deficiency,tomato,deficient,tomato_village/clean/train/Nitrogen Deficiency,train
+deficiency,K_deficiency,tomato,deficient,tomato_village/clean/train/Pottassium Deficiency,train
+deficiency,healthy,tomato,healthy,tomato_village/clean/val/Healthy,val
+deficiency,Mg_deficiency,tomato,deficient,tomato_village/clean/val/Magnesium Deficiency,val
+deficiency,N_deficiency,tomato,deficient,tomato_village/clean/val/Nitrogen Deficiency,val
+deficiency,K_deficiency,tomato,deficient,tomato_village/clean/val/Pottassium Deficiency,val
+deficiency,healthy,tomato,healthy,tomato_village/clean/test/Healthy,test
+deficiency,Mg_deficiency,tomato,deficient,tomato_village/clean/test/Magnesium Deficiency,test
+deficiency,N_deficiency,tomato,deficient,tomato_village/clean/test/Nitrogen Deficiency,test
+deficiency,K_deficiency,tomato,deficient,tomato_village/clean/test/Pottassium Deficiency,test
+deficiency,Fe_deficiency,citrus,deficient,citrusuat/clean/Fe,auto
+deficiency,Mg_deficiency,citrus,deficient,citrusuat/clean/Mg,auto
+deficiency,Mn_deficiency,citrus,deficient,citrusuat/clean/Mn,auto
+deficiency,N_deficiency,citrus,deficient,citrusuat/clean/N,auto
+deficiency,Zn_deficiency,citrus,deficient,citrusuat/clean/Zn,auto
+deficiency,healthy,citrus,healthy,citrusuat/clean/Healthy,auto
+crop,citrus,citrus,other,citrusuat/clean_other/HLB,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Greasy_spot,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Texas_mite,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Red_scale,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Red_scale_sequelae,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Citrus_leafminer,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Bacteiral Spot,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Early Blight,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Late Blight,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Leaf Miner Flies,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Yellow Leaf Curl Virus,auto
+crop,tomato,tomato,other,tomato_village/clean_diseases/train/Early_blight,train
+crop,tomato,tomato,other,tomato_village/clean_diseases/train/Late_blight,train
+crop,tomato,tomato,other,tomato_village/clean_diseases/train/Leaf Miner,train
+crop,tomato,tomato,other,tomato_village/clean_diseases/train/Spotted Wilt Virus,train
+crop,tomato,tomato,other,tomato_village/clean_diseases/val/Early_blight,val
+crop,tomato,tomato,other,tomato_village/clean_diseases/val/Late_blight,val
+crop,tomato,tomato,other,tomato_village/clean_diseases/val/Leaf Miner,val
+crop,tomato,tomato,other,tomato_village/clean_diseases/val/Spotted Wilt Virus,val
+crop,tomato,tomato,other,tomato_village/clean_diseases/test/Early_blight,test
+crop,tomato,tomato,other,tomato_village/clean_diseases/test/Late_blight,test
+crop,tomato,tomato,other,tomato_village/clean_diseases/test/Leaf Miner,test
+crop,tomato,tomato,other,tomato_village/clean_diseases/test/Spotted Wilt Virus,test
+crop,olive,olive,other,olive_tr/train/Healthy,auto
+crop,olive,olive,other,olive_tr/train/olive_peacock_spot,auto
+crop,olive,olive,other,olive_tr/train/aculus_olearius,auto
+crop,olive,olive,other,olive_tr/test/Healthy,auto
+crop,olive,olive,other,olive_tr/test/olive_peacock_spot,auto
+crop,olive,olive,other,olive_tr/test/aculus_olearius,auto
+crop,olive,olive,other,olive_cam/square/healthy,auto
+crop,olive,olive,other,olive_cam/square/diseased,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/healthy_lemon_leaf,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/citrus_leafminer,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/citrus_leaf_curl,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/citrus_huanglongbing,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/swallowtail_herbivory,auto

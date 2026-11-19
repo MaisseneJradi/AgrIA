@@ -56,7 +56,7 @@ Ces photos contiennent surtout des feuilles. Elles sont ambiguës et ne montrent
 
 ## Seuil de confiance
 
-Le seuil reste à 0,6 par défaut (`DEFAULT_THRESHOLD` dans `src/vision/predict.py`). Sur test, aucune image n'est sous ce seuil. Sur test_field, une seule l'est, et elle est bien classée. Nourhene calibrera le seuil à l'étape 2.
+Le seuil a été calibré à l'étape 2 avec `src/vision/calibrate.py` : **0,5**, le plancher de la règle, car le routeur se trompe très rarement. Sur test comme sur test_field, toutes les photos sont gardées.
 
 ## Contrat `predict()`
 
