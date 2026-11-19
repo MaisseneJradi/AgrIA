@@ -129,3 +129,39 @@ deficiency,Mn_deficiency,citrus,deficient,citrusuat/clean/Mn,auto
 deficiency,N_deficiency,citrus,deficient,citrusuat/clean/N,auto
 deficiency,Zn_deficiency,citrus,deficient,citrusuat/clean/Zn,auto
 deficiency,healthy,citrus,healthy,citrusuat/clean/Healthy,auto
+crop,citrus,citrus,other,citrusuat/clean_other/HLB,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Greasy_spot,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Texas_mite,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Red_scale,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Red_scale_sequelae,auto
+crop,citrus,citrus,other,citrusuat/clean_other/Citrus_leafminer,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Bacteiral Spot,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Early Blight,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Late Blight,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Leaf Miner Flies,auto
+crop,tomato,tomato,other,tomato_mg/Tomato Leaf Disease Classification Dataset/Tomato Dataset/Yellow Leaf Curl Virus,auto
+crop,tomato,tomato,other,tomato_village/clean_diseases/train/Early_blight,train
+crop,tomato,tomato,other,tomato_village/clean_diseases/train/Late_blight,train
+crop,tomato,tomato,other,tomato_village/clean_diseases/train/Leaf Miner,train
+crop,tomato,tomato,other,tomato_village/clean_diseases/train/Spotted Wilt Virus,train
+crop,tomato,tomato,other,tomato_village/clean_diseases/val/Early_blight,val
+crop,tomato,tomato,other,tomato_village/clean_diseases/val/Late_blight,val
+crop,tomato,tomato,other,tomato_village/clean_diseases/val/Leaf Miner,val
+crop,tomato,tomato,other,tomato_village/clean_diseases/val/Spotted Wilt Virus,val
+crop,tomato,tomato,other,tomato_village/clean_diseases/test/Early_blight,test
+crop,tomato,tomato,other,tomato_village/clean_diseases/test/Late_blight,test
+crop,tomato,tomato,other,tomato_village/clean_diseases/test/Leaf Miner,test
+crop,tomato,tomato,other,tomato_village/clean_diseases/test/Spotted Wilt Virus,test
+crop,olive,olive,other,olive_tr/train/Healthy,auto
+crop,olive,olive,other,olive_tr/train/olive_peacock_spot,auto
+crop,olive,olive,other,olive_tr/train/aculus_olearius,auto
+crop,olive,olive,other,olive_tr/test/Healthy,auto
+crop,olive,olive,other,olive_tr/test/olive_peacock_spot,auto
+crop,olive,olive,other,olive_tr/test/aculus_olearius,auto
+crop,olive,olive,other,olive_cam/square/healthy,auto
+crop,olive,olive,other,olive_cam/square/diseased,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/healthy_lemon_leaf,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/citrus_leafminer,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/citrus_leaf_curl,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/citrus_huanglongbing,auto
+crop,citrus,citrus,other,lemon_bd/Dataset/swallowtail_herbivory,auto

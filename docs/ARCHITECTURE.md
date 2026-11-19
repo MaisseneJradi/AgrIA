@@ -16,25 +16,27 @@ Le travail est **séquentiel** : une étape commence quand la précédente a coc
 
 ## 1. Vue d'ensemble : un système multi-agents
 
-AgrIA est un **système de six agents** qui coopèrent autour d'un dossier partagé (`src/agent/state.py`), orchestrés avec LangGraph (`src/agent/graph.py`).
+AgrIA est un **système de sept agents** qui coopèrent autour d'un dossier partagé (`src/agent/state.py`), orchestrés avec LangGraph (`src/agent/graph.py`).
 
 | Agent | Rôle | Outils | Fonctionne avec |
 |---|---|---|---|
 | **Coordinateur** | planifie le cas, assemble les résultats, écrit la réponse, la réécrit si elle est bloquée (2 fois au plus), sinon oriente vers le CRDA | `redaction.py` | règles |
 | **Linguistique** | comprend le message (français, arabe, darija, arabizi) : culture, symptômes, gouvernorat ; écrit la réponse en français ou en arabe | `normalize_terms`, `crop_code`, `redaction.py` | lexique + phrases écrites par le code |
-| **Diagnostic** | lit la photo (routeur puis modèle maladies, carences ou fruits) ; décide si le diagnostic est fiable, sinon pose des questions | `predict()` | 4 modèles d'images (EfficientNet-B0) |
+| **Identification de la culture** | reconnaît la plante sur la photo (14 cultures du projet ou « autre plante ») ; sans culture indiquée, la culture reconnue limite le diagnostic ; si la photo contredit nettement la culture indiquée, ou si elle est incertaine, une question est posée | `ensemble.crop_decision`, `vlm.observe` | vote du modèle de culture (v3a, 15 classes) et du modèle des maladies ; VLM NVIDIA en contrôle et en secours (`AGRIA_VLM=nvidia`) |
+| **Diagnostic** | lit la photo (routeur puis modèle maladies, carences ou fruits) ; décide si le diagnostic est fiable, sinon pose des questions | `predict()`, `ensemble.kind_share` | routeur + combinaison : modèle feuille (carence ou maladie) + avis du VLM, puis modèle des maladies restreint à la culture ou carence du modèle feuille |
 | **Phytosanitaire** | choisit les traitements homologués (dose, DAR, LMR, restrictions) et des conseils des fiches | `get_treatments`, `search_knowledge` | base SQLite + recherche TF-IDF |
 | **Agronome** | engrais pour une carence (fiabilité selon la culture, sol du gouvernorat) et besoin en eau du mois | `get_fertilizers`, `get_water_need` | base SQLite + règles |
 | **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **8 règles codées** |
 
-**Pas de LLM.** AgrIA répond en **français ou en arabe** (pas de darija). Toutes les phrases sont écrites par le code (`src/agent/redaction.py`), donc aucun fait (produit, dose, délai) ne peut être inventé ni mal traduit. Un essai avec un petit LLM local (`derja`, Qwen3 4B, Ollama) l'a montré : il changeait des doses (« 300 g/hl » devenu « 300 g/l ») et traduisait mal les termes agricoles. Dans une réponse en arabe, les passages des fiches (français ou anglais) sont remplacés par leurs liens.
+**Pas de LLM pour écrire.** Le seul modèle de langage est un VLM (NVIDIA, optionnel) qui **regarde** la photo et donne un avis (culture, carence ou maladie, symptômes) ; il n'écrit jamais la réponse, ne choisit aucun produit et ne peut pas contredire la culture donnée par l'agriculteur (docs/results_vision.md, section 13). AgrIA répond en **français ou en arabe** (pas de darija). Toutes les phrases sont écrites par le code (`src/agent/redaction.py`), donc aucun fait (produit, dose, délai) ne peut être inventé ni mal traduit. Un essai avec un petit LLM local (`derja`, Qwen3 4B, Ollama) l'a montré : il changeait des doses (« 300 g/hl » devenu « 300 g/l ») et traduisait mal les termes agricoles. Dans une réponse en arabe, les passages des fiches (français ou anglais) sont remplacés par leurs liens.
 
 ```mermaid
 flowchart TD
     U[Agriculteur<br/>photo + message + gouvernorat] --> API[API]
     API --> CP[Coordinateur<br/>planifier]
     CP --> LC[Linguistique<br/>comprendre le message]
-    LC --> DG[Diagnostic<br/>routeur + modèles]
+    LC --> IC[Identification de la culture<br/>modèle de culture]
+    IC --> DG[Diagnostic<br/>routeur + modèles]
     DG -->|autre ou pas de photo| CR
     DG -->|doute : confiance ou culture| CR
     DG -->|diagnostic fiable| PH[Phytosanitaire<br/>traitements homologués]
@@ -254,7 +256,7 @@ POST /diagnose
 1. ✅ Décision : application web responsive (téléphone et ordinateur).
 2. ✅ `src/agent/` : les six agents et leur graphe LangGraph (section 1), 11 tests dans `tests/agent/`, dont un rédacteur fautif qui glisse un produit non homologué : bloqué 4 fois, puis texte de secours.
 3. ✅ Réponses en français ou en arabe écrites par le code (`src/agent/redaction.py`), sans LLM. Arabe à relire avec `docs/validation_langue.xlsx`.
-4. ✅ `src/api/main.py` (FastAPI) : `POST /diagnose`, `GET /gouvernorats`, `GET /health`, documentation sur `/docs` ; photo supprimée après l'analyse ; 6 tests dans `tests/api/`.
+4. ✅ `src/api/main.py` (FastAPI) : `POST /identify` (culture reconnue sur la photo, pour pré-remplir le champ « Culture »), `GET /cultures`, `POST /diagnose`, `GET /gouvernorats`, `GET /health`, documentation sur `/docs` ; photo supprimée après l'analyse ; 6 tests dans `tests/api/`.
 5. ✅ `src/app/` : application web responsive (téléphone et ordinateur) : photo prise avec l'appareil, message, gouvernorat, culture ; interface et réponse en français ou en arabe (de droite à gauche) ; « Comment AgrIA a décidé » montre la trace des agents. Lancement : `python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000`.
 6. Importer le jeu de test de l'agent et mesurer le système complet.
 7. Organiser le pilote : au moins 10 agriculteurs ou conseillers.

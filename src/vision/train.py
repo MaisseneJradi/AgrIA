@@ -68,7 +68,7 @@ def run_epoch(net, loader, device, loss_fn, optimizer=None, scaler=None):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--task", required=True, choices=["routing", "diseases", "deficiency", "fruits", "leaf"])
+    ap.add_argument("--task", required=True, choices=["routing", "diseases", "deficiency", "fruits", "leaf", "crop"])
     ap.add_argument("--model", default="efficientnet_b0")
     ap.add_argument("--epochs", type=int, default=20)
     ap.add_argument("--batch", type=int, default=32)
@@ -80,7 +80,10 @@ def main():
     ap.add_argument("--train-set", choices=["balanced", "raw"], default="balanced")
     ap.add_argument("--field-val", action="store_true")
     ap.add_argument("--field-weight", type=int, default=1)
-    ap.add_argument("--aug", choices=["standard", "field"], default="standard")
+    ap.add_argument("--aug", choices=["standard", "field", "crop"], default="standard")
+    ap.add_argument("--sampler", choices=["none", "source"], default="none",
+                    help="source: each class weighs the same, and inside a class each source weighs sqrt(its size), "
+                         "so that one big source (PlantVillage) does not teach its photo style; loss unweighted")
     ap.add_argument("--select", choices=["val", "val_field", "mean"], default=None)
     args = ap.parse_args()
     out = args.out or str(ROOT / "models" / args.task)
@@ -94,8 +97,18 @@ def main():
                                field_holdout=args.field_val, field_weight=args.field_weight, aug=args.aug)
     val_ds = ManifestDataset(args.task, "val", classes, limit=args.limit)
     g = torch.Generator().manual_seed(SEED)
-    train_dl = DataLoader(train_ds, args.batch, shuffle=True, num_workers=args.workers, pin_memory=True,
-                          generator=g, persistent_workers=args.workers > 0)
+    sampler = None
+    if args.sampler == "source":
+        df = train_ds.df
+        n_group = df.groupby(["class", "source"])["path"].transform("size")
+        group_mass = np.sqrt(n_group)
+        class_mass = df.assign(m=group_mass).groupby(["class", "source"])["m"].first().groupby("class").sum()
+        w = group_mass / n_group / df["class"].map(class_mass)
+        sampler = torch.utils.data.WeightedRandomSampler(torch.tensor(w.to_numpy(), dtype=torch.double), len(df),
+                                                         replacement=True, generator=g)
+    train_dl = DataLoader(train_ds, args.batch, shuffle=sampler is None, sampler=sampler, num_workers=args.workers,
+                          pin_memory=True, generator=g if sampler is None else None,
+                          persistent_workers=args.workers > 0)
     val_dl = DataLoader(val_ds, args.batch * 2, num_workers=args.workers, pin_memory=True,
                         persistent_workers=args.workers > 0)
     field_dl = None
@@ -105,10 +118,11 @@ def main():
                               num_workers=min(2, args.workers), pin_memory=True)
     print(f"{args.task}: {len(classes)} classes, train {len(train_ds)}, val {len(val_ds)} images, "
           f"{args.model}, {args.train_set} train set, field val {len(field_dl.dataset) if field_dl else 0}, "
-          f"field weight {args.field_weight}, aug {args.aug}, select on {args.select}, on {device}" + (f" ({torch.cuda.get_device_name(0)})" if device.type == "cuda" else ""))
+          f"field weight {args.field_weight}, aug {args.aug}, sampler {args.sampler}, select on {args.select}, "
+          f"on {device}" + (f" ({torch.cuda.get_device_name(0)})" if device.type == "cuda" else ""))
 
     net = build(args.model, len(classes)).to(device)
-    weights = class_weights(args.task, classes).to(device) if balanced else None
+    weights = class_weights(args.task, classes).to(device) if balanced and args.sampler == "none" else None
     loss_fn = torch.nn.CrossEntropyLoss(weight=weights)
     optimizer = torch.optim.AdamW(net.parameters(), lr=args.lr, weight_decay=0.05)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)

@@ -2,7 +2,8 @@
 
 Usage: python src/preparation/prepare_tomato_village.py
 Reads   data/raw/tomato_village/Variant-a(Multiclass Classification)/<split>/<class>/*.jpg   (never changed)
-Writes  data/raw/tomato_village/clean/<split>/<class>/*.jpg                                   (copies)
+Writes  data/raw/tomato_village/clean/<split>/<class>/*.jpg            deficiency and healthy classes (copies)
+        data/raw/tomato_village/clean_diseases/<split>/<class>/*.jpg   disease classes, used only by the crop model
 
 The authors' folders hold their own augmented copies of each leaf: mirrored, flipped, rotated by 90/180/270 degrees
 or by any angle (black corners), sometimes the same picture twice; 217 such pairs sit in different splits (train vs
@@ -11,7 +12,7 @@ test), which would inflate every test score. Here:
   - one image is kept per group: the first one without black corners, in the order train > val > test of the
     authors' split, so a leaf seen in train is never tested;
   - images rotated by any angle (2+ black corners) are left out: their original cannot be matched reliably.
-Only the deficiency and healthy classes are kept (the diseases of the dataset are not used here).
+The two outputs are cleaned separately (one pass for the deficiency classes, one for the disease classes).
 """
 import collections
 import os
@@ -22,6 +23,8 @@ from PIL import Image, ImageOps
 SRC = os.path.join("data", "raw", "tomato_village", "Variant-a(Multiclass Classification)")
 OUT = os.path.join("data", "raw", "tomato_village", "clean")
 CLASSES = ("Healthy", "Magnesium Deficiency", "Nitrogen Deficiency", "Pottassium Deficiency")
+DISEASES = ("Early_blight", "Late_blight", "Leaf Miner", "Spotted Wilt Virus")
+OUT_DISEASES = os.path.join("data", "raw", "tomato_village", "clean_diseases")
 ORDER = {"train": 0, "val": 1, "test": 2}
 
 
@@ -43,9 +46,14 @@ def black_corners(im):
 
 
 def main():
+    clean(CLASSES, OUT)
+    clean(DISEASES, OUT_DISEASES)
+
+
+def clean(classes, out):
     items = []
     for split in ORDER:
-        for cls in CLASSES:
+        for cls in classes:
             folder = os.path.join(SRC, split, cls)
             for f in sorted(os.listdir(folder)):
                 if f.lower().endswith(".jpg"):
@@ -71,8 +79,8 @@ def main():
     for i in range(len(items)):
         groups[root(i)].append(i)
 
-    if os.path.exists(OUT):
-        shutil.rmtree(OUT)
+    if os.path.exists(out):
+        shutil.rmtree(out)
     kept, stats = 0, collections.Counter()
     for ids in groups.values():
         candidates = sorted((i for i in ids if not items[i]["rotated"]), key=lambda i: ORDER[items[i]["split"]])
@@ -84,12 +92,12 @@ def main():
         if len(labels) > 1:  # same leaf under two labels: true label unknown
             stats["conflit d'étiquette"] += 1
             continue
-        dst = os.path.join(OUT, keep["split"], keep["cls"])
+        dst = os.path.join(out, keep["split"], keep["cls"])
         os.makedirs(dst, exist_ok=True)
         shutil.copy2(os.path.join(SRC, keep["split"], keep["cls"], keep["file"]), dst)
         kept += 1
         stats[(keep["split"], keep["cls"])] += 1
-    print(f"{len(items)} images, {len(groups)} feuilles distinctes, {kept} gardées")
+    print(f"{out}: {len(items)} images, {len(groups)} feuilles distinctes, {kept} gardées")
     for k, v in sorted(stats.items(), key=str):
         print(f"  {k}: {v}")
 

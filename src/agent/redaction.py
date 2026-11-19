@@ -87,6 +87,8 @@ LANGS = tuple(P)
 
 # fixed free sentences of the agents and tools (questions, warnings) -> Arabic
 FIXED_AR = {
+    "Quelle est la culture (tomate, olivier, agrumes, poivron, vigne…) ?":
+        "ما هي الزراعة (طماطم، زيتون، قوارص، فلفل، عنب…)؟",
     "Pouvez-vous envoyer une autre photo, de près, d'une feuille ou d'un fruit atteint, à la lumière du jour ?":
         "هل يمكنك إرسال صورة أخرى عن قرب لورقة أو ثمرة مصابة، في ضوء النهار؟",
     "Depuis quand voyez-vous ces symptômes, et sur combien de plantes ?": "منذ متى تلاحظ هذه الأعراض، وعلى كم نبتة؟",

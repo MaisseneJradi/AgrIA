@@ -47,8 +47,10 @@
           <select id="gouvernorat" name="gouvernorat"><option value="" data-i18n="choose">— choisir —</option></select>
         </label>
         <label class="field">
-          <span data-i18n="crop">Culture (facultatif)</span>
-          <input id="culture" name="culture" type="text" data-i18n-ph="cropPh" placeholder="tomate, olivier…">
+          <span data-i18n="crop">Culture détectée</span>
+          <select id="culture" name="culture"><option value="" data-i18n="cropAuto">— ajoutez une photo —</option></select>
+          <small id="crop-hint" class="hint" aria-live="polite" hidden></small>
+          <span id="crop-choices" class="chips" hidden></span>
         </label>
       </div>
 
@@ -66,6 +68,10 @@
         <span id="badge" class="badge"></span>
         <span id="confidence" class="muted"></span>
       </div>
+      <dl class="summary">
+        <div><dt data-i18n="cropField">Culture</dt><dd id="res-crop">—</dd></div>
+        <div><dt data-i18n="problemField">Maladie détectée</dt><dd id="res-problem">—</dd></div>
+      </dl>
       <div id="answer" class="answer"></div>
 
       <details id="products-box" hidden>

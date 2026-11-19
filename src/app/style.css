@@ -103,6 +103,21 @@ td:nth-child(2), td:nth-child(3) { white-space: nowrap; direction: ltr; unicode-
 .trace { margin: 8px 0 0; padding-inline-start: 20px; display: grid; gap: 6px; font-size: .9rem; }
 .trace b { color: var(--brand); }
 
+.hint { color: var(--muted); font-size: .85rem; }
+.hint.ok { color: var(--ok); }
+.hint.warn { color: var(--warn); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button {
+  min-height: 36px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--card); color: var(--text); font: inherit; font-size: .88rem; cursor: pointer;
+}
+.chips button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.summary { display: grid; grid-template-columns: 1fr; gap: 8px; margin: 14px 0 0; }
+@media (min-width: 560px) { .summary { grid-template-columns: 1fr 1fr; } }
+.summary div { background: var(--brand-soft); border-radius: 10px; padding: 10px 12px; }
+.summary dt { font-size: .8rem; color: var(--muted); }
+.summary dd { margin: 2px 0 0; font-weight: 700; }
+
 .feedback { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
 .feedback p { margin: 0; font-weight: 600; }
 .fb-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }

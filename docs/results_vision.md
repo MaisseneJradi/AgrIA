@@ -208,3 +208,59 @@ Manifest des carences : 13 771 → **16 679 images**, aucun doublon (`check_dupl
 | photos de terrain (199 maladies) | 59,3 % | 59,8 % |
 
 Sur les images de test des nouvelles sources, bon nutriment : tomate Mendeley 98,2 %, Tomato-Village 95,7 %, CitrusUAT 98,3 %, maïs 86,7 %. Sur les photos du journal de l'application, une tomate carencée en magnésium est maintenant reconnue (« carence en magnésium », 89 %, avant : « moisissure des feuilles », 100 %) ; la seconde reste vue comme une maladie (part de carence 38 %, avant 11 %).
+
+## 12. Modèle de culture (agent Identification de la culture)
+
+Tâche `crop` (src/vision/dataset.py) : la culture de la feuille, 15 classes (14 cultures du projet, « orange » comptée avec les agrumes, et « autre_plante » pour le riz, le café, les courges…), construite sur le jeu feuille dédoublonné ; EfficientNet-B0, poids par classe, validation de terrain, suréchantillonnage ×5 et augmentations « terrain ».
+
+| | v1 (installée, `models/crop`) | v2 (essai, `models/crop_v2`) |
+|---|---|---|
+| test laboratoire | 99,9 % | 99,9 % |
+| photos de terrain (199) | **86,9 %** | 85,9 % |
+| 15 photos d'Internet du journal : bonne culture | 6/15 | 6/15 |
+| idem : fausse avec ≥ 85 % de confiance | **5** | 7 |
+| idem : vraie culture dans le top 3 | 9/15 | 11/15 |
+
+**Cause des erreurs.** Chaque culture vient presque d'une seule source (olivier 100 % d'un seul jeu ; agrumes 84 % PlantVillage, feuilles jaunies du greening sur fond uni) : le modèle apprend en partie le style des photos de chaque source (apprentissage par raccourci). Une feuille d'agrume verte photographiée sur l'arbre devient « poivron 98 % » ou « cerisier 98 % ».
+
+**v2 essayée** (18/11/2026) : 4 532 images utilisées seulement par le modèle de culture (`crop_manifest.csv`, ajoutées avec `add_source.py` : maladies et ravageurs de CitrusUAT, maladies de la tomate des jeux Mendeley et Tomato-Village, 32 doublons retirés), tirage équilibré par source (`--sampler source`), augmentations de luminosité, contraste, saturation et effacement (`--aug crop`, teinte inchangée). Mieux sur les agrumes (2/6 au lieu de 1/6), moins bien sur l'olivier, plus d'erreurs sûres d'elles : **non installée**. Rééquilibrer les mêmes sources ne suffit pas ; il faut d'autres sources par culture (olivier surtout), ou un deuxième avis (VLM).
+
+**Règle retenue dans l'agent** : le modèle propose, l'agriculteur confirme. L'application pré-remplit la culture (`POST /identify`), affiche les 3 cultures les plus probables en boutons ; sans culture confirmée, aucun traitement n'est conseillé.
+
+## 13. Combinaison des modèles et VLM (agents Identification et Diagnostic)
+
+Les deux agents ne s'appuient plus sur un seul modèle, mais sur une **combinaison des modèles déjà entraînés et d'un VLM** (`src/agent/ensemble.py`). Les poids sont appris sur la **validation** (photos de laboratoire et 287 photos de terrain PlantDoc tenues à l'écart), puis mesurés sur tous les jeux de test (`python src/agent/eval_ensemble.py --tune --vlm`, rapport `docs/eval_ensemble_vlm.md`).
+
+- **Culture** : vote du modèle de culture et du modèle des maladies (probabilités additionnées par culture), puis le VLM en contrôle et en secours.
+- **Carence ou maladie** : part de carence du modèle feuille (poids 1), plus l'avis du VLM (poids 0,5).
+- **Classe** : modèle des maladies restreint à la culture, ou carence du modèle feuille.
+
+**Modèle de culture installé : v3a** (19/11/2026), qui inclut les nouvelles sources olivier et agrumes. Comparaison dans la combinaison (culture juste / fausse et sûre) :
+
+| | v1 | **v3a** | v3b |
+|---|---|---|---|
+| terrain PlantDoc (199) | 87,4 / 1,5 | 86,9 / 2,0 | 86,4 / 2,5 |
+| nouvelles sources (216) | 82,4 / 2,3 | 99,5 / 0 | 100 / 0 |
+| feuilles de citronnier (lemon_bd, 36) | **0/36** | 36/36 | 36/36 |
+| chaîne complète sur le terrain | 63,3 % | 62,8 % | 60,8 % |
+
+v1 et v3a sont équivalentes sur les photos indépendantes (1 à 3 photos d'écart sur 214), mais v1 ne reconnaît aucune feuille de citronnier. v1 est conservée dans `models/crop_v1`.
+
+**VLM** : `nvidia/nemotron-3.5-super-vl-120b-a12b` par l'API NVIDIA (clé dans `.env`, `AGRIA_VLM=nvidia`), environ 8 s par photo, réponses en cache. Ce modèle « raisonne » avant de répondre : il lui faut au moins 1 500 jetons. Seul, il est **faible sur les photos de laboratoire** (culture juste 63,8 %, fausse et sûre 19,9 % : pommier, cerisier, pêcher, pomme de terre) et sur PlantDoc (75,0 %), mais **très bon sur les photos d'Internet** du journal (14/15, contre 4/15 pour la combinaison). Il distingue bien carence et maladie (98,4 % sur le terrain). La validation lui donne un poids 0 dans le vote de la culture : il est donc utilisé en contrôle et en secours.
+
+| Culture (juste / fausse et sûre) | labo (358) | terrain (199) | nouvelles sources (216) | journal (15) |
+|---|---|---|---|---|
+| combinaison sans VLM | 99,2 / 0 | 86,9 / 2,0 | 99,5 / 0 | 26,7 / 26,7 |
+| **décision avec VLM** | 98,6 / 0 | 85,4 / 1,0 | 96,8 / 0 | **66,7 / 0** |
+
+Ce que fait le VLM dans la décision :
+- **Contrôle** : si le vote est sûr mais que le VLM voit une autre culture, la réponse n'est plus « sûre » et l'agriculteur doit confirmer. Cela supprime toutes les erreurs sûres d'elles sur le journal, divise par deux celles du terrain, et ne coûte rien ailleurs.
+- **Secours** : si le vote hésite et que le VLM est sûr à ≥ 0,95, la culture du VLM est proposée en premier, sans jamais être « sûre ». Avec un seuil de 0,9, le VLM prenait 12 feuilles d'agrumes pour de l'olivier.
+- La culture vue par le VLM figure toujours parmi les 3 propositions affichées.
+
+Carence ou maladie, avec le VLM à poids 0,5 : terrain 96,0 → 98,0 %, nouvelles sources 69,0 → 71,3 %, labo inchangé (98,0 %).
+
+**Limites.**
+- Le seuil de secours a été choisi en regardant aussi les 15 photos du journal : c'est un petit échantillon. Il faudra le revoir sur de vraies photos d'agriculteurs tunisiens.
+- 65 photos sur environ 1 400 ont reçu une réponse illisible du VLM : dans ce cas, le vote seul s'applique.
+- Le VLM n'est jamais seul à décider : il ne peut pas contredire la culture donnée par l'agriculteur, et la culture reste toujours confirmée par l'agriculteur.

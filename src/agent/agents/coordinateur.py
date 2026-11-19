@@ -15,7 +15,8 @@ MAX_REWRITES = 2
 
 def planifier(d):
     t0 = time.time()
-    plan = "Linguistique -> Diagnostic -> (Phytosanitaire + Agronome) -> rédaction -> Linguistique -> Vérificateur"
+    plan = ("Linguistique -> Identification de la culture -> Diagnostic -> (Phytosanitaire + Agronome) -> rédaction "
+            "-> Linguistique -> Vérificateur")
     if not d.get("photo"):
         plan = "pas de photo : Linguistique -> Diagnostic (demande de photo) -> rédaction -> Vérificateur"
     return {"essais": 0, "sources": [], "trace": step("Coordinateur", f"plan : {plan}", t0)}
@@ -103,6 +104,7 @@ def finaliser(d):
         "diagnostic": {k: diag.get(k) for k in ("routing", "task", "classe", "nom", "confiance", "fiable",
                                                  "raisons_doute", "top3", "autre_modele", "choix_du_modele")}
         if diag.get("classe") else None,
+        "culture": {"code": d.get("culture_code"), **(d.get("culture_info") or {})} if d.get("photo") else None,
         "produits": b["produits"], "engrais": b["engrais"], "avertissements": b.get("avertissements", []),
         "questions": d.get("questions", []) if d.get("issue") == "question" else [],
         "sources": list({s["lien"]: s for s in d.get("sources", [])}.values()), "verification": d.get("verification"),

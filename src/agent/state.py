@@ -19,8 +19,14 @@ class Dossier(TypedDict, total=False):
     # Agent Linguistique, input side
     termes: dict                  # normalize_terms(message)
     langue_reponse: str
-    culture_code: Optional[str]   # crop code (tomato, olive...) from the request, the message or the diagnosis
+    culture_code: Optional[str]   # crop code (tomato, olive...) from the request, the message, the photo or the diagnosis
+    culture_source: Optional[str] # agriculteur (field), message, photo
     gouvernorat_officiel: Optional[str]
+
+    # Agent Identification de la culture
+    routage: dict                 # router prediction (leaf, fruit, other), reused by the Diagnostic agent
+    culture_info: dict            # crop seen on the photo: predite, confiance, source, contradiction/inconnue/non_couverte
+    opinions: Optional[dict]      # every model output (and the VLM's observation) on the photo, shared by two agents
 
     # Agent Diagnostic
     diagnostic: dict              # routing, task, classe, confiance, top3, fiable, raisons_doute

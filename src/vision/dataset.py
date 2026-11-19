@@ -24,7 +24,11 @@ from torchvision import transforms
 
 ROOT = Path(__file__).resolve().parents[2]
 PROC = ROOT / "data" / "processed"
-TASKS = ("routing", "diseases", "deficiency", "fruits", "leaf")
+TASKS = ("routing", "diseases", "deficiency", "fruits", "leaf", "crop")
+# crops of the project (task "crop"); any other plant of the data (rice, coffee, gourds...) -> "autre_plante"
+PROJECT_CROPS = ("apple", "cherry", "citrus", "corn", "datepalm", "grape", "olive", "peach", "pepper", "potato",
+                 "squash", "strawberry", "tomato", "wheat")
+CROP_ALIASES = {"orange": "citrus"}
 SIZE = 224
 MEAN, STD = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
 FIELD_SOURCES = ("plantdoc",)  # real field photos (the other sources are lab or close-up photos)
@@ -58,13 +62,34 @@ def _leaf_manifest():
     return pd.concat([dis, dfc], ignore_index=True)
 
 
+def _crop_manifest():
+    """Task "crop": which plant the leaf belongs to. The leaf manifest (diseases + deficiencies, deduplicated), with
+    the crop as class: the 14 crops of the project, "orange" counted as citrus, every other plant "autre_plante";
+    plus crop_manifest.csv: leaves used only by this model (added with add_source.py, task "crop": CitrusUAT diseases
+    and pests, tomato diseases of the Mendeley and Tomato-Village sets), so that each crop is seen from several
+    sources (one source per crop taught the model the style of the photos instead of the plant). An extra image
+    already in the leaf manifest (same md5 or dhash) is left out."""
+    m = _leaf_manifest()
+    extra_path = PROC / "crop_manifest.csv"
+    if extra_path.exists():
+        extra = pd.read_csv(extra_path)
+        h = pd.read_csv(PROC / "hash_cache.csv")
+        known = h[h["path"].isin(m["path"])]
+        dup = set(h.loc[h["md5"].isin(set(known["md5"])) | h["dhash"].isin(set(known["dhash"])), "path"])
+        m = pd.concat([m, extra[~extra["path"].isin(dup)]], ignore_index=True)
+    crop = m["crop"].replace(CROP_ALIASES)
+    m["class"] = crop.where(crop.isin(PROJECT_CROPS), "autre_plante")
+    return m
+
+
 _MANIFESTS = {}
 
 
 def manifest(task):
     """Whole manifest of a task (cached)."""
     if task not in _MANIFESTS:
-        _MANIFESTS[task] = _leaf_manifest() if task == "leaf" else pd.read_csv(PROC / f"{task}_manifest.csv")
+        build = {"leaf": _leaf_manifest, "crop": _crop_manifest}.get(task)
+        _MANIFESTS[task] = build() if build else pd.read_csv(PROC / f"{task}_manifest.csv")
     return _MANIFESTS[task].copy()
 
 
@@ -90,7 +115,7 @@ def load_split(task, split, balanced=True, field_holdout=False):
         df["path"] = df["path"].map(local_path)
         held = field_val_paths(task)
         return df[df["path"].isin(held)].assign(split="val_field").reset_index(drop=True)
-    if split == "train" and task not in ("routing", "leaf") and balanced:
+    if split == "train" and task not in ("routing", "leaf", "crop") and balanced:
         df = pd.read_csv(PROC / "balanced" / f"{task}_train.csv")
     else:
         df = manifest(task)
@@ -120,8 +145,20 @@ def class_weights(task, classes):
 
 def make_transform(train, aug="standard"):
     """aug="field": stronger changes of framing and sharpness that field photos show (closer or farther leaf,
-    tilted phone, slight blur), still never a colour change."""
+    tilted phone, slight blur), still never a colour change.
+    aug="crop" (crop model only): the field changes plus brightness, contrast and saturation, and a part of the photo
+    erased, so that the model cannot recognise a source by its light or background. The hue is never changed, and
+    this is not used for the diagnosis models: there a colour is a symptom."""
     steps = [transforms.Resize((SIZE, SIZE))]
+    if train and aug == "crop":
+        steps += [transforms.RandomHorizontalFlip(), transforms.RandomVerticalFlip(0.2), transforms.RandomRotation(25),
+                  transforms.RandomPerspective(0.25, p=0.3),
+                  transforms.RandomResizedCrop(SIZE, scale=(0.35, 1.0), ratio=(0.75, 1.33)),
+                  transforms.ColorJitter(brightness=0.35, contrast=0.35, saturation=0.3, hue=0),
+                  transforms.RandomApply([transforms.GaussianBlur(5, sigma=(0.1, 1.5))], p=0.3),
+                  transforms.ToTensor(), transforms.Normalize(MEAN, STD),
+                  transforms.RandomErasing(p=0.3, scale=(0.02, 0.15))]
+        return transforms.Compose(steps)
     if train and aug == "field":
         steps += [transforms.RandomHorizontalFlip(), transforms.RandomVerticalFlip(0.2),
                   transforms.RandomRotation(25),
