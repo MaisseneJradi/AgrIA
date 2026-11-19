@@ -1,4 +1,4 @@
-"""AgrIA API: the six agents behind one HTTP endpoint, and the web app served on the same address.
+"""AgrIA API: the seven agents behind one HTTP endpoint, and the web app served on the same address.
 
 Run:   python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000
 Open:  http://localhost:8000          the app (phone: http://<IP of the computer>:8000 on the same Wi-Fi)
