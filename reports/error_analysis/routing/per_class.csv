@@ -1,0 +1,2 @@
+class,support,correct,accuracy,recall,precision,f1,conf_right,conf_wrong,most_confused_with,n_predicted
+leaf,70,70,1.0,1.0,1.0,1.0,0.9908,,,70

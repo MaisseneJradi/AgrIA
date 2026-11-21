@@ -1,0 +1,11 @@
+true,pred,n,share_of_true
+corn__gray_leaf_spot,corn__northern_leaf_blight,8,0.4444
+corn__northern_leaf_blight,corn__gray_leaf_spot,6,0.2222
+tomato__bacterial_spot,tomato__septoria_leaf_spot,5,0.2381
+apple__rust,apple__scab,5,0.1923
+tomato__septoria_leaf_spot,tomato__early_blight,5,0.1724
+tomato__mosaic_virus,tomato__yellow_leaf_curl_virus,4,0.2105
+potato__early_blight,potato__late_blight,4,0.1818
+corn__common_rust,corn__northern_leaf_blight,4,0.1081
+apple__black_rot,apple__scab,3,0.5
+pepper__bacterial_spot,tomato__bacterial_spot,3,0.1875

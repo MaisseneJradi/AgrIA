@@ -1,0 +1,10 @@
+{
+ "n": 1861,
+ "accuracy": 0.943,
+ "macro_f1": 0.8938,
+ "ece": 0.0402,
+ "weak_rule": "recall < 0.6 with >= 5 photos",
+ "weak_classes": [],
+ "model": "crop",
+ "split": "test_field"
+}

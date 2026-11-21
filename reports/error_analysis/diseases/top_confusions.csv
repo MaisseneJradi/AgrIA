@@ -1,0 +1,11 @@
+true,pred,n,share_of_true
+corn__gray_leaf_spot,corn__northern_leaf_blight,10,0.5556
+corn__northern_leaf_blight,corn__gray_leaf_spot,8,0.2963
+tomato__bacterial_spot,tomato__septoria_leaf_spot,6,0.2857
+tomato__septoria_leaf_spot,tomato__early_blight,5,0.1724
+potato__early_blight,potato__late_blight,4,0.1818
+tomato__late_blight,potato__late_blight,4,0.1481
+tomato__healthy,pepper__healthy,3,0.375
+cherry__healthy,apple__healthy,3,0.3
+tomato__mosaic_virus,tomato__healthy,3,0.1579
+tomato__mosaic_virus,tomato__yellow_leaf_curl_virus,3,0.1579

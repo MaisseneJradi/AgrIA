@@ -1,0 +1,7 @@
+date,model,change,lab_acc,field_acc,plantdoc_acc,field_macro_f1,field_ece,mcnemar_p_vs_previous,notes
+2026-11-15,diseases_raw,"EfficientNet-B0, jeu brut, sans photos de terrain ajoutées (référence étape 2)",0.9903,0.5292,0.6193,0.4811,0.2711,,test terrain 703 photos ; graine 42
+2026-11-20,diseases_v2,"+ PlantWild et pomme de terre au champ ; val terrain, terrain x5, aug field ; DÉPLOYÉ",0.9945,0.8009,0.7157,0.7607,0.1419,4.6e-36,test terrain 703 photos ; graine 42
+2026-11-16,leaf_v3,"51 maladies + 9 carences, carences des cultures du projet (référence)",0.9716,0.5092,0.6041,0.4697,0.3359,,test terrain 703 photos ; graine 42
+2026-11-20,leaf_v4,"+ photos de terrain ; val terrain, terrain x5, aug field ; DÉPLOYÉ",0.9697,0.7852,0.6751,0.7409,0.1441,1.7e-37,test terrain 703 photos ; graine 42
+2026-11-19,crop_v3a,"15 classes, sources olivier et agrumes ajoutées, aug crop (référence)",0.9993,0.5895,0.8579,0.4762,0.3184,,test terrain 1861 photos ; graine 42
+2026-11-20,crop_v4,"+ PlantWild, pomme de terre, GVLiD ; jeu équilibré, aug crop (saturation ±30 %) ; DÉPLOYÉ",0.9988,0.943,0.8528,0.8938,0.0402,1.7e-160,test terrain 1861 photos ; graine 42
