@@ -1,0 +1,10 @@
+{
+ "n": 70,
+ "accuracy": 1.0,
+ "macro_f1": 1.0,
+ "ece": 0.0092,
+ "weak_rule": "recall < 0.6 with >= 5 photos",
+ "weak_classes": [],
+ "model": "routing",
+ "split": "test_field"
+}

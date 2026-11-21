@@ -1,0 +1,5 @@
+source,n,accuracy,macro_f1
+gvlid,458,1.0,1.0
+plantdoc,197,0.8528,0.8504
+plantwild,750,0.8987,0.8698
+potato_field,456,0.9978,0.9989

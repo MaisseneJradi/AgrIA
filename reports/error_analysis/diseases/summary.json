@@ -1,0 +1,18 @@
+{
+ "n": 703,
+ "accuracy": 0.8009,
+ "macro_f1": 0.7607,
+ "ece": 0.1419,
+ "weak_rule": "recall < 0.6 with >= 5 photos",
+ "weak_classes": [
+  "tomato__healthy",
+  "tomato__bacterial_spot",
+  "corn__gray_leaf_spot",
+  "tomato__mosaic_virus",
+  "cherry__healthy",
+  "apple__black_rot",
+  "potato__early_blight"
+ ],
+ "model": "diseases",
+ "split": "test_field"
+}

@@ -1,0 +1,11 @@
+true,pred,n,share_of_true
+tomato,potato,10,0.0552
+potato,tomato,9,0.018
+corn,wheat,8,0.0976
+cherry,apple,5,0.1613
+tomato,pepper,5,0.0276
+pepper,tomato,4,0.1212
+wheat,corn,4,0.0227
+cherry,grape,3,0.0968
+apple,cherry,3,0.0341
+apple,potato,3,0.0341
