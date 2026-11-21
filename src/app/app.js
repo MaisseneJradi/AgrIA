@@ -24,6 +24,7 @@ const I18N = {
     cropUnsure: (n, c) => `Culture incertaine (${n} ? ${c} %) : choisissez-la.`,
     cropOther: "Cette plante ne semble pas faire partie des cultures d'AgrIA.",
     cropNotLeaf: "Pas de feuille reconnue : la culture sera déduite au diagnostic, ou choisissez-la.",
+    notPlant: "Cette photo ne ressemble pas à une plante : envoyez une photo d'une feuille ou d'un fruit, de près.",
     cropField: "Culture", problemField: "Maladie détectée", healthy: "Plante saine", none: "—",
     fbQuestion: "Ce diagnostic est-il correct ?", yes: "Oui", no: "Non",
     fbTruth: "Quelle est la bonne réponse ? (plante et maladie)", fbPh: "Ex. : olivier, œil de paon",
@@ -49,6 +50,7 @@ const I18N = {
     cropUnsure: (n, c) => `زراعة غير مؤكدة (${n}؟ ${c} %): اخترها.`,
     cropOther: "لا يبدو أن هذه النبتة من زراعات AgrIA.",
     cropNotLeaf: "لم يتم التعرف على ورقة: اختر الزراعة أو ستُستنتج عند التشخيص.",
+    notPlant: "لا تبدو هذه الصورة صورة نبات: أرسل صورة ورقة أو ثمرة عن قرب.",
     cropField: "الزراعة", problemField: "المرض المكتشف", healthy: "نبتة سليمة", none: "—",
     fbQuestion: "هل هذا التشخيص صحيح؟", yes: "نعم", no: "لا",
     fbTruth: "ما هو الجواب الصحيح؟ (النبتة والمرض)", fbPh: "مثال: زيتون، عين الطاووس",
@@ -145,6 +147,7 @@ function showCropHint(r) {
   showCropChoices(r && !r.loading ? r : null);
   if (!r) { hint.hidden = true; return; }
   if (r.loading) { hint.textContent = t.identifying; }
+  else if (r.photo_plante === false) { hint.textContent = t.notPlant; hint.classList.add("warn"); }
   else if (!r.feuille || !r.culture) { hint.textContent = t.cropNotLeaf; hint.classList.add("warn"); }
   else if (r.autre_plante && r.sure) { hint.textContent = t.cropOther; hint.classList.add("warn"); }
   else if (r.sure) {

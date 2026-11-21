@@ -1,10 +1,11 @@
 """Agent Identification de la culture: which plant is on the photo, before any diagnosis.
 
-Model: models/crop = crop_v3a (EfficientNet-B0, 15 classes: the 14 crops of the project and "autre_plante"), trained
-on every leaf image of the project with its crop as label (src/vision/dataset.py, task "crop"), including the new
-olive and citrus sources (lemon_bd, olive_cam...). Alone: 85.9 % on the 199 field photos. In the vote with the disease
-model (docs/eval_ensemble.md): 86.9 % on field photos with 2.0 % sure and wrong, 99.5 % on the new sources.
-The previous model (crop_v1) is kept in models/crop_v1: as good on field photos, but 0/36 on lemon leaves (lemon_bd).
+Model: models/crop = crop_v4 (EfficientNet-B0, 15 classes: the 14 crops of the project and "autre_plante"), trained
+on every leaf image of the project with its crop as label (src/vision/dataset.py, task "crop"), including the olive and
+citrus sources (lemon_bd, olive_cam...) and the field photos added on 20/11/2026 (PlantWild, potato field, GVLiD).
+Alone: 94.3 % on the 1,861 field test photos (crop_v3a: 58.9 %). In the vote with the disease model and the VLM
+(docs/eval_ensemble_vlm.md): 88.9 % on the 703 field photos with 0.4 % sure and wrong, 15/15 on the journal photos.
+Previous models are kept in models/crop_v3a and models/crop_v1 (docs/results_vision.md, sections 12 to 14).
 Why: without the crop, the diagnosis models answer with the disease of another plant (first tests in the app: a citrus
 leaf answered "bacterial spot of tomato", "healthy apple"...); with the crop, the diagnosis is restricted to it.
 
@@ -26,6 +27,11 @@ from src.agent.paths import ROOT
 from predict import predict  # src/vision
 from src.agent import ensemble as E
 
+# Router: a leaf or a fruit is accepted only from ROUTE_MIN. The router never saw screenshots or documents ("other" =
+# outdoor COCO photos only): a screenshot of code came out "leaf 58 %" (21/11/2026). Real photos are above 0.9 in
+# 97 to 98.5 % of cases (field test 1,861: 3.0 % below; app journal: 1 of 68, the screenshot); below, the photo is
+# refused and another photo is asked for.
+ROUTE_MIN = 0.9
 ACCEPT = 0.85      # confidence above which a crop is proposed (field photos: ~93 % right above 0.85)
 CONTRADICT = 0.95  # model sure enough to question the crop the farmer gave (field photos: 95.6 % right)
 CROP_QUESTION = "Quelle est la culture (tomate, olivier, agrumes, poivron, vigne…) ?"
@@ -40,8 +46,9 @@ def recognise(photo):
     summed per crop, VLM when enabled, with the weights learnt on the validation sets). Used by the agent and by
     POST /identify. "opinions" holds every model output, reused by the Diagnostic agent."""
     route = predict("routing", photo)
-    out = {"routage": route, "feuille": route["class"] == "leaf"}
-    if route["class"] != "leaf" or not crop_model_available():
+    plant = route["class"] != "other" and route["confidence"] >= ROUTE_MIN
+    out = {"routage": route, "photo_plante": plant, "feuille": plant and route["class"] == "leaf"}
+    if not out["feuille"] or not crop_model_available():
         return out
     op = E.opinions(photo)
     vote = E.crop_decision(op)  # vote of the models, the VLM (if enabled) as check and fallback

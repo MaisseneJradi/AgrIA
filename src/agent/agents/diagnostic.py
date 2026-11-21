@@ -31,9 +31,9 @@ from fertilizers import get_fertilizers  # src/tools
 from predict import class_names, predict  # src/vision
 from src.agent.agents.aides import class_name, crop_name, crop_of_class, step
 from src.agent import ensemble as E
-from src.agent.agents.identification import CROP_QUESTION
+from src.agent.agents.identification import CROP_QUESTION, ROUTE_MIN
 
-AGENT_THRESHOLDS = {"routing": 0.5, "diseases": 0.9, "deficiency": 0.95, "fruits": 0.65}
+AGENT_THRESHOLDS = {"routing": ROUTE_MIN, "diseases": 0.9, "deficiency": 0.95, "fruits": 0.65}
 MIN_CROP_MASS = 0.2
 GENERAL_QUESTIONS = ["Pouvez-vous envoyer une autre photo, de près, d'une feuille ou d'un fruit atteint, à la lumière "
                      "du jour ?",

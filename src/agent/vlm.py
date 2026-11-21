@@ -105,8 +105,11 @@ def _cache_get(key):
     if not CACHE.exists():
         return None
     for line in CACHE.read_text(encoding="utf-8").splitlines():
-        r = json.loads(line)
-        if r["key"] == key:
+        try:
+            r = json.loads(line)
+        except ValueError:  # a line cut by a shutdown during a write: skipped, the photo is simply asked again
+            continue
+        if r.get("key") == key:
             return r["answer"]
     return None
 
