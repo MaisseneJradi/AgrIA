@@ -1,0 +1,61 @@
+source,class,photos,feuille_gardee,ecartee_routeur
+plantwild,apple black rot,83,37,46
+plantwild,apple mosaic virus,89,88,1
+plantwild,apple rust,139,122,17
+plantwild,apple scab,258,159,99
+plantwild,bell pepper bacterial spot,76,71,5
+plantwild,bell pepper blossom end rot,112,53,59
+plantwild,bell pepper frogeye leaf spot,31,31,0
+plantwild,bell pepper powdery mildew,28,28,0
+plantwild,cherry leaf spot,107,105,2
+plantwild,cherry powdery mildew,33,32,1
+plantwild,citrus canker,390,310,80
+plantwild,citrus greening disease,133,103,30
+plantwild,corn gray leaf spot,107,105,2
+plantwild,corn northern leaf blight,130,128,2
+plantwild,corn rust,177,177,0
+plantwild,corn smut,202,114,88
+plantwild,grape black rot,122,75,47
+plantwild,grape downy mildew,281,266,15
+plantwild,grape leaf spot,91,91,0
+plantwild,grapevine leafroll disease,71,61,10
+plantwild,peach anthracnose,13,2,11
+plantwild,peach brown rot,173,71,102
+plantwild,peach leaf curl,182,179,3
+plantwild,peach rust,8,8,0
+plantwild,peach scab,78,35,43
+plantwild,potato early blight,126,125,1
+plantwild,potato late blight,117,117,0
+plantwild,squash powdery mildew,182,179,3
+plantwild,strawberry anthracnose,58,14,44
+plantwild,strawberry leaf scorch,39,38,1
+plantwild,tomato bacterial leaf spot,110,90,20
+plantwild,tomato early blight,187,168,19
+plantwild,tomato late blight,163,119,44
+plantwild,tomato leaf mold,156,156,0
+plantwild,tomato mosaic virus,63,62,1
+plantwild,tomato septoria leaf spot,130,128,2
+plantwild,tomato yellow leaf curl virus,93,90,3
+plantwild,wheat bacterial leaf streak (black chaff),117,116,1
+plantwild,wheat head scab,319,310,9
+plantwild,wheat leaf rust,132,127,5
+plantwild,wheat loose smut,215,204,11
+plantwild,wheat powdery mildew,271,269,2
+plantwild,wheat septoria blotch,232,232,0
+plantwild,wheat stem rust,148,136,12
+plantwild,wheat stripe rust,358,351,7
+plantwild,zucchini bacterial wilt,81,79,2
+plantwild,zucchini downy mildew,45,44,1
+plantwild,zucchini powdery mildew,223,218,5
+plantwild,zucchini yellow mosaic virus,95,95,0
+gvlid,Black rot,808,808,0
+gvlid,esca,888,879,9
+gvlid,healthy,1109,1108,1
+gvlid,leaf blight,672,666,6
+potato_field,Bacteria,569,550,19
+potato_field,Fungi,748,746,2
+potato_field,Healthy,201,201,0
+potato_field,Nematode,68,67,1
+potato_field,Pest,611,611,0
+potato_field,Phytopthora,347,346,1
+potato_field,Virus,532,532,0

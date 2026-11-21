@@ -264,3 +264,98 @@ Carence ou maladie, avec le VLM à poids 0,5 : terrain 96,0 → 98,0 %, nouvelle
 - Le seuil de secours a été choisi en regardant aussi les 15 photos du journal : c'est un petit échantillon. Il faudra le revoir sur de vraies photos d'agriculteurs tunisiens.
 - 65 photos sur environ 1 400 ont reçu une réponse illisible du VLM : dans ce cas, le vote seul s'applique.
 - Le VLM n'est jamais seul à décider : il ne peut pas contredire la culture donnée par l'agriculteur, et la culture reste toujours confirmée par l'agriculteur.
+
+## 14. Photos de terrain ajoutées et nouveaux modèles (20/11/2026)
+
+**Pourquoi.** Sur le terrain, les modèles restaient autour de 60 % (H1) : les photos de terrain ne pesaient que 4,8 % de l'entraînement et venaient toutes de PlantDoc. Trois jeux publics de **vraies photos de terrain**, uniquement des cultures du projet, ont été ajoutés (`data/README.md`, section « Field photo sources ») :
+
+| Jeu | Culture(s) | Photos gardées | Utilisation | Licence |
+|---|---|---|---|---|
+| PlantWild v2 (Wei et al., 2024) | 14 cultures du projet, 49 classes sur 115 | 5 918 sur 6 774 | maladies, feuille et culture | CC BY-NC-ND 4.0 |
+| Potato Leaf Disease, Uncontrolled Environment (Mendeley 10.17632/ptz377bwb8.1) | pomme de terre | 3 053 sur 3 076 | maladies (mildiou, saine) et culture | CC BY 4.0 |
+| GVLiD (Mendeley 10.17632/wkymf8bhcg.5) | vigne | 3 461 → 2 268 après doublons | **culture seulement** : mêmes photos étiquetées esca et brûlure, 38 % d'images de vidéo presque identiques | CC BY 4.0 |
+
+Refusés : Roboflow (photos de laboratoire), le jeu Mendeley « Tomato Leaf and Fruit » (feuilles posées sur du papier blanc), le piment (hors projet). Les maladies hors de nos classes (mildiou de la vigne, rouille jaune du blé…) servent seulement au modèle de culture ; elles deviendront des classes plus tard.
+
+**Préparation** (`src/preparation/prepare_field_sources.py`, rapport `docs/field_sources_routing.csv`) : seules les classes des 14 cultures sont extraites ; le **routeur** lit chaque photo et ne garde que les feuilles (épis, fruits, tiges écartés) ; orientation EXIF appliquée. Ajout par `add_source.py`, nouveau découpage `auto_field` : 85 % entraînement, 15 % test terrain par classe. Doublons contrôlés (`check_duplicates.py`, `clean_duplicates.py`), retraits journalisés dans `docs/removed_images.csv`.
+
+**Effet sur les jeux de test terrain** : maladies et feuille 199 → **703 photos** (PlantDoc 197, PlantWild 425, pomme de terre 81) ; culture **1 861 photos** (+ GVLiD 458). La validation terrain (15 % des photos de terrain de l'entraînement, tirée à la lecture) passe de 287 à 685 photos (1 537 pour la culture).
+
+**Entraînement** : mêmes réglages que l'essai 2 de la section 9 (validation terrain, photos de terrain ×5, augmentations « terrain » sans changement de couleur), choix de l'époque sur la moyenne des macro-F1 labo et terrain.
+
+| Nouveau modèle | Meilleure époque | Durée |
+|---|---|---|
+| `diseases_v2` (jeu brut, patience 6) | 20 sur 20 | 1 h 41 |
+| `leaf_v4` (jeu brut, patience 8) | 18 sur 20 | 1 h 55 |
+| `crop_v4` (jeu équilibré, 15 époques, patience 6) | 12 sur 15 | 2 h 10 |
+
+### 14.1 Anciens et nouveaux modèles sur les mêmes jeux de test
+
+| Modèle | Test labo, ancien → nouveau | **Test terrain, ancien → nouveau** | Macro-F1 terrain |
+|---|---|---|---|
+| Maladies (`diseases_raw` → `diseases_v2`) | 99,0 → 99,5 % | **52,9 → 80,1 %** (703) | 0,481 → 0,761 |
+| Feuille (`leaf_v3` → `leaf_v4`) | 97,2 → 97,0 % | **50,9 → 78,5 %** (703) | 0,470 → 0,741 |
+| Culture (`crop_v3a` → `crop_v4`) | 99,9 → 99,9 % | **58,9 → 94,3 %** (1 861) | 0,476 → 0,894 |
+
+Par source (bonnes réponses sur le test terrain, ancien → nouveau) :
+
+| Source | Maladies | Feuille | Culture |
+|---|---|---|---|
+| PlantDoc (197) | 61,9 → 71,6 % | 60,4 → 67,5 % | 85,8 → 85,3 % |
+| PlantWild (425 ; 750 pour la culture) | 53,2 → 80,5 % | 51,8 → 80,0 % | 46,5 → 89,9 % |
+| Pomme de terre au champ (81 ; 456) | 29,6 → 98,8 % | 23,5 → 97,5 % | 46,5 → 99,8 % |
+| GVLiD (458) | — | — | 80,1 → 100 % |
+
+Test de McNemar (mêmes photos, ancien contre nouveau) :
+
+| Modèle | PlantDoc seul | Tout le test terrain |
+|---|---|---|
+| Maladies | 33 gagnées, 14 perdues, **p = 0,008** | 224 / 33, p < 0,001 |
+| Feuille | 30 / 16, p = 0,054 | 225 / 31, p < 0,001 |
+| Culture | 12 / 13, p = 1 | 692 / 34, p < 0,001 |
+
+**Lecture honnête.**
+- Les gains sur PlantWild, la pomme de terre et GVLiD sont **optimistes** : le test de chaque source vient de la même source que son entraînement (mêmes champs, mêmes appareils ; pour GVLiD, des images de vidéo voisines même après le retrait des doublons).
+- **PlantDoc** est la mesure la plus indépendante : sa part d'entraînement n'a pas changé. Le modèle des maladies y gagne **9,7 points (significatif)**, le modèle feuille 7,1 points (à la limite), le modèle de culture reste stable : son gain vient des nouvelles sources.
+- Aucune perte en laboratoire.
+- La vraie mesure reste à faire sur des **photos tunisiennes**, d'aucune de ces sources.
+
+Seuils calibrés sur la validation (`calibrate.py`, cible 98 %) : maladies 0,50, feuille 0,67, culture 0,50. Les seuils de l'agent (0,9 maladie, 0,95 carence) sont inchangés.
+
+Les anciens modèles restent dans `models/diseases_raw`, `models/leaf_v3` et `models/crop_v3a` ; leurs prédictions sur le nouveau test terrain sont gardées hors Git dans `data/backup/2026-11-20/old_eval/`.
+
+### 14.2 Combinaison des modèles et VLM avec les nouveaux modèles
+
+Les poids sont appris de nouveau sur la validation, qui contient maintenant 685 photos de terrain au lieu de 287 (`eval_ensemble.py --tune --vlm --refresh`). Avant : les anciens modèles avec leurs poids, mesurés sur les **mêmes** jeux agrandis (`docs/eval_ensemble_avant_terrain.md`). Après : `docs/eval_ensemble_vlm.md`.
+
+| Poids | culture | carence ou maladie | maladie |
+|---|---|---|---|
+| avant | culture 1, maladies 1, VLM 0 | feuille 1, VLM 0,5 | maladies 1 |
+| **après** | culture 1, maladies 0,25, **VLM 0,25** | feuille 1, VLM 0,25 | maladies 1, **feuille 1** |
+
+Le VLM entre maintenant dans le vote de la culture (poids 0,25), en plus de son rôle de contrôle et de secours.
+
+| Décision de l'agent (vote + contrôle VLM) | Avant | **Après** |
+|---|---|---|
+| Culture, terrain (703) : juste / fausse et sûre | 78,0 / 2,0 % | **88,9 / 0,4 %** |
+| Culture, labo (358) | 98,6 / 0 % | 97,2 / 0 % |
+| Culture, nouvelles sources (216) | 96,8 / 0 % | 97,2 / 0 % |
+| Culture, photos d'Internet du journal (15) | 66,7 / 0 % | **100 / 0 %** |
+| Carence ou maladie, terrain | 98,4 % | **99,4 %** |
+| Maladie exacte avec la vraie culture, terrain | 73,3 % | **86,3 %** |
+| Carence exacte, labo (54) | 96,3 % | **100 %** |
+| **Chaîne complète, terrain** (culture votée → type → classe) | 55,2 % | **78,2 %** |
+| Chaîne complète, labo | 95,0 % | **97,2 %** |
+
+**Seuil de secours du VLM (0,95) vérifié** sur les opinions en cache :
+
+| Seuil | val labo | val terrain | test terrain | journal (15) |
+|---|---|---|---|---|
+| 0,90 | 87,8 % | 86,7 % | 82,4 % | 93,3 % |
+| **0,95 (gardé)** | 98,6 % | 96,4 % | 88,9 % | **100 %** |
+| 0,97 | 99,4 % | 99,1 % | 90,0 % | 73,3 % |
+| 0,99 ou sans secours | 99,7 % | 99,1 % | 89,8 % | 66,7 % |
+
+Les erreurs sûres d'elles restent à 0 à 0,4 % pour tous les seuils. Sur la validation seule, un seuil plus haut serait meilleur (1 à 3 points), mais ces jeux viennent maintenant des mêmes sources que l'entraînement. Les photos d'Internet du journal sont les seules proches de vraies photos d'agriculteurs, et le secours y fait passer la bonne culture de 67 % à 100 %. Une erreur du secours ne change que la culture pré-remplie : l'agriculteur la corrige parmi 3 boutons, et aucun traitement n'est conseillé sans culture confirmée. **0,95 est donc gardé.** À revoir sur des photos tunisiennes (`src/agent/ensemble.py`, `VLM_FALLBACK`).
+
+**Installés le 21/11/2026** : `models/diseases` = `diseases_v2`, `models/leaf` = `leaf_v4`, `models/crop` = `crop_v4` ; les dossiers remplacés sont dans `models/_replaced_2026-11-21/`, les poids précédents dans `data/backup/2026-11-20/backup/weights_before_field_v2.json`.

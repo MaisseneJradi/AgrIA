@@ -31,7 +31,8 @@ PROJECT_CROPS = ("apple", "cherry", "citrus", "corn", "datepalm", "grape", "oliv
 CROP_ALIASES = {"orange": "citrus"}
 SIZE = 224
 MEAN, STD = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
-FIELD_SOURCES = ("plantdoc",)  # real field photos (the other sources are lab or close-up photos)
+# real field photos (the other sources are lab or close-up photos); plantwild, gvlid, potato_field added 20/11/2026
+FIELD_SOURCES = ("plantdoc", "plantwild", "gvlid", "potato_field")
 FIELD_VAL_SHARE = 0.15
 
 

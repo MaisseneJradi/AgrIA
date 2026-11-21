@@ -5,7 +5,9 @@ Usage: python src/preparation/add_source.py wheat
 Reads the rows of docs/extra_class_mapping.csv whose folder starts with "<source>/", resizes the images
 (224x224 RGB JPEG) into data/processed/<task>/<split>/<class>/ and APPENDS them to the manifests.
 Existing images, manifests and the label-audit removals are left untouched (unlike prepare_images.py,
-which rebuilds everything from scratch). Split "auto" = 70/15/15 per class; otherwise the source's split is kept.
+which rebuilds everything from scratch). Split "auto" = 70/15/15 per class; "auto_field" (real field photos) =
+85 % train / 15 % test_field per class, like PlantDoc: the field validation set is then drawn from train at read
+time (src/vision/dataset.py, FIELD_SOURCES); otherwise the source's split is kept.
 """
 import csv
 import os
@@ -16,6 +18,7 @@ import sys
 from PIL import Image
 
 SEED, SIZE, SPLIT = 42, (224, 224), (0.70, 0.15, 0.15)
+FIELD_TRAIN = 0.85  # split "auto_field": the rest goes to test_field
 EXT = (".jpg", ".jpeg", ".png")
 RAW, OUT = os.path.join("data", "raw"), os.path.join("data", "processed")
 
@@ -66,6 +69,10 @@ def main(source):
                 rng.shuffle(files)
                 a, b = int(len(files) * SPLIT[0]), int(len(files) * (SPLIT[0] + SPLIT[1]))
                 jobs = [(f, "train") for f in files[:a]] + [(f, "val") for f in files[a:b]] + [(f, "test") for f in files[b:]]
+            elif m["split"] == "auto_field":
+                rng.shuffle(files)
+                a = int(round(len(files) * FIELD_TRAIN))
+                jobs = [(f, "train") for f in files[:a]] + [(f, "test_field") for f in files[a:]]
             else:
                 jobs = [(f, m["split"]) for f in files]
             cls, idx = m["unified_class"], next_index(task, m["unified_class"], rows + new)

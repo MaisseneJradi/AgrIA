@@ -118,7 +118,7 @@ def identify(photo: UploadFile = File(...)):
     finally:
         os.unlink(path)
     names = {c: (fr, ar) for c, fr, ar in CROPS}
-    out = {"feuille": r["feuille"], "routage": r["routage"]["class"]}
+    out = {"feuille": r["feuille"], "photo_plante": r["photo_plante"], "routage": r["routage"]["class"]}
     if "predite" in r:
         fr, ar = names.get(r["predite"], ("Autre plante", "نبتة أخرى"))
         out.update(culture=r["predite"], fr=fr, ar=ar, confiance=r["confiance"], sure=r["sure"],

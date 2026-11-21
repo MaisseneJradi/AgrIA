@@ -82,22 +82,24 @@ Phytosanitaire et Agronome travaillent en parallèle.
 
 Tous les modèles sont des EfficientNet-B0 entraînés en local, sur une NVIDIA RTX 2050 (4 Go). Pour chaque tâche, le modèle est choisi sur la validation. Le test sert uniquement à mesurer.
 
-| Modèle | Tâche | Test laboratoire | Photos de terrain (PlantDoc, 199) |
+| Modèle | Tâche | Test laboratoire | Photos de terrain (test, avant → après l'ajout de photos de terrain) |
 |---|---|---|---|
 | Routeur | feuille, fruit ou autre | 99,8 % | — |
-| Maladies | 51 classes | 99,0 % (macro-F1 0,968) | 61,8 % ; 89 % des réponses justes au-dessus du seuil de 0,9 |
-| Feuille (v3) | 51 maladies + 9 carences | carence ou maladie : 97,6 % / 98,9 % ; bon nutriment : 91,4 % | — |
+| Maladies (v2) | 51 classes | 99,5 % (macro-F1 0,976) | 52,9 → **80,1 %** (703 photos) ; PlantDoc seul 61,9 → 71,6 % |
+| Feuille (v4) | 51 maladies + 9 carences | 97,0 % ; carence ou maladie 98,9 % | 50,9 → **78,5 %** (703 photos) |
 | Fruits | 18 classes | 98,3 % (macro-F1 0,897) | — |
-| Culture (v3a) | 14 cultures + « autre plante » | 99,2 % | 85,9 % |
+| Culture (v4) | 14 cultures + « autre plante » | 99,9 % | 58,9 → **94,3 %** (1 861 photos) |
 
-**Combinaison utilisée par les agents.** Les poids sont appris sur la validation. Les chiffres donnent : culture juste / culture fausse avec une confiance d'au moins 85 %.
+Les photos de terrain de PlantWild, de pommes de terre au champ et de vignes (GVLiD) ont été ajoutées le 20/11/2026. Les gains sur ces sources sont optimistes, car leur test vient de la même source que leur entraînement. Sur PlantDoc, source inchangée, le modèle des maladies gagne 9,7 points (McNemar p = 0,008).
 
-| Culture reconnue | Labo (358) | Terrain (199) | Nouvelles sources (216) | Photos d'Internet (15) |
+**Combinaison utilisée par les agents.** Les poids sont appris sur la validation. Les chiffres donnent : culture juste / culture fausse avec une confiance d'au moins 85 %. Mêmes jeux de test avant et après.
+
+| Décision de l'agent (vote + VLM) | Labo (358) | Terrain (703) | Nouvelles sources (216) | Photos d'Internet (15) |
 |---|---|---|---|---|
-| Combinaison des modèles | 99,2 / 0 | 86,9 / 2,0 | 99,5 / 0 | 26,7 / 26,7 |
-| Combinaison + VLM (contrôle et secours) | 98,6 / 0 | 85,4 / 1,0 | 96,8 / 0 | 66,7 / 0 |
+| anciens modèles | 98,6 / 0 | 78,0 / 2,0 | 96,8 / 0 | 66,7 / 0 |
+| **nouveaux modèles** | 97,2 / 0 | **88,9 / 0,4** | 97,2 / 0 | **100 / 0** |
 
-Avec le VLM, le choix entre carence et maladie est juste dans 98,0 % des cas sur les photos de terrain. La chaîne complète (culture, puis type de problème, puis classe) est juste dans 95 % des cas sur les photos de laboratoire et dans environ 63 % des cas sur les photos de terrain.
+Avec les nouveaux modèles, le choix entre carence et maladie est juste dans 99,4 % des cas sur les photos de terrain. La chaîne complète (culture, puis type de problème, puis classe) est juste dans 97,2 % des cas sur les photos de laboratoire et dans **78,2 %** des cas sur les photos de terrain (55,2 % avant).
 
 Le détail est dans [docs/results_vision.md](docs/results_vision.md) : comparaison CNN et ViT, hypothèses H1 à H3, seuils de confiance, combinaison et VLM.
 
@@ -237,6 +239,7 @@ AgrIA/
 | PlantVillage, PlantDoc, OLID I | images de maladies et de carences (laboratoire et terrain) |
 | Jeux de carences : poivron, maïs (Mendeley), tomate (Mendeley, Tomato-Village), CitrusUAT (Zenodo) | carences des cultures du projet |
 | Jeux d'olivier et d'agrumes (dont lemon_bd) | reconnaissance de la culture |
+| PlantWild v2 (CC BY-NC-ND 4.0), pommes de terre au champ (Mendeley, CC BY 4.0), GVLiD vigne (Mendeley, CC BY 4.0) | photos de terrain ajoutées le 20/11/2026 ; GVLiD pour la culture seulement |
 | Liste des pesticides homologués en Tunisie (Ministère de l'Agriculture, 22/05/2024) | traitements, doses, délais avant récolte |
 | Base de données des pesticides de l'UE | limites maximales de résidus |
 | agrishop, agriclic | engrais : composition et doses |
@@ -257,7 +260,7 @@ Chaque jeu garde sa propre licence. La plupart sont en CC BY 4.0. **Tomato-Villa
 
 ## Limites connues
 
-- **Photos de terrain.** Les modèles ont surtout appris sur des photos de laboratoire. Sur le terrain, le diagnostic exact de la maladie tombe à environ 62 %, d'où le seuil de 0,9 et les questions de confirmation.
+- **Photos de terrain.** Les modèles ont surtout appris sur des photos de laboratoire. Sur le terrain, le diagnostic exact de la maladie était d'environ 62 % ; avec les photos de terrain ajoutées, il atteint 80 % sur le test terrain, mais seulement 72 % sur PlantDoc, d'où le seuil de 0,9 et les questions de confirmation.
 - **Peu de photos tunisiennes.** L'olivier, le palmier et les agrumes ont moins d'images et des sources peu variées. Le modèle apprend en partie le style des photos de chaque source. Un jeu de test de photos tunisiennes reste à construire.
 - **Carences de certaines cultures.** Aucun jeu public n'existe pour l'olivier, la vigne, la pomme de terre et les arbres fruitiers : leurs carences sont toujours présentées comme des hypothèses.
 - **VLM.** Il est faible sur les photos de laboratoire et très bon sur les photos d'Internet. Son seuil de secours a été réglé en partie sur un petit échantillon de 15 photos. Il ajoute environ 8 secondes par nouvelle photo et dépend du service NVIDIA.
