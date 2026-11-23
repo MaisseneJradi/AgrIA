@@ -33,6 +33,13 @@ Blocking rules
   14. a practical dose ("Dose pratique : 48 g pour un pulvérisateur de 16 L ; 1,5 kg pour vos 0,5 ha") whose
       quantities differ from the official dose converted by dose_calc, written for a dose that cannot be converted,
       without the sprayer volume or the area it is for, or written outside the lines of a product (phyto step 5)
+  15. a product whose WHO hazard class is known (validated docs/substance_hazard.csv): class not written under it, or
+      a different class written
+  16. a product highly toxic to bees (validated docs/bee_hazard.csv) without its bee warning (no application during
+      flowering)
+  17. a pesticide without the line of protective equipment
+  18. a rain (24 h) or wind (> 15 km/h, 12 h) warning of the forecast ("meteo" of the answer) not written, or written
+      with another number (rules 15-18: phyto step 6)
 Warnings (the answer must mention them): restriction, provisional authorisation, relation vecteur or proche,
 DAR not given by the list, model confusions of fertilizers.py.
 """
@@ -44,6 +51,7 @@ import ranking
 from dose_calc import TANK_L, area_text, practical_dose
 from dose_calc import check as check_dose
 from fertilizers import get_fertilizers
+from hazard import bee_toxic, who_class
 from treatments import get_treatments
 
 
@@ -117,6 +125,29 @@ def _named_in_text(text):
 
 
 PRACTICAL_MARKERS = ("Dose pratique", "الكمية العملية")  # first words of the practical-dose line (redaction.py)
+# step 6 (redaction.py): protective equipment line, weather lines, bee warning, WHO class written in the reasons
+PPE_MARKERS = ("Protection :", "الوقاية:")
+WEATHER_MARKERS = ("Météo :", "الطقس:")
+RAIN_WORDS, WIND_WORDS, BEE_WORDS = ("pluie", "أمطار"), ("vent", "رياح"), ("abeilles", "النحل")
+WHO_IN_TEXT = re.compile(r"(?:OMS|صنف السمية|صنف)\s+(Ia|Ib|III|II|U)(?![A-Za-z])")
+
+
+def _num_text(x):
+    return f"{x:.1f}".rstrip("0").rstrip(".").replace(".", ",")
+
+
+def product_block(p, text):
+    """The line of product p and the indented lines under it (practical dose, reasons)."""
+    lines, out = text.splitlines(), []
+    for i, line in enumerate(lines):
+        if p.get("nom") and p["nom"] in line and (p.get("dose") or "") in line:
+            out.append(line)
+            for nxt in lines[i + 1:]:
+                if not nxt.startswith("  "):
+                    break
+                out.append(nxt)
+            break
+    return "\n".join(out)
 
 
 def practical_line_of(p, text):
@@ -209,6 +240,18 @@ def check_answer(answer):
                     reasons.append(f"« {p['nom']} » : la dose pratique ne dit pas le volume du pulvérisateur")
                 if expected.get("surface") and area_text(ctx["area"]) not in line:
                     reasons.append(f"« {p['nom']} » : la dose pratique ne dit pas la surface")
+        # rules 15-16: the WHO class and the bee warning of the validated tables are written for this product
+        block = product_block(p, text)
+        cls_expected = who_class(usages[0])
+        if cls_expected:
+            written = WHO_IN_TEXT.findall(block)
+            if not written:
+                reasons.append(f"« {p['nom']} » : classe de toxicité OMS ({cls_expected}) non écrite")
+            elif any(c != cls_expected for c in written):
+                reasons.append(f"« {p['nom']} » : classe de toxicité OMS fausse (liste OMS : {cls_expected})")
+        if bee_toxic(usages[0]) and not any(p["nom"] in x and any(b in x for b in BEE_WORDS)
+                                            for x in text.splitlines()):
+            reasons.append(f"« {p['nom']} » : très toxique pour les abeilles, avertissement absent")
         same = ranking.shared_groups(ranking.moa_groups(usages[0]), last) if last else set()
         if same and alternative:
             reasons.append(f"« {p['nom']} » : même groupe ({' + '.join(sorted(same))}) que le dernier traitement alors "
@@ -238,6 +281,20 @@ def check_answer(answer):
     stray = [x for x in text.splitlines() if any(m in x for m in PRACTICAL_MARKERS) and x not in attached]
     if stray:
         reasons.append("dose pratique écrite hors de la ligne d'un produit retenu")
+
+    # rule 17: protective equipment with any pesticide; rule 18: the weather warnings of the forecast, with its numbers
+    # (like rule 8, they read the text: an answer given without text is checked on its facts only)
+    if produits and text and not any(m in text for m in PPE_MARKERS):
+        reasons.append("équipement de protection non indiqué alors qu'un pesticide est conseillé")
+    meteo = answer.get("meteo") or {}
+    if produits and text and meteo:
+        lines = [x for x in text.splitlines() if any(m in x for m in WEATHER_MARKERS)]
+        if meteo.get("pluie") and not any(_num_text(meteo["pluie_mm"]) in x and any(w in x for w in RAIN_WORDS)
+                                          for x in lines):
+            reasons.append(f"pluie prévue ({meteo['pluie_mm']} mm) non signalée ou chiffre différent")
+        if meteo.get("vent") and not any(_num_text(meteo["vent_max_kmh"]) in x and any(w in x for w in WIND_WORDS)
+                                         for x in lines):
+            reasons.append(f"vent prévu ({meteo['vent_max_kmh']} km/h) non signalé ou chiffre différent")
 
     for name in _named_in_text(text):
         if not registered(name) and not any(_same_product(name, e.get("nom", "")) for e in engrais):

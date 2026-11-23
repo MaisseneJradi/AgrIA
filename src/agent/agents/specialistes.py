@@ -17,6 +17,8 @@ import time
 from src.agent import paths  # noqa: F401
 from dose_calc import practical_dose  # src/tools
 from fertilizers import get_fertilizers
+from hazard import bee_toxic, who_class
+from weather import spray_conditions
 from prevention import cultural_sentences, prevention_advice
 from rag import search_knowledge
 from ranking import decisive_fields, rank
@@ -53,8 +55,12 @@ def phytosanitaire(d):
                  "dar_message": u["dar_message"], "relation": u["relation"], "product_id": u["product_id"],
                  "bio_ue": u["bio_ue"], "ue_approuve": u["ue_approuve"], "raisons": u["raisons"],
                  # the registered dose for a 16 L sprayer and the farmer's area (dose_calc.py): None when unreadable
-                 "dose_pratique": practical_dose(u["dose"], ctx.get("area"))}
+                 "dose_pratique": practical_dose(u["dose"], ctx.get("area")),
+                 # applicator and bee safety (validated rows of docs/substance_hazard.csv and docs/bee_hazard.csv)
+                 "classe_oms": who_class(u), "abeilles": bool(bee_toxic(u))}
                 for u in chosen]
+    # weather of the next hours (Open-Meteo, cached; nothing when unreachable; not under a greenhouse)
+    meteo = spray_conditions(d.get("gouvernorat_officiel")) if produits and ctx.get("greenhouse") != "y" else None
     # advice never carries a product: sentences of the sheets without chemistry, and, when nothing is registered,
     # the validated prevention advice of docs/conseils_prevention.csv and the CRDA referral
     conseils = cultural_sentences(passages)
@@ -73,7 +79,7 @@ def phytosanitaire(d):
                             "prevention": prevention, "orientation_crda": not usages or none_fits,
                             "ecartes": ranked["ecartes"], "aucun_adapte": none_fits,
                             "n_candidats": ranked["n_candidats"], "questions_contexte": questions,
-                            "dernier_groupe": ranked["dernier_groupe"],
+                            "dernier_groupe": ranked["dernier_groupe"], "meteo": meteo,
                             "rotation_impossible": ranked["rotation_impossible"],
                             # one line on rotation when a product of the answer has a known FRAC / IRAC group
                             "rotation_conseil": any(r[0] in ("groupe", "rotation") for p in produits

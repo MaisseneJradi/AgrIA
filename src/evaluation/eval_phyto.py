@@ -33,6 +33,7 @@ import argparse
 import csv
 import datetime
 import re
+import os
 import statistics
 import subprocess
 import time
@@ -41,12 +42,15 @@ from pathlib import Path
 
 from langgraph.graph import START, StateGraph
 
+os.environ.setdefault("AGRIA_METEO", "0")  # the answers must not depend on the day of the run (weather: unit tests)
+
 from src.agent import paths  # noqa: F401
 from common import fold, query  # src/tools
 from dose_calc import check as check_dose
 from dose_calc import practical_dose, written_quantities
 from safety import _named_in_text, _same_product, _squash, chemical_terms, practical_line_of
 from treatments import GROUPS
+import hazard
 import ranking
 from src.agent.agents.aides import class_name
 from src.agent.agents.coordinateur import crda, finaliser, rediger, secours
@@ -64,7 +68,7 @@ LOG_COLUMNS = ["date", "step", "branch", "change", "n_cases", "safety_pct", "hor
                "recall_or_pct", "absence_dite_pct", "prevention_crda_pct", "engrais_bons_pct", "dose_dar_exact_pct", "n_produits", "blocage_pct", "crda_pct",
                "liens_corrects", "liens_faux", "liens_attendus", "dar_trop_long", "export_non_ue", "bio_non_bio",
                "rotation", "rotation_cas", "ligne_rotation_pct", "dose_pratique_pct", "dose_pratique_exacte_pct",
-               "questions_moy", "bio_debut_pct", "pourquoi_pct",
+               "questions_moy", "bio_debut_pct", "pourquoi_pct", "epi_pct", "classe_oms_pct", "abeilles_pct",
                "latence_med_ms", "latence_p95_ms", "notes"]
 FRUIT_CLASSES = {"citrus__black_spot", "citrus__canker", "citrus__scab", "orange__citrus_greening",
                  "pomegranate__alternaria_spot", "pomegranate__anthracnose", "pomegranate__bacterial_blight",
@@ -199,12 +203,19 @@ def _other_group_fits(case, last):
 def assume_validated(path):
     """SIMULATION ONLY (--supposer-valides): the agents read the proposed rows of this table as if validated, to show
     the effect of the review before it is done. Never used by the application."""
-    rows = ranking._rows(path, statuses=("proposed", "validated"))
+    both = ("proposed", "validated")
     groups = {}
-    for r in rows:
+    for r in ranking._rows(path, statuses=both):
         if r.get("groupe"):
             groups.setdefault(r["substance"].strip().lower(), set()).add(r["groupe"].strip())
     ranking._moa = lambda: groups
+    # step 6: WHO classes and bee hazards too
+    who = {r["substance"].strip().lower(): r["classe_oms"].strip() for r in ranking._rows(ranking.HAZARD, both)
+           if r.get("classe_oms")}
+    ranking._hazard = lambda: who
+    bees = {r["substance"].strip().lower() for r in ranking._rows(hazard.BEES, both)
+            if r.get("tres_toxique_abeilles") == "oui"}
+    hazard._bees = lambda: bees
 
 
 def _split(cell):
@@ -299,6 +310,13 @@ def score(case, out, ms):
         "rotation_connue": bool(last), "rotation_viol": " | ".join(repeat) if rotation_viol else "",
         "avec_groupe": with_group, "ligne_rotation": with_group and ROTATION_LINE in text,
         "n_dose_pratique": len(practical), "n_dose_pratique_exacte": sum(not e for e in practical),
+        # step 6: protective equipment, WHO class written (when known), bee warning (when highly toxic)
+        "epi": bool(shown) and "Protection :" in text,
+        "n_classe_connue": sum(bool(hazard.who_class(p)) for p in shown),
+        "n_classe_ecrite": sum(bool(hazard.who_class(p)) and f"OMS {hazard.who_class(p)} " in text for p in shown),
+        "n_abeilles": sum(bool(hazard.bee_toxic(p)) for p in shown),
+        "n_abeilles_dit": sum(bool(hazard.bee_toxic(p)) and any(p["nom"] in x and "abeilles" in x
+                                                                for x in text.splitlines()) for p in shown),
     }
 
 
@@ -340,6 +358,9 @@ def summarize(rows):
         "bio_debut_pct": pct(sum(r["bio_en_tete"] for r in rows if r["bio_possible"]),
                              sum(bool(r["bio_possible"]) for r in rows)),
         "pourquoi_pct": pct(sum(r["n_pourquoi"] for r in rows), shown),
+        "epi_pct": pct(sum(r["epi"] for r in rows), sum(bool(r["n_shown"]) for r in rows)),
+        "classe_oms_pct": pct(sum(r["n_classe_ecrite"] for r in rows), sum(r["n_classe_connue"] for r in rows)),
+        "abeilles_pct": pct(sum(r["n_abeilles_dit"] for r in rows), sum(r["n_abeilles"] for r in rows)),
         "latence_med_ms": round(statistics.median(ms)), "latence_p95_ms": ms[min(n - 1, int(0.95 * n))],
     }
 
@@ -407,6 +428,9 @@ TABLE = [("Sécurité : réponses avec un pesticide non homologué ou interdit (
          ("Début d'attaque : produit bio en tête quand il en existe un", "bio_debut_pct", " %"),
          ("Produits avec une ligne « pourquoi »", "pourquoi_pct", " %"),
          ("Questions de contexte par réponse (moyenne)", "questions_moy", ""),
+         ("Réponses avec pesticide qui donnent l'équipement de protection", "epi_pct", " %"),
+         ("Produits de classe OMS connue dont la classe est écrite", "classe_oms_pct", " %"),
+         ("Produits très toxiques pour les abeilles avec l'avertissement", "abeilles_pct", " %"),
          ("Latence médiane / p95 (ms, sans la vision)", ("latence_med_ms", "latence_p95_ms"), "")]
 
 

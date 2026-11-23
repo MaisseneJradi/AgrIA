@@ -67,6 +67,7 @@ def rediger(d):
                  "n_candidats": tr.get("n_candidats", 0), "questions_contexte": tr.get("questions_contexte", []),
                  "dernier_groupe": tr.get("dernier_groupe", []), "rotation_impossible": tr.get("rotation_impossible"),
                  "rotation_conseil": tr.get("rotation_conseil"),
+                 "meteo": tr.get("meteo") if produits else None, "securite": bool(produits),
                  "verifier_dar": ctx.get("days_to_harvest")
                  if any(p["dar_jours"] is None for p in produits) else None}
     text = compose(facts, "fr")
@@ -76,7 +77,7 @@ def rediger(d):
              if issue == "conseil" else [],
              "engrais": [{"nom": e["nom"]} for e in engrais] if issue == "conseil" else [],
              "texte": text, "avertissements": warnings if issue == "conseil" else [], "faits": facts,
-             "contexte": ctx}
+             "contexte": ctx, "meteo": facts.get("meteo")}
     n = d.get("essais", 0)
     action = "réponse rédigée" if n == 0 else f"réponse réécrite (essai {n + 1}) sans : {blocked[:120]}"
     return {"brouillon": draft, "trace": step("Coordinateur", action, t0)}

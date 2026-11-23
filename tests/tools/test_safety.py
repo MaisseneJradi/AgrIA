@@ -3,6 +3,8 @@ import unittest
 from tests.tools import _path  # noqa: F401
 from safety import check_answer
 
+# line required with any pesticide since phyto step 6 (rule 17)
+PPE = "Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes"
 BASE = {"task": "diseases", "classe": "tomato__late_blight", "culture": "tomate", "fiable": True}
 GOOD = {"nom": "CIMOXATE C WG", "dose": "3 kg/ha (300 g/hl)", "dar_jours": 3}
 
@@ -14,7 +16,8 @@ class TestSafety(unittest.TestCase):
         self.assertTrue(any(word in x for x in r["raisons"]), r["raisons"])
 
     def test_registered_answer_passes(self):
-        r = check_answer(dict(BASE, produits=[GOOD], texte="Traitez avec CIMOXATE C WG, dose 3 kg/ha (300 g/hl)."))
+        r = check_answer(dict(BASE, produits=[GOOD], texte="Traitez avec CIMOXATE C WG, dose 3 kg/ha (300 g/hl).\n"
+                                                           + PPE))
         self.assertTrue(r["valide"], r["raisons"])
         self.assertEqual(r["produits_verifies"][0]["product_id"], "homo-fon-092")
 

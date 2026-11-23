@@ -87,7 +87,8 @@ class TestRule14(unittest.TestCase):
     LINE = "- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours"
 
     def answer(self, practical):
-        return dict(self.BASE, produits=[self.GOOD], texte=self.LINE + "\n  " + practical)
+        return dict(self.BASE, produits=[self.GOOD], texte=self.LINE + "\n  " + practical
+                    + "\nProtection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes")
 
     def test_exact_practical_dose_passes(self):
         r = check_answer(self.answer("Dose pratique : 48 g pour un pulvérisateur de 16 L ; 1,5 kg pour vos 0,5 ha"))
