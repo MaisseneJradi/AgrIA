@@ -30,6 +30,9 @@ Blocking rules
   (rules 10-12, phyto step 3: the context filters of ranking.py, checked again on the final answer)
   13. "contexte".last_treatment_group known: a product sharing a FRAC / IRAC group with it (low-risk groups M, BM, P,
       U, UN left out) while another registered product of a known, different group fits the case (phyto step 4)
+  14. a practical dose ("Dose pratique : 48 g pour un pulvérisateur de 16 L ; 1,5 kg pour vos 0,5 ha") whose
+      quantities differ from the official dose converted by dose_calc, written for a dose that cannot be converted,
+      without the sprayer volume or the area it is for, or written outside the lines of a product (phyto step 5)
 Warnings (the answer must mention them): restriction, provisional authorisation, relation vecteur or proche,
 DAR not given by the list, model confusions of fertilizers.py.
 """
@@ -38,6 +41,8 @@ from functools import lru_cache
 
 from common import fold, query
 import ranking
+from dose_calc import TANK_L, area_text, practical_dose
+from dose_calc import check as check_dose
 from fertilizers import get_fertilizers
 from treatments import get_treatments
 
@@ -111,6 +116,23 @@ def _named_in_text(text):
     return found
 
 
+PRACTICAL_MARKERS = ("Dose pratique", "الكمية العملية")  # first words of the practical-dose line (redaction.py)
+
+
+def practical_line_of(p, text):
+    """The practical-dose line written under the line of product p (indented lines that follow it), or None."""
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        if p.get("nom") and p["nom"] in line and (p.get("dose") or "") in line:
+            for nxt in lines[i + 1:]:
+                if not nxt.startswith("  "):
+                    break
+                if any(m in nxt for m in PRACTICAL_MARKERS):
+                    return nxt
+            return None
+    return None
+
+
 def _same_product(a, b):
     fa, fb = fold(a), fold(b)
     return fa == fb or fa.startswith(fb + " ") or fb.startswith(fa + " ")
@@ -153,6 +175,7 @@ def check_answer(answer):
         alternative = any(ranking.moa_groups(u) and not ranking.shared_groups(ranking.moa_groups(u), last)
                           for u in main if not ranking.set_aside(u, ctx, dars.get(u["produit"], ())))
 
+    attached = set()  # practical-dose lines that belong to a product of the answer
     for p in produits:
         usages = registered(p.get("nom", ""))
         if not usages:
@@ -169,6 +192,23 @@ def check_answer(answer):
                 reasons.append(f"délai avant récolte de « {p['nom']} » inventé : la liste n'en donne pas")
             elif p["dar_jours"] not in dars:
                 reasons.append(f"délai avant récolte de « {p['nom']} » faux (liste : {sorted(d for d in dars if d is not None)})")
+        # rule 14: the practical dose written under the product = the official dose converted (dose_calc)
+        line = practical_line_of(p, text)
+        if line is not None:
+            attached.add(line)
+            official = next((u["dose"] for u in usages if _squash(u["dose"]) == _squash(p.get("dose") or "")),
+                            usages[0]["dose"])
+            expected = practical_dose(official, ctx.get("area"))
+            if expected is None:
+                reasons.append(f"« {p['nom']} » : dose pratique écrite alors que la dose officielle ({official}) ne se "
+                               "convertit pas")
+            else:
+                for err in check_dose(line, expected):
+                    reasons.append(f"« {p['nom']} » : dose pratique fausse ({err})")
+                if expected.get("pulverisateur") and f"{TANK_L} L" not in line:
+                    reasons.append(f"« {p['nom']} » : la dose pratique ne dit pas le volume du pulvérisateur")
+                if expected.get("surface") and area_text(ctx["area"]) not in line:
+                    reasons.append(f"« {p['nom']} » : la dose pratique ne dit pas la surface")
         same = ranking.shared_groups(ranking.moa_groups(usages[0]), last) if last else set()
         if same and alternative:
             reasons.append(f"« {p['nom']} » : même groupe ({' + '.join(sorted(same))}) que le dernier traitement alors "
@@ -194,6 +234,10 @@ def check_answer(answer):
         if u["relation"] in ("vecteur", "proche"):
             warnings.append(f"« {u['produit']} » : {u['relation_sens']}")
         checked.append({"nom": u["produit"], "product_id": u["product_id"], "relation": u["relation"]})
+
+    stray = [x for x in text.splitlines() if any(m in x for m in PRACTICAL_MARKERS) and x not in attached]
+    if stray:
+        reasons.append("dose pratique écrite hors de la ligne d'un produit retenu")
 
     for name in _named_in_text(text):
         if not registered(name) and not any(_same_product(name, e.get("nom", "")) for e in engrais):

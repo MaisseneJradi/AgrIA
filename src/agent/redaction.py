@@ -12,6 +12,7 @@ from functools import lru_cache
 
 from src.agent import paths  # noqa: F401
 from common import query  # src/tools
+from dose_calc import TANK_L, area_text, qty_text
 
 MONTHS = {
     "fr": ["", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre",
@@ -71,6 +72,11 @@ P = {
         "r_rotation": "groupe {g}, différent de votre dernier traitement ({last})",
         "r_groupe": "groupe {g}",
         "r_groupe_faible_risque": "groupe {g} ; {shared} déjà utilisé, mais à faible risque de résistance",
+        # step 5: practical dose (dose_calc.py); "L" of the sprayer in capital, quantities in g, kg, ml, l
+        "dp": "Dose pratique : ", "dp_tank": "{q} pour un pulvérisateur de {l} L", "dp_area": "{q} pour vos {a} ha",
+        "dp_tank_absent": "pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir "
+                          "l'étiquette",
+        "dp_area_absent": "pour vos {a} ha, la quantité dépend du volume de mélange par hectare : voir l'étiquette",
         "c_meme_groupe": "même groupe que votre dernier traitement ({last}) : {n} produit(s)",
         "rotation": "Alternez les groupes de mode d'action (code FRAC ou IRAC indiqué sur l'étiquette) d'un traitement "
                     "à l'autre : répéter le même groupe favorise la résistance de la maladie ou du ravageur.",
@@ -138,6 +144,9 @@ P = {
         "r_rotation": "مجموعة {g} مختلفة عن آخر مداواة ({last})",
         "r_groupe": "مجموعة {g}",
         "r_groupe_faible_risque": "مجموعة {g}؛ {shared} مستعملة سابقًا لكن خطر المقاومة فيها ضعيف",
+        "dp": "الكمية العملية: ", "dp_tank": "{q} لمرشّة ظهرية سعتها {l} L", "dp_area": "{q} لمساحة {a} هكتار",
+        "dp_tank_absent": "بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق",
+        "dp_area_absent": "بالنسبة لمساحة {a} هكتار، الكمية حسب حجم المحلول في الهكتار: راجع الملصق",
         "c_meme_groupe": "نفس مجموعة آخر مداواة ({last}): {n} منتج",
         "rotation": "غيّر مجموعة طريقة التأثير (رمز FRAC أو IRAC المكتوب على الملصق) من مداواة إلى أخرى: تكرار نفس "
                     "المجموعة يساعد المرض أو الحشرة على اكتساب المقاومة.",
@@ -187,6 +196,24 @@ def reason_text(r, t):
     if code == "groupe_faible_risque":
         return t["r_groupe_faible_risque"].format(g=r[1], shared=r[2])
     return t["r_" + code]
+
+
+def practical_line(dp, t, lang):
+    """dose_calc.practical_dose(...) -> 'Dose pratique : 48 g pour un pulvérisateur de 16 L ; 1,5 kg pour vos 0,5 ha'.
+    The quantities are formatted by dose_calc (the Vérificateur checks them against the official dose)."""
+    parts = []
+    tank, area = dp.get("pulverisateur"), dp.get("surface")
+    if tank:
+        parts.append(t["dp_tank"].format(q=qty_text(tank["min"], tank["max"], tank["base"], lang),
+                                         l=dp.get("reservoir_l", TANK_L)))
+    elif dp.get("pulverisateur_absent"):
+        parts.append(t["dp_tank_absent"])
+    if area:
+        parts.append(t["dp_area"].format(q=qty_text(area["min"], area["max"], area["base"], lang),
+                                         a=area_text(area["ha"])))
+    elif dp.get("surface_absente"):
+        parts.append(t["dp_area_absent"].format(a=area_text(dp.get("ha_demandes")) if dp.get("ha_demandes") else ""))
+    return t["dp"] + t["sep"].join(parts)
 
 
 def set_aside_lines(ecartes, ctx, t, last=""):
@@ -344,6 +371,7 @@ def compose(d, lang="fr"):
                                     dar=f"{p['dar_jours']} {days_word(p['dar_jours'], t)}" if p["dar_jours"] is not None
                                     else t["dar_inconnu"])
                 # the reasons go on their own line: the product line keeps exactly its registered dose (rule 8)
+                + (("\n  " + practical_line(p["dose_pratique"], t, lang)) if p.get("dose_pratique") else "")
                 + ("\n  " + t["pourquoi"] + t["sep"].join(reason_text(r, t) for r in p["raisons"])
                    if p.get("raisons") else "")
                 for p in d["produits"]))
