@@ -49,7 +49,7 @@ from common import fold, query  # src/tools
 from dose_calc import check as check_dose
 from dose_calc import practical_dose, written_quantities
 from safety import _named_in_text, _same_product, _squash, chemical_terms, practical_line_of
-from treatments import GROUPS
+from treatments import GROUPS, LIST_DATE
 import hazard
 import ranking
 from src.agent.agents.aides import class_name
@@ -69,6 +69,7 @@ LOG_COLUMNS = ["date", "step", "branch", "change", "n_cases", "safety_pct", "hor
                "liens_corrects", "liens_faux", "liens_attendus", "dar_trop_long", "export_non_ue", "bio_non_bio",
                "rotation", "rotation_cas", "ligne_rotation_pct", "dose_pratique_pct", "dose_pratique_exacte_pct",
                "questions_moy", "bio_debut_pct", "pourquoi_pct", "epi_pct", "classe_oms_pct", "abeilles_pct",
+               "date_liste_pct", "lmr_pct", "dar_inconnu_pct",
                "latence_med_ms", "latence_p95_ms", "notes"]
 FRUIT_CLASSES = {"citrus__black_spot", "citrus__canker", "citrus__scab", "orange__citrus_greening",
                  "pomegranate__alternaria_spot", "pomegranate__anthracnose", "pomegranate__bacterial_blight",
@@ -216,6 +217,15 @@ def assume_validated(path):
     bees = {r["substance"].strip().lower() for r in ranking._rows(hazard.BEES, both)
             if r.get("tres_toxique_abeilles") == "oui"}
     hazard._bees = lambda: bees
+    # step 7: DAR completions and Codex commodities
+    import mrl
+    import treatments
+    comp = {(r["product_id"], r["culture"]): r for r in ranking._rows(treatments.COMPLETIONS, both)}
+    treatments._completions = lambda: comp
+    codex = {}
+    for r in ranking._rows(mrl.MAPPING, both):
+        codex.setdefault(r["culture"], []).append((r["denree_codex"], r["niveau"]))
+    mrl._mapping = lambda: codex
 
 
 def _split(cell):
@@ -251,7 +261,9 @@ def score(case, out, ms):
     exact = []
     for p in shown:
         uses = official_uses(p["product_id"], crop)
-        ok = any(_squash(u["dose"]) == _squash(p["dose"]) and _dar(u["dar_jours"]) == p["dar_jours"] for u in uses)
+        # the DAR equals the list, or the list has none and it comes from a validated completion (step 7)
+        ok = any(_squash(u["dose"]) == _squash(p["dose"]) and (_dar(u["dar_jours"]) == p["dar_jours"] or (
+            _dar(u["dar_jours"]) is None and p.get("dar_source") == "complement")) for u in uses)
         exact.append(ok)
 
     blocked = sum(1 for t in out["trace"] if t["agent"] == "Vérificateur" and "bloquée" in t["action"])
@@ -317,6 +329,13 @@ def score(case, out, ms):
         "n_abeilles": sum(bool(hazard.bee_toxic(p)) for p in shown),
         "n_abeilles_dit": sum(bool(hazard.bee_toxic(p)) and any(p["nom"] in x and "abeilles" in x
                                                                 for x in text.splitlines()) for p in shown),
+        # step 7: date of the list, MRL of the market, DAR still unknown
+        "phyto": bool(shown) or NO_PRODUCT in text or "ne convient à votre situation" in text,
+        "date_liste": f"liste DGSVCIA du {LIST_DATE}" in text,
+        "n_lmr_attendue": len(shown) if case.get("market") in ("local", "export") else 0,
+        "n_lmr": sum(f"LMR de {p['nom']} (" in text for p in shown) if case.get("market") in ("local", "export")
+        else 0,
+        "n_dar_inconnu": sum(p["dar_jours"] is None for p in shown),
     }
 
 
@@ -361,6 +380,9 @@ def summarize(rows):
         "epi_pct": pct(sum(r["epi"] for r in rows), sum(bool(r["n_shown"]) for r in rows)),
         "classe_oms_pct": pct(sum(r["n_classe_ecrite"] for r in rows), sum(r["n_classe_connue"] for r in rows)),
         "abeilles_pct": pct(sum(r["n_abeilles_dit"] for r in rows), sum(r["n_abeilles"] for r in rows)),
+        "date_liste_pct": pct(sum(r["date_liste"] for r in rows if r["phyto"]), sum(r["phyto"] for r in rows)),
+        "lmr_pct": pct(sum(r["n_lmr"] for r in rows), sum(r["n_lmr_attendue"] for r in rows)),
+        "dar_inconnu_pct": pct(sum(r["n_dar_inconnu"] for r in rows), shown),
         "latence_med_ms": round(statistics.median(ms)), "latence_p95_ms": ms[min(n - 1, int(0.95 * n))],
     }
 
@@ -431,6 +453,9 @@ TABLE = [("Sécurité : réponses avec un pesticide non homologué ou interdit (
          ("Réponses avec pesticide qui donnent l'équipement de protection", "epi_pct", " %"),
          ("Produits de classe OMS connue dont la classe est écrite", "classe_oms_pct", " %"),
          ("Produits très toxiques pour les abeilles avec l'avertissement", "abeilles_pct", " %"),
+         ("Réponses phyto qui citent la liste DGSVCIA et sa date", "date_liste_pct", " %"),
+         ("Produits avec la LMR de leur marché (cas au marché connu)", "lmr_pct", " %"),
+         ("Produits montrés dont le DAR reste inconnu", "dar_inconnu_pct", " %"),
          ("Latence médiane / p95 (ms, sans la vision)", ("latence_med_ms", "latence_p95_ms"), "")]
 
 

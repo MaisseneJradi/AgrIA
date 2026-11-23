@@ -123,7 +123,7 @@ class TestRule9(unittest.TestCase):
 
     def test_substances_on_the_line_of_a_registered_product_pass(self):
         text = ("- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours"
-                "\nProtection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes")  # rule 17
+                "\nProtection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes\nListe DGSVCIA du 22/05/2024")  # rule 17
         r = check_answer(dict(self.BASE, produits=[self.GOOD], texte=text))
         self.assertTrue(r["valide"], r["raisons"])
 

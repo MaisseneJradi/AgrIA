@@ -4,7 +4,7 @@ from tests.tools import _path  # noqa: F401
 from safety import check_answer
 
 # line required with any pesticide since phyto step 6 (rule 17)
-PPE = "Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes"
+PPE = "Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes\nListe DGSVCIA du 22/05/2024"
 BASE = {"task": "diseases", "classe": "tomato__late_blight", "culture": "tomate", "fiable": True}
 GOOD = {"nom": "CIMOXATE C WG", "dose": "3 kg/ha (300 g/hl)", "dar_jours": 3}
 

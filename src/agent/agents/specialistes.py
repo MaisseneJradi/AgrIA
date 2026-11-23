@@ -18,6 +18,8 @@ from src.agent import paths  # noqa: F401
 from dose_calc import practical_dose  # src/tools
 from fertilizers import get_fertilizers
 from hazard import bee_toxic, who_class
+from lexicon import crop_code
+from mrl import applicable_mrl
 from weather import spray_conditions
 from prevention import cultural_sentences, prevention_advice
 from rag import search_knowledge
@@ -53,11 +55,15 @@ def phytosanitaire(d):
     passages = search_knowledge("lutte prévention traitement", k=2, classe=cls)
     produits = [{"nom": u["produit"], "substances": u["substances"], "dose": u["dose"], "dar_jours": u["dar_jours"],
                  "dar_message": u["dar_message"], "relation": u["relation"], "product_id": u["product_id"],
+                 "dar_source": u.get("dar_source"), "dar_texte": u.get("dar_texte"),
+                 "dar_source_detail": u.get("dar_source_detail"),
                  "bio_ue": u["bio_ue"], "ue_approuve": u["ue_approuve"], "raisons": u["raisons"],
                  # the registered dose for a 16 L sprayer and the farmer's area (dose_calc.py): None when unreadable
                  "dose_pratique": practical_dose(u["dose"], ctx.get("area")),
                  # applicator and bee safety (validated rows of docs/substance_hazard.csv and docs/bee_hazard.csv)
-                 "classe_oms": who_class(u), "abeilles": bool(bee_toxic(u))}
+                 "classe_oms": who_class(u), "abeilles": bool(bee_toxic(u)),
+                 # MRL of the market (EU for export, Tunisian or Codex for local): mrl.py; [] when the market is unknown
+                 "lmr_marche": applicable_mrl(u, crop_code(crop) if crop else None, ctx.get("market"))}
                 for u in chosen]
     # weather of the next hours (Open-Meteo, cached; nothing when unreachable; not under a greenhouse)
     meteo = spray_conditions(d.get("gouvernorat_officiel")) if produits and ctx.get("greenhouse") != "y" else None

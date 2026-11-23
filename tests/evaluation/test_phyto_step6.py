@@ -116,7 +116,7 @@ class WithValidated(unittest.TestCase):
         shutil.rmtree(cls.dir)
 
 
-PPE = "Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes"
+PPE = "Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes\nListe DGSVCIA du 22/05/2024"
 
 
 class TestRules15to18(WithValidated):
