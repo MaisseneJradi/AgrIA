@@ -28,6 +28,8 @@ Blocking rules
   11. "contexte".market = export: a product with a substance not approved, or of unknown status, in the EU
   12. "contexte".organic = y: a product with a substance not allowed in organic farming (bio_ue)
   (rules 10-12, phyto step 3: the context filters of ranking.py, checked again on the final answer)
+  13. "contexte".last_treatment_group known: a product sharing a FRAC / IRAC group with it (low-risk groups M, BM, P,
+      U, UN left out) while another registered product of a known, different group fits the case (phyto step 4)
 Warnings (the answer must mention them): restriction, provisional authorisation, relation vecteur or proche,
 DAR not given by the list, model confusions of fertilizers.py.
 """
@@ -35,6 +37,7 @@ import re
 from functools import lru_cache
 
 from common import fold, query
+import ranking
 from fertilizers import get_fertilizers
 from treatments import get_treatments
 
@@ -137,6 +140,19 @@ def check_answer(answer):
     def registered(name):
         return [u for u in allowed if _same_product(u["produit"], name)]
 
+    # rule 13: same FRAC / IRAC group as the last treatment while a product of another known group fits the case
+    ctx = answer.get("contexte") or {}
+    last = ranking.last_groups(ctx.get("last_treatment_group"))
+    alternative = False
+    if last and allowed:
+        main = [u for u in allowed if u["relation"] != "proche"] or allowed
+        dars = {}
+        for u in main:
+            if u["dar_jours"] is not None:
+                dars.setdefault(u["produit"], []).append(u["dar_jours"])
+        alternative = any(ranking.moa_groups(u) and not ranking.shared_groups(ranking.moa_groups(u), last)
+                          for u in main if not ranking.set_aside(u, ctx, dars.get(u["produit"], ())))
+
     for p in produits:
         usages = registered(p.get("nom", ""))
         if not usages:
@@ -153,8 +169,11 @@ def check_answer(answer):
                 reasons.append(f"délai avant récolte de « {p['nom']} » inventé : la liste n'en donne pas")
             elif p["dar_jours"] not in dars:
                 reasons.append(f"délai avant récolte de « {p['nom']} » faux (liste : {sorted(d for d in dars if d is not None)})")
+        same = ranking.shared_groups(ranking.moa_groups(usages[0]), last) if last else set()
+        if same and alternative:
+            reasons.append(f"« {p['nom']} » : même groupe ({' + '.join(sorted(same))}) que le dernier traitement alors "
+                           "qu'un produit d'un autre groupe est homologué pour ce cas")
         # rules 10-12: the situation of the farmer (contexte), when it is known
-        ctx = answer.get("contexte") or {}
         dth = ctx.get("days_to_harvest")
         if dth is not None:
             shown = p.get("dar_jours")

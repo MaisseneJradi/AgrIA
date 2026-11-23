@@ -45,6 +45,7 @@ from src.agent import paths  # noqa: F401
 from common import fold, query  # src/tools
 from safety import _named_in_text, _same_product, _squash, chemical_terms
 from treatments import GROUPS
+import ranking
 from src.agent.agents.aides import class_name
 from src.agent.agents.coordinateur import crda, finaliser, rediger, secours
 from src.agent.agents.linguistique import normalize_context, traduire
@@ -60,13 +61,15 @@ LOG = ROOT / "docs" / "phyto_experiments.csv"
 LOG_COLUMNS = ["date", "step", "branch", "change", "n_cases", "safety_pct", "hors_cible_pct", "coverage_pct",
                "recall_or_pct", "absence_dite_pct", "prevention_crda_pct", "engrais_bons_pct", "dose_dar_exact_pct", "n_produits", "blocage_pct", "crda_pct",
                "liens_corrects", "liens_faux", "liens_attendus", "dar_trop_long", "export_non_ue", "bio_non_bio",
-               "rotation", "questions_moy", "bio_debut_pct", "pourquoi_pct", "latence_med_ms", "latence_p95_ms", "notes"]
+               "rotation", "rotation_cas", "ligne_rotation_pct", "questions_moy", "bio_debut_pct", "pourquoi_pct",
+               "latence_med_ms", "latence_p95_ms", "notes"]
 FRUIT_CLASSES = {"citrus__black_spot", "citrus__canker", "citrus__scab", "orange__citrus_greening",
                  "pomegranate__alternaria_spot", "pomegranate__anthracnose", "pomegranate__bacterial_blight",
                  "pomegranate__cercospora_spot", "tomato__anthracnose", "tomato__blossom_end_rot", "tomato__cracking",
                  "tomato__mold", "tomato__fruitworm"}
 SHOP_URL = re.compile(r"https?://(?:www\.)?(?:agrishop|agriclic)\.tn\S*", re.I)
 NO_PRODUCT = "Aucun produit n'est homologué"
+ROTATION_LINE = "Alternez les groupes de mode d'action"
 ADVICE_HEADERS = ("Mesures de prévention",)  # validated advice only: quoted sheets are often descriptions
 ORIENTATION = "examen sur place"  # words of the CRDA referral given when no product is registered
 
@@ -176,6 +179,31 @@ def _bio_fits(case):
     return _bio_fits_key(case["disease_or_deficiency"], case["crop"], dth, case.get("market") or None)
 
 
+def _other_group_fits(case, last):
+    """A registered product of a known group, not shared with the last treatment, fits this case (DAR, market,
+    organic): then repeating the last group is a fault (step 4)."""
+    from treatments import get_treatments
+    ctx = normalize_context(case)
+    uses = [u for u in get_treatments(case["disease_or_deficiency"], case["crop"]) if u["relation"] != "proche"]
+    dars = {}
+    for u in uses:
+        if u["dar_jours"] is not None:
+            dars.setdefault(u["produit"], []).append(u["dar_jours"])
+    return any(ranking.moa_groups(u) and not ranking.shared_groups(ranking.moa_groups(u), last)
+               for u in uses if not ranking.set_aside(u, ctx, dars.get(u["produit"], ())))
+
+
+def assume_validated(path):
+    """SIMULATION ONLY (--supposer-valides): the agents read the proposed rows of this table as if validated, to show
+    the effect of the review before it is done. Never used by the application."""
+    rows = ranking._rows(path, statuses=("proposed", "validated"))
+    groups = {}
+    for r in rows:
+        if r.get("groupe"):
+            groups.setdefault(r["substance"].strip().lower(), set()).add(r["groupe"].strip())
+    ranking._moa = lambda: groups
+
+
 def _split(cell):
     return [x.strip() for x in str(cell or "").split("|") if x.strip() and x.strip() != "nan"]
 
@@ -223,6 +251,11 @@ def score(case, out, ms):
                              and not info.get(p["product_id"], {}).get("eu_ok", False)],
            "bio_non_bio": [p["nom"] for p in shown if case["organic"] == "y"
                            and not info.get(p["product_id"], {}).get("bio", False)]}
+    # resistance (step 4): a shown product repeats the group of the last treatment while another group fits the case
+    last = ranking.last_groups(case.get("last_treatment_group"))
+    repeat = [p["nom"] for p in shown if last and ranking.shared_groups(ranking.moa_groups(p), last)]
+    rotation_viol = bool(repeat) and _other_group_fits(case, last)
+    with_group = any(ranking.moa_groups(p) for p in shown)
     fert_ok = None
     if kind == "deficiency":
         need = [a.split(":", 1)[1] for a in acceptable if a.startswith("nutriment:")]
@@ -250,6 +283,8 @@ def score(case, out, ms):
         "bio_possible": case.get("stage") == "early" and _bio_fits(case),
         "bio_en_tete": bool(shown) and bool(shown[0].get("bio_ue")),
         "n_pourquoi": sum(bool(p.get("raisons")) for p in shown),
+        "rotation_connue": bool(last), "rotation_viol": " | ".join(repeat) if rotation_viol else "",
+        "avec_groupe": with_group, "ligne_rotation": with_group and ROTATION_LINE in text,
     }
 
 
@@ -279,7 +314,11 @@ def summarize(rows):
         "liens_attendus": sum(bool(r.get("expected")) for r in rows),
         "dar_trop_long": sum(bool(r["dar_trop_long"]) for r in rows),
         "export_non_ue": sum(bool(r["export_non_ue"]) for r in rows),
-        "bio_non_bio": sum(bool(r["bio_non_bio"]) for r in rows), "rotation": "n/a",
+        "bio_non_bio": sum(bool(r["bio_non_bio"]) for r in rows),
+        "rotation": sum(bool(r["rotation_viol"]) for r in rows) if any(r["rotation_connue"] for r in rows)
+        else "n/a (aucun groupe validé)",
+        "rotation_cas": sum(r["rotation_connue"] for r in rows),
+        "ligne_rotation_pct": pct(sum(r["ligne_rotation"] for r in rows), sum(r["avec_groupe"] for r in rows)),
         "questions_moy": round(sum(r["n_questions"] for r in rows) / n, 2),
         "bio_debut_pct": pct(sum(r["bio_en_tete"] for r in rows if r["bio_possible"]),
                              sum(bool(r["bio_possible"]) for r in rows)),
@@ -341,7 +380,9 @@ TABLE = [("Sécurité : réponses avec un pesticide non homologué ou interdit (
          ("DAR plus long que les jours avant récolte (cas)", "dar_trop_long", ""),
          ("Export : substance non approuvée UE (cas)", "export_non_ue", ""),
          ("Bio : produit non autorisé en bio (cas)", "bio_non_bio", ""),
-         ("Rotation (groupe FRAC/IRAC)", "rotation", ""),
+         ("Rotation : même groupe que le dernier traitement alors qu'un autre convient (cas)", "rotation", ""),
+         ("Cas dont le dernier traitement a un groupe reconnu", "rotation_cas", ""),
+         ("Réponses avec un groupe connu qui expliquent la rotation", "ligne_rotation_pct", " %"),
          ("Début d'attaque : produit bio en tête quand il en existe un", "bio_debut_pct", " %"),
          ("Produits avec une ligne « pourquoi »", "pourquoi_pct", " %"),
          ("Questions de contexte par réponse (moyenne)", "questions_moy", ""),
@@ -362,7 +403,12 @@ def main():
     ap.add_argument("--no-log", action="store_true", help="trial run: table on screen only, no file written")
     ap.add_argument("--sans-contexte", action="store_true",
                     help="the agents do not receive the context of the cases (measures the questions asked)")
+    ap.add_argument("--supposer-valides", action="store_true",
+                    help="SIMULATION: the proposed rows of docs/moa_groups.csv are read as validated")
     a = ap.parse_args()
+    if a.supposer_valides:
+        assume_validated(ranking.MOA)
+        print("SIMULATION : groupes FRAC/IRAC proposés lus comme validés")
     cases = read_cases()
     rows = evaluate(cases, with_context=not a.sans_contexte)
     s = summarize(rows)

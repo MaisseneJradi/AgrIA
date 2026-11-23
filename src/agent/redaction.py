@@ -69,6 +69,13 @@ P = {
         "r_dar_dth": "délai avant récolte de {dar} {j}, compatible avec votre récolte dans {dth} jours",
         "r_ue": "substances approuvées dans l'Union européenne",
         "r_rotation": "groupe {g}, différent de votre dernier traitement ({last})",
+        "r_groupe": "groupe {g}",
+        "r_groupe_faible_risque": "groupe {g} ; {shared} déjà utilisé, mais à faible risque de résistance",
+        "c_meme_groupe": "même groupe que votre dernier traitement ({last}) : {n} produit(s)",
+        "rotation": "Alternez les groupes de mode d'action (code FRAC ou IRAC indiqué sur l'étiquette) d'un traitement "
+                    "à l'autre : répéter le même groupe favorise la résistance de la maladie ou du ravageur.",
+        "rotation_impossible": "Aucun autre groupe que celui de votre dernier traitement ({last}) n'est homologué pour ce "
+                               "cas : demandez conseil au CRDA avant de le répéter.",
         "ecartes": "Produits homologués écartés pour votre situation :",
         "aucun_adapte": "Aucun des {n} produits homologués contre ce problème ne convient à votre situation :",
         "c_dar_long": "délai avant récolte plus long que les {dth} jours avant votre récolte : {n} produit(s)",
@@ -129,6 +136,13 @@ P = {
         "r_dar_dth": "مدة قبل الجني {dar} {j}، تتوافق مع الجني بعد {dth} يومًا",
         "r_ue": "مواد فعالة مصادق عليها في الاتحاد الأوروبي",
         "r_rotation": "مجموعة {g} مختلفة عن آخر مداواة ({last})",
+        "r_groupe": "مجموعة {g}",
+        "r_groupe_faible_risque": "مجموعة {g}؛ {shared} مستعملة سابقًا لكن خطر المقاومة فيها ضعيف",
+        "c_meme_groupe": "نفس مجموعة آخر مداواة ({last}): {n} منتج",
+        "rotation": "غيّر مجموعة طريقة التأثير (رمز FRAC أو IRAC المكتوب على الملصق) من مداواة إلى أخرى: تكرار نفس "
+                    "المجموعة يساعد المرض أو الحشرة على اكتساب المقاومة.",
+        "rotation_impossible": "لا توجد مجموعة مصادق عليها لهذه الحالة غير مجموعة آخر مداواة ({last}): اطلب نصيحة "
+                               "الـCRDA قبل تكرارها.",
         "ecartes": "مبيدات مصادق عليها استُبعدت بسبب وضعيتك:",
         "aucun_adapte": "لا يناسب وضعيتك أيٌّ من المبيدات المصادق عليها ضد هذه المشكلة ({n}):",
         "c_dar_long": "مدة قبل الجني أطول من {dth} يومًا المتبقية قبل الجني: {n} منتج",
@@ -146,12 +160,14 @@ P = {
         "q_last_treatment_group": "ما هو المنتج الذي استعملته في آخر مداواة؟",
     }
 }
-CAUSES = ("dar_long", "non_ue", "ue_inconnu", "non_bio")
+CAUSES = ("dar_long", "non_ue", "ue_inconnu", "non_bio", "meme_groupe")
 
 
 def days_word(n, t):
-    """'jour' for 0 and 1 in French, else 'jours' (the Arabic sentences keep their own word)."""
-    return t["dar_jours"].format(n="").strip() if "dar_jour" not in t or n > 1 else t["dar_jour"].format(n="").strip()
+    """French: 'jour' for 0 and 1, else 'jours'. Arabic: يوم (0, 1), يومان (2), أيام (3 to 10), يومًا (11 and more)."""
+    if t is P["ar"]:
+        return "يوم" if n <= 1 else "يومان" if n == 2 else "أيام" if n <= 10 else "يومًا"
+    return t["dar_jours"].format(n="").strip() if n > 1 else t["dar_jour"].format(n="").strip()
 
 
 def reason_text(r, t):
@@ -166,13 +182,17 @@ def reason_text(r, t):
         return t["r_dar_dth"].format(dar=r[1], j=j, dth=r[2]) if r[2] is not None else t["r_dar"].format(dar=r[1], j=j)
     if code == "rotation":
         return t["r_rotation"].format(g=r[1], last=r[2])
+    if code == "groupe":
+        return t["r_groupe"].format(g=r[1])
+    if code == "groupe_faible_risque":
+        return t["r_groupe_faible_risque"].format(g=r[1], shared=r[2])
     return t["r_" + code]
 
 
-def set_aside_lines(ecartes, ctx, t):
+def set_aside_lines(ecartes, ctx, t, last=""):
     """Products set aside -> one line per cause with how many products (no name: they do not fit this case)."""
     counts = {c: sum(c in e["raisons"] for e in ecartes) for c in CAUSES}
-    return [t["c_" + c].format(n=n, dth=ctx.get("days_to_harvest")) for c, n in counts.items() if n]
+    return [t["c_" + c].format(n=n, dth=ctx.get("days_to_harvest"), last=last) for c, n in counts.items() if n]
 LANGS = tuple(P)
 
 # fixed free sentences of the agents and tools (questions, warnings) -> Arabic
@@ -327,15 +347,21 @@ def compose(d, lang="fr"):
                 + ("\n  " + t["pourquoi"] + t["sep"].join(reason_text(r, t) for r in p["raisons"])
                    if p.get("raisons") else "")
                 for p in d["produits"]))
+            last = " + ".join(d.get("dernier_groupe") or [])
             if d.get("ecartes"):
-                parts.append(t["ecartes"] + "\n" + bullets(set_aside_lines(d["ecartes"], ctx, t)))
+                parts.append(t["ecartes"] + "\n" + bullets(set_aside_lines(d["ecartes"], ctx, t, last)))
+            if d.get("rotation_impossible"):
+                parts.append(t["rotation_impossible"].format(last=last))
+            if d.get("rotation_conseil"):
+                parts.append(t["rotation"])
             if d.get("verifier_dar") is not None:
                 parts.append(t["verifier_dar"].format(dth=d["verifier_dar"]))
             if ctx.get("organic") == "y":
                 parts.append(t["bio_etiquette"])
         elif d.get("aucun_adapte"):
             parts.append(t["aucun_adapte"].format(n=d.get("n_candidats", 0)) + "\n"
-                         + bullets(set_aside_lines(d.get("ecartes", []), ctx, t)))
+                         + bullets(set_aside_lines(d.get("ecartes", []), ctx, t,
+                                                   " + ".join(d.get("dernier_groupe") or []))))
         elif d.get("aucun_produit"):
             parts.append(t["aucun_produit"])
         if d.get("questions_contexte"):
