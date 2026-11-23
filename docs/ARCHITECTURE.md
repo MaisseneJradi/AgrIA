@@ -26,7 +26,7 @@ AgrIA est un **système de sept agents** qui coopèrent autour d'un dossier part
 | **Diagnostic** | lit la photo (routeur puis modèle maladies, carences ou fruits) ; décide si le diagnostic est fiable, sinon pose des questions | `predict()`, `ensemble.kind_share` | routeur + combinaison : modèle feuille (carence ou maladie) + avis du VLM, puis modèle des maladies restreint à la culture ou carence du modèle feuille |
 | **Phytosanitaire** | choisit les traitements homologués (dose, DAR, LMR, restrictions) et des conseils des fiches | `get_treatments`, `search_knowledge` | base SQLite + recherche TF-IDF |
 | **Agronome** | engrais pour une carence (fiabilité selon la culture, sol du gouvernorat) et besoin en eau du mois | `get_fertilizers`, `get_water_need` | base SQLite + règles |
-| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **8 règles codées** |
+| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **9 règles codées** |
 
 **Pas de LLM pour écrire.** Le seul modèle de langage est un VLM (NVIDIA, optionnel) qui **regarde** la photo et donne un avis (culture, carence ou maladie, symptômes) ; il n'écrit jamais la réponse, ne choisit aucun produit et ne peut pas contredire la culture donnée par l'agriculteur (docs/results_vision.md, section 13). AgrIA répond en **français ou en arabe** (pas de darija). Toutes les phrases sont écrites par le code (`src/agent/redaction.py`), donc aucun fait (produit, dose, délai) ne peut être inventé ni mal traduit. Un essai avec un petit LLM local (`derja`, Qwen3 4B, Ollama) l'a montré : il changeait des doses (« 300 g/hl » devenu « 300 g/l ») et traduisait mal les termes agricoles. Dans une réponse en arabe, les passages des fiches (français ou anglais) sont remplacés par leurs liens.
 
@@ -112,7 +112,8 @@ Le dossier `data/` n'est **pas sur GitHub**. Il reste sur la machine locale. **T
 | Validation et test | `data/processed/<tâche>_manifest.csv` | Colonne `split` : `val`, `test`, et `test_field` pour les maladies |
 | Routeur | `data/processed/routing_manifest.csv` | 15 985 photos, classes `leaf`, `fruit`, `other` |
 | Test par culture | `data/processed/balanced/deficiency_test_by_crop.csv` | Mesure du biais des carences |
-| Traitements | `data/processed/clean/classe_traitements.csv` | Classe du modèle vers produit homologué |
+| Traitements | `docs/disease_target_mapping.csv` (lignes `validated`) appliqué à `data/processed/pesticides/tn_usages.csv` | Classe du modèle vers cible du registre, puis produit homologué (plan phyto, étape 2) |
+| Prévention sans produit | `docs/conseils_prevention.csv` (lignes `validated`) | Conseils de prévention en français et en arabe pour les classes sans produit homologué |
 | Réglementation | `data/processed/clean/pesticides_usages.csv`, `pesticides_usage_lmr.csv`, `eu_mrl.csv` | Usages, doses, LMR |
 | Engrais | `data/processed/clean/carence_engrais.csv`, `engrais_catalogue.csv`, `engrais_usages.csv` | Carence vers engrais, composition, doses |
 | Règles de carences | `data/processed/knowledge/regles_carences.json` | Questions de confirmation, règle de sol |

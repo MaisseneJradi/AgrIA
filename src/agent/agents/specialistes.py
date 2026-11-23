@@ -1,8 +1,10 @@
 """The two specialist agents, run in parallel once the diagnosis is trusted.
 
 Agent Phytosanitaire: registered pesticides for the disease or pest, on the farmer's crop (get_treatments), and
-  prevention advice from the sheets (search_knowledge). Products are chosen HERE, in code: at most MAX_PRODUCTS,
-  relation direct or vecteur first, a known DAR first; "proche" only when nothing else exists, with a warning.
+  prevention advice from the sheets (search_knowledge), cleaned of any chemical control (prevention.py). Products are
+  chosen HERE, in code: at most MAX_PRODUCTS, relation direct or vecteur first, a known DAR first; "proche" only when
+  nothing else exists, with a warning. When nothing is registered: validated prevention advice and the CRDA referral,
+  never a product.
 Agent Agronome: fertilizers for a deficiency (get_fertilizers: reliability on this crop, soil of the governorate,
   confirmation questions) and the irrigation need of the month (get_water_need).
 """
@@ -11,6 +13,7 @@ import time
 
 from src.agent import paths  # noqa: F401
 from fertilizers import get_fertilizers  # src/tools
+from prevention import cultural_sentences, prevention_advice
 from rag import search_knowledge
 from src.agent.agents.aides import step
 from treatments import get_treatments
@@ -47,11 +50,18 @@ def phytosanitaire(d):
     produits = [{"nom": u["produit"], "substances": u["substances"], "dose": u["dose"], "dar_jours": u["dar_jours"],
                  "dar_message": u["dar_message"], "relation": u["relation"], "product_id": u["product_id"]}
                 for u in chosen]
+    # advice never carries a product: sentences of the sheets without chemistry, and, when nothing is registered,
+    # the validated prevention advice of docs/conseils_prevention.csv and the CRDA referral
+    conseils = cultural_sentences(passages)
+    prevention = prevention_advice(cls) if not usages else []
+    note = f"{len(usages)} usages homologués, {len(produits)} retenus"
+    if not usages:
+        note += f" ; {len(prevention)} mesures de prévention validées, orientation CRDA"
     return {"traitements": {"concerne": True, "produits": produits, "nb_usages": len(usages),
-                            "aucun_produit": not usages, "avertissements": warnings,
-                            "conseils": [p["extrait"][:300] for p in passages]},
+                            "aucun_produit": not usages, "avertissements": warnings, "conseils": conseils,
+                            "prevention": prevention, "orientation_crda": not usages},
             "sources": [{"fiche": p["nom"], "lien": p["source"], "licence": p["licence"]} for p in passages],
-            "trace": step("Phytosanitaire", f"{len(usages)} usages homologués, {len(produits)} retenus", t0)}
+            "trace": step("Phytosanitaire", note, t0)}
 
 
 def agronome(d):

@@ -2,8 +2,10 @@
 
 Usage: python src/tools/build_db.py
 Tables
-  traitements        image class -> registered product usage (clean/classe_traitements.csv) with the DAR text and
-                     the restrictions of pesticides/tn_usages.csv and of the product list
+  traitements        image class -> registered product usage, from the validated rows of docs/disease_target_mapping.csv
+                     applied to pesticides/tn_usages.csv (src/tools/target_mapping.py; until step 2 of the phyto plan:
+                     clean/classe_traitements.csv, which they give back exactly), with the DAR text and the restrictions
+                     of pesticides/tn_usages.csv and of the product list
   usage_lmr          EU maximum residue limits of each usage substance (clean/pesticides_usage_lmr.csv)
   pesticides_produits, pesticides_usages, pesticides_agrishop, substances
   carence_engrais, engrais_catalogue, engrais_usages, semences
@@ -14,11 +16,15 @@ The CSV files are never changed.
 """
 import json
 import sqlite3
+import sys
 import time
 
 import pandas as pd
 
 from common import DB_PATH, PROC, ROOT
+from target_mapping import MAPPING
+from target_mapping import load as load_mapping
+from target_mapping import usage_classes
 
 CLEAN, CTX, KNOW = PROC / "clean", PROC / "context", PROC / "knowledge"
 FILES = {
@@ -45,8 +51,20 @@ INDEXES = [("traitements", "unified_class"), ("usage_lmr", "product_id, usage_id
            ("pesticides_produits", "product_id")]
 
 
+def class_treatments():
+    """Image class -> registered use, from the VALIDATED rows of docs/disease_target_mapping.csv (target_mapping.py).
+    Text cleaned as clean_structured.py cleans classe_traitements.csv (which these rows give back exactly)."""
+    sys.path.insert(0, str(ROOT / "src" / "preparation"))
+    from clean_structured import tidy  # noqa: E402
+    ct = usage_classes(pd.read_csv(PROC / "pesticides" / "tn_usages.csv"), load_mapping())
+    ct = ct.drop(columns=["restriction"])  # the restriction of the use is joined below as restriction_usage
+    for c in ct.select_dtypes("object"):
+        ct[c] = ct[c].map(tidy)
+    return ct.astype({"usage_idx": int, "autorisation_provisoire": bool, "bio_ue": bool})
+
+
 def treatments():
-    ct = pd.read_csv(CLEAN / "classe_traitements.csv")
+    ct = class_treatments()
     use = pd.read_csv(PROC / "pesticides" / "tn_usages.csv",
                       usecols=["product_id", "usage_idx", "dar_texte", "restriction", "lmr", "remarques"])
     use = use.rename(columns={"restriction": "restriction_usage", "lmr": "remarques_lmr"})
@@ -66,7 +84,8 @@ def build():
     tmp.unlink(missing_ok=True)
     con = sqlite3.connect(tmp)
     meta = []
-    tables = {"traitements": (treatments(), "clean/classe_traitements.csv + pesticides/tn_usages.csv + produits")}
+    tables = {"traitements": (treatments(), f"{MAPPING.relative_to(ROOT)} (lignes validated) x pesticides/tn_usages.csv "
+                                            "+ produits")}
     for name, path in FILES.items():
         tables[name] = (pd.read_csv(path), str(path.relative_to(ROOT)))
     fiches = pd.read_json(KNOW / "fiches.jsonl", lines=True)
