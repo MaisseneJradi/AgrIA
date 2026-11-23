@@ -290,7 +290,7 @@ POST /diagnose
 | Dates de chaque étape | À remplir |
 | Validation des 88 termes en darija (avec un locuteur tunisien) | À faire à l'étape 3 |
 | Jeu de test de l'agent | À importer avant l'étape 4 |
-| Photos de terrain tunisiennes | En continu, si possible |
-| Seuil des maladies dans l'agent : 0,5 (calibré en laboratoire) ou 0,9 (recommandé, voir `results_vision.md`) | À décider avant l'étape 4 |
-| Améliorer H1 (terrain 61,8 % contre 90 % visé) : PlantDoc train est déjà utilisé ; essais de validation de terrain, suréchantillonnage et augmentations | En cours, voir `results_vision.md` section 9 |
+| Photos de terrain tunisiennes | En continu : case d'accord dans l'application, puis `src/preparation/field_tn.py` (jeu de test gelé `data/field_tn/`) |
+| Seuils de l'agent Diagnostic | ✅ maladies 0,8 et carences 0,7 depuis les modèles en taille 300 (22/11/2026), choisis sur la confiance de la combinaison réellement utilisée (`results_vision.md`, section 15.7) |
+| Améliorer H1 (terrain 61,8 % contre 90 % visé) | Maladies 82,8 % et feuille 81,4 % sur le test terrain (22/11/2026) ; une source jamais vue reste vers 37–52 % : voir `results_vision.md` sections 14 et 15 |
 | Fruits : modèle brut (choisi par la validation) ou équilibré (meilleur sur les classes rares) | Brut par défaut |

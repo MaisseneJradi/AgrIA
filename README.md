@@ -85,8 +85,8 @@ Tous les modèles sont des EfficientNet-B0 entraînés en local, sur une NVIDIA 
 | Modèle | Tâche | Test laboratoire | Photos de terrain (test, avant → après l'ajout de photos de terrain) |
 |---|---|---|---|
 | Routeur | feuille, fruit ou autre | 99,8 % | — |
-| Maladies (v2) | 51 classes | 99,5 % (macro-F1 0,976) | 52,9 → **80,1 %** (703 photos) ; PlantDoc seul 61,9 → 71,6 % |
-| Feuille (v4) | 51 maladies + 9 carences | 97,0 % ; carence ou maladie 98,9 % | 50,9 → **78,5 %** (703 photos) |
+| Maladies (s300, 22/11) | 51 classes | 99,4 % | 52,9 → 80,1 → **82,8 %** (703 photos) ; PlantDoc seul 61,9 → 71,6 → 75,6 % |
+| Feuille (s300, 22/11) | 51 maladies + 9 carences | 97,0 % ; type de problème (carence ou maladie) 97,3 % | 50,9 → 78,5 → **81,4 %** (703 photos) |
 | Fruits | 18 classes | 98,3 % (macro-F1 0,897) | — |
 | Culture (v4) | 14 cultures + « autre plante » | 99,9 % | 58,9 → **94,3 %** (1 861 photos) |
 
@@ -97,9 +97,12 @@ Les photos de terrain de PlantWild, de pommes de terre au champ et de vignes (GV
 | Décision de l'agent (vote + VLM) | Labo (358) | Terrain (703) | Nouvelles sources (216) | Photos d'Internet (15) |
 |---|---|---|---|---|
 | anciens modèles | 98,6 / 0 | 78,0 / 2,0 | 96,8 / 0 | 66,7 / 0 |
-| **nouveaux modèles** | 97,2 / 0 | **88,9 / 0,4** | 97,2 / 0 | **100 / 0** |
+| modèles avec photos de terrain (20/11) | 97,2 / 0 | 88,9 / 0,4 | 97,2 / 0 | 100 / 0 |
+| **modèles en taille 300 (22/11)** | 97,5 / 0 | **89,2 / 0,6** | 97,7 / 0 | **100 / 0** |
 
-Avec les nouveaux modèles, le choix entre carence et maladie est juste dans 99,4 % des cas sur les photos de terrain. La chaîne complète (culture, puis type de problème, puis classe) est juste dans 97,2 % des cas sur les photos de laboratoire et dans **78,2 %** des cas sur les photos de terrain (55,2 % avant).
+Avec les nouveaux modèles, le choix entre carence et maladie est juste dans 99,9 % des cas sur les photos de terrain. La chaîne complète (culture, puis type de problème, puis classe) est juste dans 97,2 % des cas sur les photos de laboratoire et dans **80,8 %** des cas sur les photos de terrain (55,2 % avant les photos de terrain, 78,2 % avant les modèles en taille 300).
+
+**Plan d'amélioration sur le terrain (21–22/11/2026).** Les modèles maladies et feuille passent en taille 300 avec label smoothing et EMA. Sur le terrain : maladies 82,8 % (McNemar p = 0,023), feuille 81,4 % (p = 0,023), et une confiance fiable (ECE 0,14 → 0,05–0,06). Les seuils de l'agent sont revus sur la confiance de la combinaison : maladies 0,9 → 0,8, avec autant de photos répondues et 93,7 % de réponses justes au lieu de 92,7 % ; carences 0,95 → 0,7, avec la même exactitude qu'avant (98,5 %). Le recadrage sur la feuille, les augmentations « terrain » et les modèles de fondation gelés (DINOv2, BioCLIP) ont été mesurés mais pas installés. Le leave-one-source-out montre qu'une source jamais vue tombe vers 37–52 %. L'application demande maintenant l'accord de l'agriculteur avant de garder sa photo, pour constituer un jeu de test tunisien gelé (`data/field_tn/`). Le détail est dans la section 15 de [docs/results_vision.md](docs/results_vision.md), et le journal des expériences dans [docs/experiments.csv](docs/experiments.csv).
 
 Le détail est dans [docs/results_vision.md](docs/results_vision.md) : comparaison CNN et ViT, hypothèses H1 à H3, seuils de confiance, combinaison et VLM.
 
@@ -200,13 +203,16 @@ curl -F "photo=@feuille.jpg" -F "message=taches brunes sur les feuilles" \
 ## Tests et évaluation
 
 ```bash
-python -m unittest discover -s tests -t .      # 69 tests : outils, agents, API
+python -m unittest discover -s tests -t .      # 117 tests : outils, agents, API, évaluation, préparation
 ```
 
 | Commande | Ce qu'elle mesure |
 |---|---|
 | `python src/vision/evaluate.py --task diseases --model-dir models/diseases --splits val test test_field` | un modèle, sur le laboratoire et le terrain |
 | `python src/vision/calibrate.py --task diseases --model-dir models/diseases` | seuils de confiance |
+| `python src/evaluation/compare.py --new models/diseases_s300 --current models/diseases --change "taille 300"` | deux modèles sur les mêmes photos : exactitude, macro-F1, ECE, McNemar (`reports/compare/`) |
+| `python src/evaluation/loso.py --task diseases --sources plantdoc plantwild potato_field --epochs 5` | leave-one-source-out : chaque source de terrain jamais vue à l'entraînement |
+| `python src/evaluation/temperature.py --task diseases` | température, couverture et exactitude selon le seuil (`reports/temperature/`) |
 | `python src/agent/eval_ensemble.py --tune --vlm` | apprend les poids de la combinaison sur la validation, puis évalue sur tous les jeux de test (`docs/eval_ensemble_vlm.md`) |
 
 ---
@@ -260,7 +266,7 @@ Chaque jeu garde sa propre licence. La plupart sont en CC BY 4.0. **Tomato-Villa
 
 ## Limites connues
 
-- **Photos de terrain.** Les modèles ont surtout appris sur des photos de laboratoire. Sur le terrain, le diagnostic exact de la maladie était d'environ 62 % ; avec les photos de terrain ajoutées, il atteint 80 % sur le test terrain, mais seulement 72 % sur PlantDoc, d'où le seuil de 0,9 et les questions de confirmation.
+- **Photos de terrain.** Les modèles ont surtout appris sur des photos de laboratoire. Sur le terrain, le diagnostic exact de la maladie était d'environ 62 % ; avec les photos de terrain ajoutées et la taille 300, il atteint 83 % sur le test terrain et 76 % sur PlantDoc, mais une source jamais vue tombe vers 37–52 % (leave-one-source-out), d'où les seuils de l'agent et les questions de confirmation. La vraie mesure viendra des photos tunisiennes gardées avec l'accord des agriculteurs (`data/field_tn/`).
 - **Peu de photos tunisiennes.** L'olivier, le palmier et les agrumes ont moins d'images et des sources peu variées. Le modèle apprend en partie le style des photos de chaque source. Un jeu de test de photos tunisiennes reste à construire.
 - **Carences de certaines cultures.** Aucun jeu public n'existe pour l'olivier, la vigne, la pomme de terre et les arbres fruitiers : leurs carences sont toujours présentées comme des hypothèses.
 - **VLM.** Il est faible sur les photos de laboratoire et très bon sur les photos d'Internet. Son seuil de secours a été réglé en partie sur un petit échantillon de 15 photos. Il ajoute environ 8 secondes par nouvelle photo et dépend du service NVIDIA.

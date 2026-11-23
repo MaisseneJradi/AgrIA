@@ -19,8 +19,8 @@
      never overrides the disease model on its own confidence.
 4. Trust (fiable) needs: the confidence above the agent threshold of the task (AGENT_THRESHOLDS, at least the model's
    own `reliable`), and the crop of the class equal to the crop the farmer named, when he named one.
-   Diseases use 0.9: on field photos the disease model is right 89 % of the time above 0.9 but only 70 % above 0.5
-   (results_vision.md, section 5).
+   Diseases use 0.8 since the size-300 disease model (step 7 of the improvement plan, results_vision.md section 15):
+   on the field validation photos the combination answers 83.5 % of them and is right on 93.5 % of those.
 5. Not trusted -> confirmation questions, never a product.
 """
 import time
@@ -33,7 +33,16 @@ from src.agent.agents.aides import class_name, crop_name, crop_of_class, step
 from src.agent import ensemble as E
 from src.agent.agents.identification import CROP_QUESTION, ROUTE_MIN
 
-AGENT_THRESHOLDS = {"routing": ROUTE_MIN, "diseases": 0.9, "deficiency": 0.95, "fruits": 0.65}
+# diseases 0.8 since the size-300 disease model (2026-11-22, label smoothing: less sure of itself): on the field
+# validation photos the combination answers 83.5 % of them, 93.5 % right (the old model at 0.9: 82.3 %, 92.2 %);
+# reports/temperature/agent_threshold_diseases.json; re-checked with the size-300 leaf model and its weights: 83.7 %
+# answered, 92.5 % right on val, 83.5 %, 93.7 % on test (reports/temperature/agent_threshold_diseases_leaf_s300.json)
+# deficiency 0.7 since the size-300 leaf model and the weights re-learnt with it (2026-11-22: deficiency model back in
+# the deficiency vote at 0.5, lab deficiency accuracy 90.8 -> 92.2 % on test, McNemar p < 0.001): the combination is
+# less sure of itself; 0.7 is the lowest threshold that gives no more wrong trusted answers than the old system at
+# 0.95 on the 1,949 lab val deficiency photos (1.6 % against 1.7 %); test: 74.2 % answered, 98.5 % right (old system
+# 81.2 %, 98.5 %); reports/temperature/agent_threshold_deficiency.json
+AGENT_THRESHOLDS = {"routing": ROUTE_MIN, "diseases": 0.8, "deficiency": 0.7, "fruits": 0.65}
 MIN_CROP_MASS = 0.2
 GENERAL_QUESTIONS = ["Pouvez-vous envoyer une autre photo, de près, d'une feuille ou d'un fruit atteint, à la lumière "
                      "du jour ?",

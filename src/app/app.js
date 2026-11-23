@@ -29,6 +29,7 @@ const I18N = {
     fbQuestion: "Ce diagnostic est-il correct ?", yes: "Oui", no: "Non",
     fbTruth: "Quelle est la bonne réponse ? (plante et maladie)", fbPh: "Ex. : olivier, œil de paon",
     fbSend: "Envoyer", fbThanks: "Merci, c'est enregistré.",
+    fbKeep: "J'accepte qu'AgrIA garde cette photo pour mieux reconnaître les maladies en Tunisie",
   },
   ar: {
     tagline: "طبيب النباتات", photo: "التقط صورة أو اخترها",
@@ -55,6 +56,7 @@ const I18N = {
     fbQuestion: "هل هذا التشخيص صحيح؟", yes: "نعم", no: "لا",
     fbTruth: "ما هو الجواب الصحيح؟ (النبتة والمرض)", fbPh: "مثال: زيتون، عين الطاووس",
     fbSend: "إرسال", fbThanks: "شكرًا، تم التسجيل.",
+    fbKeep: "أوافق على أن يحتفظ AgrIA بهذه الصورة لتحسين التعرف على الأمراض في تونس",
   },
 };
 
@@ -260,6 +262,8 @@ function render(r) {
   $("feedback").hidden = !journalId;
   $("fb-truth").hidden = true;
   $("fb-send").hidden = true;
+  $("fb-keep-label").hidden = true;
+  $("fb-keep").checked = false;
   $("fb-done").hidden = true;
   $("fb-text").value = "";
   document.querySelectorAll("[data-correct]").forEach((b) => b.setAttribute("aria-pressed", "false"));
@@ -273,6 +277,7 @@ async function sendFeedback() {
   data.append("journal_id", journalId);
   data.append("correct", fbCorrect);
   data.append("vraie_reponse", $("fb-text").value.trim());
+  data.append("garder_photo", $("fb-keep").checked ? "oui" : "non");
   try {
     const r = await fetch("feedback", { method: "POST", body: data });
     if (r.ok) { $("fb-done").hidden = false; $("fb-send").hidden = true; }
@@ -341,6 +346,7 @@ document.querySelectorAll("[data-correct]").forEach((b) => b.addEventListener("c
   document.querySelectorAll("[data-correct]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
   $("fb-truth").hidden = fbCorrect === "oui";
   $("fb-send").hidden = false;
+  $("fb-keep-label").hidden = false;
   $("fb-done").hidden = true;
   if (fbCorrect === "oui") sendFeedback();
 }));

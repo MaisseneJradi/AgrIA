@@ -1,0 +1,3 @@
+class,n,recall,most_predicted,learnable
+potato__healthy,200,0.045,potato__late_blight,True
+potato__late_blight,308,0.5649,potato__late_blight,True
