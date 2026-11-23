@@ -53,8 +53,11 @@ def rediger(d):
     elif issue == "autre_photo":
         facts = {"issue": "autre_photo", "sans_photo": bool(diag.get("sans_photo"))}
     else:
+        # blocked for chemical control outside the registered products: the quoted passages go, the facts stay
+        conseils = [] if "lutte chimique" in blocked else tr.get("conseils", [])
         facts = {"issue": issue, "diagnostic": diag, "produits": produits, "aucun_produit": tr.get("aucun_produit"),
-                 "conseils": tr.get("conseils", []), "engrais": engrais, "hypothese": hypothese,
+                 "conseils": conseils, "prevention": tr.get("prevention", []),
+                 "orientation_crda": tr.get("orientation_crda", False), "engrais": engrais, "hypothese": hypothese,
                  "questions": eng.get("questions", []) if hypothese else [], "eau": ag.get("eau"),
                  "avertissements": warnings, "gouvernorat": d.get("gouvernorat_officiel"),
                  "sources": list({s["lien"]: s for s in d.get("sources", [])}.values())}

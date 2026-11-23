@@ -21,6 +21,8 @@ Blocking rules
   6. a deficiency on a crop never seen for it in training, not presented as a hypothesis (H2)
   7. a fertilizer that is not in the catalogue of that deficiency
   8. a product whose registered dose is not written, as such, on the same line as the product in the text
+  9. a substance or a word of chemical control (fongicide, cuivre, azoxystrobine, spray...) outside the lines of the
+     registered products and fertilizers of the answer: advice and quoted sheets never carry a treatment (phyto step 2)
 Warnings (the answer must mention them): restriction, provisional authorisation, relation vecteur or proche,
 DAR not given by the list, model confusions of fertilizers.py.
 """
@@ -52,6 +54,44 @@ def _known_products():
                          0 if one_word else re.I)
         out.append((fold(base), n, pat, one_word))
     return out
+
+
+# words of chemical control, in French and English (the sheets are in both languages)
+CONTROL_WORDS = r"fongicides?|fungicides?|insecticides?|acaricides?|bactericides?|nematicides?|herbicides?|pesticides?|" \
+                r"bouillies?|sprays?|sprayed|spraying|soufre|sulfur|sulphur|streptomycine?|antibiotiques?|" \
+                r"traite[rz]|pulveris(?:ez|er|ation|ations)"  # 'il faut traiter...': a treatment without a product
+# tokens of the substance table that are not substances (organisms, salts, nutrients, generic chemistry words)
+NOT_CHEMICAL = {"acetate", "acetates", "adjuvant", "alkylphenolexy", "aluminium", "ammonium", "appliquee",
+                "armigera", "armigeranucleopolyhe", "benzoate", "butylglycol", "cannelle", "capsicum", "chlorure",
+                "cinnamomum", "compounds", "derivves", "diethyl", "diethyle", "dodecatrienyl", "ectomyeloisceratoniae",
+                "essence", "essentielle", "ethylene", "ethylhexyl", "extrai", "extrait", "extract", "formate",
+                "formerly", "garlic", "garlicextract", "glutinosa", "helicoverpa", "hydrochloride", "hydrogen",
+                "hydrogene", "hydrolysat", "hydrolysed", "hydrolysees", "hydroxide", "hydroxyde", "lepidopteran",
+                "littoralis", "littoralisnucleopolyhed", "magnesium", "margosa", "melaleuca", "melaleucaalternifolia",
+                "alternifolia", "methyle", "methylheptyl", "minerale", "natural", "orange", "oxychloride",
+                "oxychlorure", "paraffinique", "phosphide", "phosphure", "phytoprotecteur", "plante", "potassium",
+                "proteines", "proteins", "sodium", "sulfate", "sulphate", "nonanol", "nonanone", "lambada",
+                "isothiocyanate", "acides", "active", "dattes", "drovirus", "rovirus", "pyrale", "pythium", "sexuelle",
+                "souche", "souches", "spores", "straight", "strain", "strains", "spodoptera", "vegetaux", "verticilium",
+                "unsaturated", "tribasic", "tribasique", "tricalcique", "tetraborate", "solaten", "safener", "surfer",
+                "renouee", "sakhaline", "swinglea", "trimethylamine", "trimethylaminehcl",
+                "trimethylaminehydrochloride", "kurstakisouche", "bassianastrain", "asperellumstrain"}
+
+
+@lru_cache(maxsize=1)
+def _chemical_pattern():
+    words = set()
+    for r in query("SELECT substance_tn, eu_name FROM substances"):
+        for n in (r["substance_tn"], r["eu_name"]):
+            words |= {w for w in re.findall(r"[a-z]{6,}", fold(n)) if w not in NOT_CHEMICAL}
+    words |= {"cuivre", "copper", "cuivrique", "cuivriques"}
+    return re.compile(r"(?<![a-z])(?:" + CONTROL_WORDS + "|" + "|".join(sorted(map(re.escape, words), key=len,
+                                                                             reverse=True)) + r")(?![a-z])")
+
+
+def chemical_terms(text):
+    """Substances and words of chemical control written in a text ('cuivre', 'fongicide', 'azoxystrobine'...)."""
+    return list(dict.fromkeys(m.group(0) for m in _chemical_pattern().finditer(fold(text))))
 
 
 def _named_in_text(text):
@@ -122,6 +162,13 @@ def check_answer(answer):
     for name in _named_in_text(text):
         if not registered(name) and not any(_same_product(name, e.get("nom", "")) for e in engrais):
             reasons.append(f"le texte cite « {name} », non homologué pour {cls}" + (f" sur {crop}" if crop else ""))
+
+    # rule 9: chemistry only on the lines of the registered products (or fertilizers) of the answer
+    names = [n for n in [p.get("nom") for p in produits] + [e.get("nom") for e in engrais] if n]
+    free = "\n".join(line for line in text.splitlines() if not any(n in line for n in names))
+    chem = chemical_terms(free)
+    if chem:
+        reasons.append("lutte chimique hors des produits homologués retenus : " + ", ".join(chem))
 
     if answer.get("task") == "deficiency" and not healthy:
         try:

@@ -45,7 +45,10 @@ P = {
         "produit": "{nom} ({substances}) : dose {dose} ; délai avant récolte : {dar}",
         "dar_jours": "{n} jours", "dar_inconnu": "non précisé dans la liste officielle, voir l'étiquette",
         "aucun_produit": "Aucun produit n'est homologué en Tunisie contre ce problème.",
-        "conseils": "Conseils tirés des fiches :",
+        "orientation": "Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA{gov}.",
+        "prevention": "Mesures de prévention :",
+        "conseils": "Extraits des fiches :",
+        "sources": "Pour en savoir plus :",
         "engrais": "Engrais correcteurs disponibles :",
         "eau": "Irrigation en {mois} à {gov} : besoin moyen d'environ {mm} mm ({m3} m³/ha), soit {mmj} mm par jour "
                "après la pluie.",
@@ -73,8 +76,11 @@ P = {
         "produit": "{nom} ({substances}): الجرعة {dose}؛ المدة قبل الجني: {dar}",
         "dar_jours": "{n} أيام", "dar_inconnu": "غير محددة في القائمة الرسمية، راجع الملصق",
         "aucun_produit": "لا يوجد أي مبيد مصادق عليه في تونس ضد هذه المشكلة.",
+        "orientation": "لفحص النبتة في المكان واتخاذ الإجراءات المناسبة لقطعتك، اتصل بالمندوبية الجهوية للتنمية "
+                       "الفلاحية (CRDA){gov}.",
+        "prevention": "إجراءات وقائية:",
         "conseils": "نصائح من البطاقات التقنية:",
-        "sources": "مزيد من المعلومات (بالفرنسية):",
+        "sources": "مزيد من المعلومات (بالفرنسية أو بالإنجليزية):",
         "engrais": "أسمدة تصحيحية متوفرة:",
         "eau": "الري في {mois} بـ{gov}: حاجة متوسطة تقارب {mm} مم ({m3} م³/هكتار)، أي {mmj} مم في اليوم بعد "
                "احتساب الأمطار.",
@@ -235,10 +241,16 @@ def compose(d, lang="fr"):
                 for p in d["produits"]))
         elif d.get("aucun_produit"):
             parts.append(t["aucun_produit"])
+        if d.get("prevention"):  # validated rows of docs/conseils_prevention.csv, in the language of the answer
+            parts.append(t["prevention"] + "\n" + bullets(p[lang] for p in d["prevention"]))
         if d.get("conseils") and lang == "fr":
             parts.append(t["conseils"] + "\n" + bullets(d["conseils"]))
-        elif d.get("conseils") and d.get("sources"):
+        elif d.get("sources"):  # Arabic answer, or no French sentence to quote: the links of the sheets
             parts.append(t["sources"] + "\n" + bullets(f"{s['fiche']} : {s['lien']}" for s in d["sources"]))
+        if d.get("orientation_crda"):  # nothing registered: a technician, never a product
+            gov = t["crda_gov"].format(gov=gov_label(d["gouvernorat"], lang)) if d.get("gouvernorat") \
+                else t["crda_sans_gov"]
+            parts.append(t["orientation"].format(gov=gov))
         if d.get("engrais"):
             parts.append(t["engrais"] + "\n" + bullets(
                 f"{e['nom']} ({e['nutriment']} {e['teneur_pct']} %)" if e.get("teneur_pct") else e["nom"]
@@ -249,6 +261,6 @@ def compose(d, lang="fr"):
                                          mmj=w["mmj"]))
         if d.get("avertissements"):
             parts.append(t["a_savoir"] + "\n" + bullets(free(a) for a in d["avertissements"]))
-        if not diag.get("sain"):
+        if not diag.get("sain") and not d.get("orientation_crda"):
             parts.append(t["fin"])
     return "\n\n".join(parts)
