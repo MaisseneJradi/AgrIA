@@ -55,11 +55,16 @@ def class_treatments():
     """Image class -> registered use, from the VALIDATED rows of docs/disease_target_mapping.csv (target_mapping.py).
     Text cleaned as clean_structured.py cleans classe_traitements.csv (which these rows give back exactly)."""
     sys.path.insert(0, str(ROOT / "src" / "preparation"))
-    from clean_structured import tidy  # noqa: E402
+    from clean_structured import COMM, tidy  # noqa: E402
     ct = usage_classes(pd.read_csv(PROC / "pesticides" / "tn_usages.csv"), load_mapping())
     ct = ct.drop(columns=["restriction"])  # the restriction of the use is joined below as restriction_usage
     for c in ct.select_dtypes("object"):
         ct[c] = ct[c].map(tidy)
+    # "40 cc/hl (COMM 06/12/2012)": the date of the commission decision is not part of the dose (phyto step 3; the
+    # clean table pesticides_usages drops it the same way). It is kept in its own column.
+    ct["comm_dose"] = ct["dose"].map(lambda s: next((m.group(1) for m in COMM.finditer(s)), None)
+                                     if isinstance(s, str) else None)
+    ct["dose"] = ct["dose"].map(lambda s: tidy(COMM.sub("", s)) if isinstance(s, str) else s)
     return ct.astype({"usage_idx": int, "autorisation_provisoire": bool, "bio_ue": bool})
 
 

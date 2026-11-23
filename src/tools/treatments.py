@@ -6,12 +6,15 @@
 
 Each usage: produit, product_id, type, substances, culture, cible, dose, unite, dar_jours (None when the list gives
 no DAR) and dar_message, lmr (EU maximum residue limits of its substances on the crop), relation and its meaning,
-restriction, autorisation_provisoire, statut, bio_ue, n_homologation.
+restriction, autorisation_provisoire, statut, bio_ue, n_homologation, ue_approuve (every substance approved in the
+EU: True / False, None when unknown; used for an export market).
 Order: relation direct, then vecteur, groupe, proche (see RELATIONS), then products with a known DAR.
 With a crop, only the usages registered for that crop (or for a group that contains it) are kept: a product is never
-advised on a crop it is not registered for.
+advised on a crop it is not registered for. A product whose trade name was misread in the list ("50", "SC") is never
+returned (UNREADABLE).
 """
 import re
+from functools import lru_cache
 
 from common import query
 from lexicon import crop_code
@@ -28,6 +31,15 @@ GROUPS = {"vegetables": ["tomato", "pepper", "potato", "squash", "cucumber", "me
           "cucurbits": ["squash", "cucumber", "melon", "watermelon"],
           "fruit_trees": ["apple", "pear", "peach", "cherry", "apricot", "plum", "almond"],
           "cereals": ["wheat", "barley", "oat"]}
+
+
+# trade names misread in the PDF of the list ("50", "y", "DP", "SC"...): a farmer cannot ask a shop for them, so their
+# uses are never advised (listed for the regulatory data review, phyto plan step 7)
+UNREADABLE = re.compile(r"^\s*(?:\d+|[A-Za-z]{1,2}|SC|EC|WG|WP|DP|SL|EW|OD|SE|CS|FS|WDG|SG|SP|GR|ME|UL|DC)\s*$")
+
+
+def readable_name(name):
+    return bool(name) and str(name) != "nan" and not UNREADABLE.match(str(name))
 
 
 def _crops_of_culture():
@@ -60,10 +72,31 @@ def _text(v):
     return None if v is None or str(v) in ("nan", "") else str(v)
 
 
+@lru_cache(maxsize=1)
+def _eu_status():
+    out = {}
+    for r in query("SELECT eu_name, eu_status FROM substances WHERE eu_name IS NOT NULL"):
+        out.setdefault(r["eu_name"].strip().lower(), set()).add(r["eu_status"])
+    return out
+
+
+def eu_approved(substances):
+    """'Cymoxanil + Copper oxychloride' -> True when every substance is approved in the EU, False when one is not
+    (or only pending), None when a substance is not found in the EU database (unknown: never taken as approved)."""
+    names = [s.strip().lower() for s in str(substances or "").split("+") if s.strip() and s.strip() != "nan"]
+    if not names:
+        return None
+    status = _eu_status()
+    if any(n not in status for n in names):
+        return None
+    return all("Approved" in status[n] for n in names)
+
+
 def get_treatments(unified_class, crop=None):
     if unified_class.endswith("__healthy") or unified_class == "healthy":
         return []
-    rows = query("SELECT * FROM traitements WHERE unified_class = ?", (unified_class,))
+    rows = [r for r in query("SELECT * FROM traitements WHERE unified_class = ?", (unified_class,))
+            if readable_name(r["nom_commercial"])]
     if crop is not None:
         code = crop_code(crop)
         if code is None:
@@ -84,6 +117,7 @@ def get_treatments(unified_class, crop=None):
             "relation": r["relation"], "relation_sens": RELATIONS.get(r["relation"]),
             "restriction": restriction or None, "autorisation_provisoire": bool(r["autorisation_provisoire"]),
             "statut": r["statut"], "bio_ue": bool(r["bio_ue"]), "n_homologation": _text(r["n_homologation"]),
+            "ue_approuve": eu_approved(r["substances_ue"]),
         })
     return sorted(out, key=lambda u: (ORDER.get(u["relation"], 9), u["dar_jours"] is None, u["produit"]))
 

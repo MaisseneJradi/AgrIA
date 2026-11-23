@@ -55,7 +55,7 @@ GOLD = {
     "grape__leaf_blight": ("disease", r"isariopsis|pseudocercospora"),
     "olive__aculus_olearius": ("pest", r"acarien|eriophy|aculus"),
     "olive__knot_disease": ("disease", r"tuberculose|pseudomonas savastanoi"),
-    "olive__peacock_spot": ("disease", r"oeil de paon|spilocaea|cycloconium"),
+    "olive__peacock_spot": ("disease", r"(?:oe|œ)il de paon|spilocaea|cycloconium"),  # fold() keeps the ligature
     "orange__citrus_greening": ("virus_vector", r"diaphorina|psylle asiatique|greening"),
     "peach__bacterial_spot": ("disease", r"bacteriose|xanthomonas"),
     "pepper__bacterial_spot": ("disease", r"bacteriose|xanthomonas"),

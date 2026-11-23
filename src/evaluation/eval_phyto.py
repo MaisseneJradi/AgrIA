@@ -47,7 +47,7 @@ from safety import _named_in_text, _same_product, _squash, chemical_terms
 from treatments import GROUPS
 from src.agent.agents.aides import class_name
 from src.agent.agents.coordinateur import crda, finaliser, rediger, secours
-from src.agent.agents.linguistique import traduire
+from src.agent.agents.linguistique import normalize_context, traduire
 from src.agent.agents.specialistes import agronome, phytosanitaire
 from src.agent.agents.verificateur import verifier
 from src.agent.graph import _after_check
@@ -60,7 +60,7 @@ LOG = ROOT / "docs" / "phyto_experiments.csv"
 LOG_COLUMNS = ["date", "step", "branch", "change", "n_cases", "safety_pct", "hors_cible_pct", "coverage_pct",
                "recall_or_pct", "absence_dite_pct", "prevention_crda_pct", "engrais_bons_pct", "dose_dar_exact_pct", "n_produits", "blocage_pct", "crda_pct",
                "liens_corrects", "liens_faux", "liens_attendus", "dar_trop_long", "export_non_ue", "bio_non_bio",
-               "rotation", "latence_med_ms", "latence_p95_ms", "notes"]
+               "rotation", "questions_moy", "bio_debut_pct", "pourquoi_pct", "latence_med_ms", "latence_p95_ms", "notes"]
 FRUIT_CLASSES = {"citrus__black_spot", "citrus__canker", "citrus__scab", "orange__citrus_greening",
                  "pomegranate__alternaria_spot", "pomegranate__anthracnose", "pomegranate__bacterial_blight",
                  "pomegranate__cercospora_spot", "tomato__anthracnose", "tomato__blossom_end_rot", "tomato__cracking",
@@ -98,8 +98,10 @@ def forced_diagnosis(cls):
             "sain": cls == "healthy" or cls.endswith("__healthy")}
 
 
-def run_case(case, month=5):
-    state = {"photo": None, "message": "", "gouvernorat": case["governorate"], "culture": case["crop"], "langue": "fr",
+def run_case(case, month=5, with_context=True):
+    ctx = normalize_context(case) if with_context else {}
+    state = {"contexte": ctx, "photo": None, "message": "", "gouvernorat": case["governorate"],
+             "culture": case["crop"], "langue": "fr",
              "mois": month, "langue_reponse": "fr", "culture_code": case["crop"], "culture_source": "agriculteur",
              "gouvernorat_officiel": case["governorate"], "diagnostic": forced_diagnosis(case["disease_or_deficiency"]),
              "issue": "conseil", "questions": [], "essais": 0, "sources": [], "trace": []}
@@ -156,6 +158,22 @@ def _fert_nutrients():
     for r in query("SELECT nom, nutriment FROM carence_engrais"):
         out.setdefault(fold(r["nom"]), set()).add(OXIDES.get(r["nutriment"], r["nutriment"]))
     return out
+
+
+@lru_cache(maxsize=None)
+def _bio_fits_key(cls, crop, dth, market):
+    from ranking import set_aside
+    from treatments import get_treatments
+    ctx = {"days_to_harvest": dth, "market": market}
+    return any(u["bio_ue"] and not set_aside(u, ctx) for u in get_treatments(cls, crop) if u["relation"] != "proche")
+
+
+def _bio_fits(case):
+    """An organic-allowed registered product fits this case (DAR, market): then it should come first when early."""
+    if case["kind"] in ("deficiency", "healthy", "physiological", "virus"):
+        return False
+    dth = int(case["days_to_harvest"]) if str(case.get("days_to_harvest", "")).strip() else None
+    return _bio_fits_key(case["disease_or_deficiency"], case["crop"], dth, case.get("market") or None)
 
 
 def _split(cell):
@@ -227,6 +245,11 @@ def score(case, out, ms):
         "links": " ".join(links), "link_ok": bool(expected) and expected in links,
         "link_wrong": [u for u in links if u != expected],
         **{k: " | ".join(v) for k, v in ctx.items()}, "ms": round(ms), "texte": text,
+        "n_questions": len(rep.get("questions_contexte") or []),
+        "questions_contexte": " | ".join(rep.get("questions_contexte") or []),
+        "bio_possible": case.get("stage") == "early" and _bio_fits(case),
+        "bio_en_tete": bool(shown) and bool(shown[0].get("bio_ue")),
+        "n_pourquoi": sum(bool(p.get("raisons")) for p in shown),
     }
 
 
@@ -257,6 +280,10 @@ def summarize(rows):
         "dar_trop_long": sum(bool(r["dar_trop_long"]) for r in rows),
         "export_non_ue": sum(bool(r["export_non_ue"]) for r in rows),
         "bio_non_bio": sum(bool(r["bio_non_bio"]) for r in rows), "rotation": "n/a",
+        "questions_moy": round(sum(r["n_questions"] for r in rows) / n, 2),
+        "bio_debut_pct": pct(sum(r["bio_en_tete"] for r in rows if r["bio_possible"]),
+                             sum(bool(r["bio_possible"]) for r in rows)),
+        "pourquoi_pct": pct(sum(r["n_pourquoi"] for r in rows), shown),
         "latence_med_ms": round(statistics.median(ms)), "latence_p95_ms": ms[min(n - 1, int(0.95 * n))],
     }
 
@@ -266,10 +293,10 @@ def read_cases(path=CASES):
         return list(csv.DictReader(f))
 
 
-def evaluate(cases):
+def evaluate(cases, with_context=True):
     rows = []
     for c in cases:
-        out, ms = run_case(c)
+        out, ms = run_case(c, with_context=with_context)
         r = score(c, out, ms)
         r["expected"] = c["expected_shop_link"].strip()
         rows.append(r)
@@ -315,6 +342,9 @@ TABLE = [("Sécurité : réponses avec un pesticide non homologué ou interdit (
          ("Export : substance non approuvée UE (cas)", "export_non_ue", ""),
          ("Bio : produit non autorisé en bio (cas)", "bio_non_bio", ""),
          ("Rotation (groupe FRAC/IRAC)", "rotation", ""),
+         ("Début d'attaque : produit bio en tête quand il en existe un", "bio_debut_pct", " %"),
+         ("Produits avec une ligne « pourquoi »", "pourquoi_pct", " %"),
+         ("Questions de contexte par réponse (moyenne)", "questions_moy", ""),
          ("Latence médiane / p95 (ms, sans la vision)", ("latence_med_ms", "latence_p95_ms"), "")]
 
 
@@ -330,9 +360,11 @@ def main():
     ap.add_argument("--change", default="référence")
     ap.add_argument("--notes", default="")
     ap.add_argument("--no-log", action="store_true", help="trial run: table on screen only, no file written")
+    ap.add_argument("--sans-contexte", action="store_true",
+                    help="the agents do not receive the context of the cases (measures the questions asked)")
     a = ap.parse_args()
     cases = read_cases()
-    rows = evaluate(cases)
+    rows = evaluate(cases, with_context=not a.sans_contexte)
     s = summarize(rows)
     if a.no_log:
         print(f"{len(rows)} cas (essai : aucun fichier écrit)")

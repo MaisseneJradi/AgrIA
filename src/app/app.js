@@ -30,6 +30,13 @@ const I18N = {
     fbTruth: "Quelle est la bonne réponse ? (plante et maladie)", fbPh: "Ex. : olivier, œil de paon",
     fbSend: "Envoyer", fbThanks: "Merci, c'est enregistré.",
     fbKeep: "J'accepte qu'AgrIA garde cette photo pour mieux reconnaître les maladies en Tunisie",
+    ctxTitle: "Précisions sur la parcelle (facultatif)",
+    ctxHelp: "Elles aident à choisir un produit adapté : délai avant récolte, marché, agriculture biologique…",
+    ctxAsk: "Les agents ont besoin des précisions en couleur : remplissez-les puis relancez l'analyse.",
+    ctxDays: "Récolte prévue dans (jours)", ctxMarket: "Marché", ctxLocal: "Marché local",
+    ctxExport: "Export (Union européenne)", ctxOrganic: "Agriculture biologique", ctxStage: "Stade de l'attaque",
+    ctxEarly: "Début (premières taches)", ctxSpread: "Déjà étendue", ctxGreenhouse: "Sous serre",
+    ctxLast: "Dernier produit utilisé", ctxLastPh: "Ex. : nom du produit", ctxArea: "Surface à traiter (ha)",
   },
   ar: {
     tagline: "طبيب النباتات", photo: "التقط صورة أو اخترها",
@@ -57,10 +64,19 @@ const I18N = {
     fbTruth: "ما هو الجواب الصحيح؟ (النبتة والمرض)", fbPh: "مثال: زيتون، عين الطاووس",
     fbSend: "إرسال", fbThanks: "شكرًا، تم التسجيل.",
     fbKeep: "أوافق على أن يحتفظ AgrIA بهذه الصورة لتحسين التعرف على الأمراض في تونس",
+    ctxTitle: "تفاصيل عن القطعة (اختياري)",
+    ctxHelp: "تساعد على اختيار منتج مناسب: المدة قبل الجني، السوق، الفلاحة البيولوجية…",
+    ctxAsk: "يحتاج الوكلاء إلى التفاصيل الملوّنة: املأها ثم أعد التحليل.",
+    ctxDays: "الجني بعد (أيام)", ctxMarket: "السوق", ctxLocal: "السوق المحلية",
+    ctxExport: "تصدير (الاتحاد الأوروبي)", ctxOrganic: "فلاحة بيولوجية", ctxStage: "مرحلة الإصابة",
+    ctxEarly: "بداية (أولى البقع)", ctxSpread: "منتشر", ctxGreenhouse: "بيت محمي",
+    ctxLast: "آخر منتج مستعمل", ctxLastPh: "مثال: اسم المنتج", ctxArea: "المساحة المراد مداواتها (هكتار)",
   },
 };
 
 const $ = (id) => document.getElementById(id);
+// context of the plot sent to /diagnose; the agents ask for the missing ones only when the answer would change
+const CTX_FIELDS = ["days_to_harvest", "market", "organic", "greenhouse", "stage", "last_treatment_group", "area"];
 let lang = "fr";
 let governorates = [];
 let cultures = [];
@@ -239,6 +255,13 @@ function render(r) {
   }
   $("products-box").hidden = !(r.produits || []).length;
 
+  // context questions: the fields the agents need are opened and coloured; the farmer fills them and sends again
+  const asked = r.questions_contexte || [];
+  document.querySelectorAll("[data-ctx]").forEach((el) => el.classList.toggle("ask", asked.includes(el.dataset.ctx)));
+  $("ctx-hint").textContent = asked.length ? t.ctxAsk : t.ctxHelp;
+  $("ctx-hint").classList.toggle("warn", asked.length > 0);
+  if (asked.length) $("context-box").open = true;
+
   const trace = $("trace");
   trace.replaceChildren();
   for (const s of r.trace || []) {
@@ -313,6 +336,7 @@ $("form").addEventListener("submit", async (e) => {
   data.append("mois", String(new Date().getMonth() + 1));
   if ($("gouvernorat").value) data.append("gouvernorat", $("gouvernorat").value);
   if ($("culture").value) data.append("culture", $("culture").value);
+  for (const f of CTX_FIELDS) if ($(f).value.trim()) data.append(f, $(f).value.trim());
 
   $("submit").disabled = true;
   $("loading").hidden = false;
@@ -335,6 +359,9 @@ $("again").addEventListener("click", () => {
   $("preview").hidden = true;
   $("photo-hint").hidden = false;
   $("result").hidden = true;
+  document.querySelectorAll("[data-ctx]").forEach((el) => el.classList.remove("ask"));
+  $("ctx-hint").textContent = I18N[lang].ctxHelp;
+  $("ctx-hint").classList.remove("warn");
   lastIdentify = null;
   showCropHint(null);
   fillCultures();
