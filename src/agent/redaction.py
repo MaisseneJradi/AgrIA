@@ -43,7 +43,7 @@ P = {
         "diagnostic": "Diagnostic : {nom} (confiance {c} %).",
         "produits": "Produits homologués en Tunisie pour ce cas :",
         "produit": "{nom} ({substances}) : dose {dose} ; délai avant récolte : {dar}",
-        "dar_jours": "{n} jours", "dar_inconnu": "non précisé dans la liste officielle, voir l'étiquette",
+        "dar_jours": "{n} jours", "dar_jour": "{n} jour", "dar_inconnu": "non précisé dans la liste officielle, voir l'étiquette",
         "aucun_produit": "Aucun produit n'est homologué en Tunisie contre ce problème.",
         "orientation": "Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA{gov}.",
         "prevention": "Mesures de prévention :",
@@ -56,6 +56,36 @@ P = {
         "fin": "Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le "
                "CRDA.",
         "sain_nom": "plante saine", "carence": "carence en {x} ({sym})",
+        # step 3 of the phyto plan: why each product, products set aside for the situation, context questions
+        "pourquoi": "Pourquoi : ", "sep": " ; ",
+        "r_direct": "homologué contre ce problème sur votre culture",
+        "r_vecteur": "vise l'insecte qui transmet la maladie",
+        "r_groupe": "homologué pour un groupe de cultures qui contient la vôtre",
+        "r_proche": "cible proche, seulement après confirmation du diagnostic",
+        "r_bio_debut": "substances autorisées en agriculture biologique, à privilégier en début d'attaque",
+        "r_bio": "substances autorisées en agriculture biologique",
+        "r_toxicite": "classe de toxicité OMS {c}",
+        "r_dar": "délai avant récolte de {dar} {j}",
+        "r_dar_dth": "délai avant récolte de {dar} {j}, compatible avec votre récolte dans {dth} jours",
+        "r_ue": "substances approuvées dans l'Union européenne",
+        "r_rotation": "groupe {g}, différent de votre dernier traitement ({last})",
+        "ecartes": "Produits homologués écartés pour votre situation :",
+        "aucun_adapte": "Aucun des {n} produits homologués contre ce problème ne convient à votre situation :",
+        "c_dar_long": "délai avant récolte plus long que les {dth} jours avant votre récolte : {n} produit(s)",
+        "c_non_ue": "substance non approuvée dans l'Union européenne (export) : {n} produit(s)",
+        "c_ue_inconnu": "statut inconnu dans l'Union européenne (export) : {n} produit(s)",
+        "c_non_bio": "non autorisé en agriculture biologique : {n} produit(s)",
+        "verifier_dar": "Délai avant récolte non précisé dans la liste officielle pour certains produits : vérifiez sur "
+                        "l'étiquette qu'il est inférieur aux {dth} jours qui restent avant votre récolte.",
+        "bio_etiquette": "En agriculture biologique, vérifiez aussi que l'étiquette porte la mention « utilisable en "
+                         "agriculture biologique ».",
+        "affiner": "Pour affiner ma réponse, dites-moi :",
+        "q_days_to_harvest": "Dans combien de jours pensez-vous récolter ?",
+        "q_market": "Votre récolte part-elle à l'export (Union européenne) ou sur le marché local ?",
+        "q_organic": "Votre parcelle est-elle en agriculture biologique ?",
+        "q_stage": "Le problème commence-t-il (premières taches ou premiers dégâts, quelques plantes) ou est-il déjà "
+                   "étendu ?",
+        "q_last_treatment_group": "Quel produit avez-vous utilisé à votre dernier traitement ?",
     },
     "ar": {
         "photo_absente": "أحتاج إلى صورة لتشخيص حالة النبتة.",
@@ -87,8 +117,62 @@ P = {
         "a_savoir": "معلومات مهمة:",
         "fin": "احترم الجرعة والمدة قبل الجني المذكورتين على الملصق. في حالة الشك، اتصل بالـCRDA.",
         "sain_nom": "نبتة سليمة", "carence": "نقص {x} ({sym})",
+        "pourquoi": "لماذا: ", "sep": "؛ ",
+        "r_direct": "مصادق عليه ضد هذه المشكلة على زراعتك",
+        "r_vecteur": "يستهدف الحشرة الناقلة للمرض",
+        "r_groupe": "مصادق عليه لمجموعة زراعات تشمل زراعتك",
+        "r_proche": "هدف قريب، لا يُستعمل إلا بعد تأكيد التشخيص",
+        "r_bio_debut": "مواد فعالة مسموح بها في الفلاحة البيولوجية، تُفضَّل في بداية الإصابة",
+        "r_bio": "مواد فعالة مسموح بها في الفلاحة البيولوجية",
+        "r_toxicite": "صنف السمية {c} حسب منظمة الصحة العالمية",
+        "r_dar": "مدة قبل الجني {dar} {j}",
+        "r_dar_dth": "مدة قبل الجني {dar} {j}، تتوافق مع الجني بعد {dth} يومًا",
+        "r_ue": "مواد فعالة مصادق عليها في الاتحاد الأوروبي",
+        "r_rotation": "مجموعة {g} مختلفة عن آخر مداواة ({last})",
+        "ecartes": "مبيدات مصادق عليها استُبعدت بسبب وضعيتك:",
+        "aucun_adapte": "لا يناسب وضعيتك أيٌّ من المبيدات المصادق عليها ضد هذه المشكلة ({n}):",
+        "c_dar_long": "مدة قبل الجني أطول من {dth} يومًا المتبقية قبل الجني: {n} منتج",
+        "c_non_ue": "مادة فعالة غير مصادق عليها في الاتحاد الأوروبي (تصدير): {n} منتج",
+        "c_ue_inconnu": "وضعية غير معروفة في الاتحاد الأوروبي (تصدير): {n} منتج",
+        "c_non_bio": "غير مسموح به في الفلاحة البيولوجية: {n} منتج",
+        "verifier_dar": "المدة قبل الجني غير محددة في القائمة الرسمية لبعض المنتجات: تأكد من الملصق أنها أقل من {dth} "
+                        "يومًا المتبقية قبل الجني.",
+        "bio_etiquette": "في الفلاحة البيولوجية، تأكد أيضًا أن الملصق يحمل عبارة «صالح للفلاحة البيولوجية».",
+        "affiner": "لأدقّق إجابتي، أخبرني:",
+        "q_days_to_harvest": "بعد كم يوم تنوي الجني؟",
+        "q_market": "هل محصولك موجّه للتصدير (الاتحاد الأوروبي) أم للسوق المحلية؟",
+        "q_organic": "هل قطعتك في الفلاحة البيولوجية؟",
+        "q_stage": "هل المشكلة في بدايتها (أولى البقع أو الأضرار، بعض النباتات) أم أنها منتشرة؟",
+        "q_last_treatment_group": "ما هو المنتج الذي استعملته في آخر مداواة؟",
     }
 }
+CAUSES = ("dar_long", "non_ue", "ue_inconnu", "non_bio")
+
+
+def days_word(n, t):
+    """'jour' for 0 and 1 in French, else 'jours' (the Arabic sentences keep their own word)."""
+    return t["dar_jours"].format(n="").strip() if "dar_jour" not in t or n > 1 else t["dar_jour"].format(n="").strip()
+
+
+def reason_text(r, t):
+    """One reason code of ranking.py -> its sentence in the language of `t`."""
+    code = r[0]
+    if code == "relation":
+        return t["r_" + r[1]]
+    if code == "toxicite":
+        return t["r_toxicite"].format(c=r[1])
+    if code == "dar":
+        j = days_word(r[1], t)
+        return t["r_dar_dth"].format(dar=r[1], j=j, dth=r[2]) if r[2] is not None else t["r_dar"].format(dar=r[1], j=j)
+    if code == "rotation":
+        return t["r_rotation"].format(g=r[1], last=r[2])
+    return t["r_" + code]
+
+
+def set_aside_lines(ecartes, ctx, t):
+    """Products set aside -> one line per cause with how many products (no name: they do not fit this case)."""
+    counts = {c: sum(c in e["raisons"] for e in ecartes) for c in CAUSES}
+    return [t["c_" + c].format(n=n, dth=ctx.get("days_to_harvest")) for c, n in counts.items() if n]
 LANGS = tuple(P)
 
 # fixed free sentences of the agents and tools (questions, warnings) -> Arabic
@@ -233,14 +317,29 @@ def compose(d, lang="fr"):
                 parts.append(t["confirmer"] + "\n" + bullets(free(q) for q in d["questions"]))
         else:
             parts.append(t["diagnostic"].format(nom=nom, c=diag["confiance"]))
+        ctx = d.get("contexte") or {}
         if d.get("produits"):
             parts.append(t["produits"] + "\n" + bullets(
                 t["produit"].format(nom=p["nom"], substances=p["substances"], dose=p["dose"],
-                                    dar=t["dar_jours"].format(n=p["dar_jours"]) if p["dar_jours"] is not None
+                                    dar=f"{p['dar_jours']} {days_word(p['dar_jours'], t)}" if p["dar_jours"] is not None
                                     else t["dar_inconnu"])
+                # the reasons go on their own line: the product line keeps exactly its registered dose (rule 8)
+                + ("\n  " + t["pourquoi"] + t["sep"].join(reason_text(r, t) for r in p["raisons"])
+                   if p.get("raisons") else "")
                 for p in d["produits"]))
+            if d.get("ecartes"):
+                parts.append(t["ecartes"] + "\n" + bullets(set_aside_lines(d["ecartes"], ctx, t)))
+            if d.get("verifier_dar") is not None:
+                parts.append(t["verifier_dar"].format(dth=d["verifier_dar"]))
+            if ctx.get("organic") == "y":
+                parts.append(t["bio_etiquette"])
+        elif d.get("aucun_adapte"):
+            parts.append(t["aucun_adapte"].format(n=d.get("n_candidats", 0)) + "\n"
+                         + bullets(set_aside_lines(d.get("ecartes", []), ctx, t)))
         elif d.get("aucun_produit"):
             parts.append(t["aucun_produit"])
+        if d.get("questions_contexte"):
+            parts.append(t["affiner"] + "\n" + bullets(t["q_" + q] for q in d["questions_contexte"]))
         if d.get("prevention"):  # validated rows of docs/conseils_prevention.csv, in the language of the answer
             parts.append(t["prevention"] + "\n" + bullets(p[lang] for p in d["prevention"]))
         if d.get("conseils") and lang == "fr":

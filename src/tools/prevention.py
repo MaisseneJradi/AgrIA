@@ -40,7 +40,8 @@ def prevention_advice(unified_class, path=ADVICE):
 def clean_sentence(s):
     """The sentence if it can be quoted to a farmer, else None."""
     s = re.sub(r"\s+", " ", s).strip()
-    s = re.sub(r"^(?:Lutte et prophylaxie|Moyens de lutte|Prévention|Lutte|Symptômes|Description|Biologie|Répartition)"
+    s = re.sub(r"^(?:Lutte et prophylaxie|Méthodes de lutte|Moyens de lutte|Prévention|Lutte|Symptômes|Description|"
+               r"Cycle biologique|Biologie|Répartition)"
                r"\s+(?=[A-ZÀ-Ý])", "", s)  # section titles glued to the first sentence
     if len(s) < MIN_LEN or re.search(r"\d|https?://|www\.", s):
         return None

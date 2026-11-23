@@ -2,9 +2,12 @@
 
 Agent Phytosanitaire: registered pesticides for the disease or pest, on the farmer's crop (get_treatments), and
   prevention advice from the sheets (search_knowledge), cleaned of any chemical control (prevention.py). Products are
-  chosen HERE, in code: at most MAX_PRODUCTS, relation direct or vecteur first, a known DAR first; "proche" only when
-  nothing else exists, with a warning. When nothing is registered: validated prevention advice and the CRDA referral,
-  never a product.
+  chosen HERE, in code (ranking.py): the uses that do not fit the situation are set aside (DAR longer than the days
+  to harvest, export with a substance not approved in the EU, organic farm), the others are ranked (relation, early
+  stage -> organic-allowed first, toxicity, shorter DAR, rotation of groups) and the MAX_PRODUCTS first are kept, each
+  with its reasons; "proche" only when nothing else exists, with a warning. The context fields still unknown that
+  would change this choice become questions (at most 3). When nothing is registered, or nothing fits: validated
+  prevention advice and the CRDA referral, never a product.
 Agent Agronome: fertilizers for a deficiency (get_fertilizers: reliability on this crop, soil of the governorate,
   confirmation questions) and the irrigation need of the month (get_water_need).
 """
@@ -15,6 +18,7 @@ from src.agent import paths  # noqa: F401
 from fertilizers import get_fertilizers  # src/tools
 from prevention import cultural_sentences, prevention_advice
 from rag import search_knowledge
+from ranking import decisive_fields, rank
 from src.agent.agents.aides import step
 from treatments import get_treatments
 from water import get_water_need
@@ -29,15 +33,12 @@ def phytosanitaire(d):
         return {"traitements": {"concerne": False},
                 "trace": step("Phytosanitaire", "rien à traiter (carence ou plante saine)", t0)}
     cls, crop = diag["classe"], d.get("culture_code")
+    ctx = d.get("contexte") or {}
     usages = get_treatments(cls, crop)
     main = [u for u in usages if u["relation"] in ("direct", "vecteur", "groupe")] or usages
-    chosen, seen = [], set()
-    for u in main:  # already sorted: relation, then known DAR first
-        if u["produit"] not in seen:
-            seen.add(u["produit"])
-            chosen.append(u)
-        if len(chosen) >= MAX_PRODUCTS:
-            break
+    ranked = rank(main, ctx, MAX_PRODUCTS)  # filters of the situation, then the score written in ranking.py
+    chosen = ranked["retenus"]
+    questions = decisive_fields(main, ctx, MAX_PRODUCTS) if main else []
     warnings = []
     for u in chosen:
         if u["relation"] in ("vecteur", "proche"):
@@ -48,18 +49,27 @@ def phytosanitaire(d):
             warnings.append(f"{u['produit']} : {u['restriction']}")
     passages = search_knowledge("lutte prévention traitement", k=2, classe=cls)
     produits = [{"nom": u["produit"], "substances": u["substances"], "dose": u["dose"], "dar_jours": u["dar_jours"],
-                 "dar_message": u["dar_message"], "relation": u["relation"], "product_id": u["product_id"]}
+                 "dar_message": u["dar_message"], "relation": u["relation"], "product_id": u["product_id"],
+                 "bio_ue": u["bio_ue"], "ue_approuve": u["ue_approuve"], "raisons": u["raisons"]}
                 for u in chosen]
     # advice never carries a product: sentences of the sheets without chemistry, and, when nothing is registered,
     # the validated prevention advice of docs/conseils_prevention.csv and the CRDA referral
     conseils = cultural_sentences(passages)
     prevention = prevention_advice(cls) if not usages else []
+    # registered products exist, but none fits the farmer's situation (DAR, export, organic): say why, then the CRDA
+    none_fits = bool(main) and not chosen
     note = f"{len(usages)} usages homologués, {len(produits)} retenus"
+    if ranked["ecartes"]:
+        note += f", {len(ranked['ecartes'])} écartés pour la situation ({ctx})"
+    if questions:
+        note += f" ; à demander : {', '.join(questions)}"
     if not usages:
         note += f" ; {len(prevention)} mesures de prévention validées, orientation CRDA"
     return {"traitements": {"concerne": True, "produits": produits, "nb_usages": len(usages),
                             "aucun_produit": not usages, "avertissements": warnings, "conseils": conseils,
-                            "prevention": prevention, "orientation_crda": not usages},
+                            "prevention": prevention, "orientation_crda": not usages or none_fits,
+                            "ecartes": ranked["ecartes"], "aucun_adapte": none_fits,
+                            "n_candidats": ranked["n_candidats"], "questions_contexte": questions},
             "sources": [{"fiche": p["nom"], "lien": p["source"], "licence": p["licence"]} for p in passages],
             "trace": step("Phytosanitaire", note, t0)}
 

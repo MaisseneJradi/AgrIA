@@ -9,6 +9,7 @@
       "produits": [{"nom": "CIMOXATE C WG", "dose": "3 kg/ha (300 g/hl)", "dar_jours": 3}],
       "engrais": [{"nom": "Sequestrene 138 FE"}],
       "texte": "the text shown to the farmer",
+      "contexte": {"days_to_harvest": 7, "market": "export", "organic": "n"},   # optional
   })
   -> {"valide": False, "raisons": [...blocking...], "avertissements": [...to mention...], "produits_verifies": [...]}
 
@@ -23,6 +24,10 @@ Blocking rules
   8. a product whose registered dose is not written, as such, on the same line as the product in the text
   9. a substance or a word of chemical control (fongicide, cuivre, azoxystrobine, spray...) outside the lines of the
      registered products and fertilizers of the answer: advice and quoted sheets never carry a treatment (phyto step 2)
+  10. "contexte".days_to_harvest known: a product whose DAR (shown, else every known DAR of its uses) is longer
+  11. "contexte".market = export: a product with a substance not approved, or of unknown status, in the EU
+  12. "contexte".organic = y: a product with a substance not allowed in organic farming (bio_ue)
+  (rules 10-12, phyto step 3: the context filters of ranking.py, checked again on the final answer)
 Warnings (the answer must mention them): restriction, provisional authorisation, relation vecteur or proche,
 DAR not given by the list, model confusions of fertilizers.py.
 """
@@ -148,6 +153,18 @@ def check_answer(answer):
                 reasons.append(f"délai avant récolte de « {p['nom']} » inventé : la liste n'en donne pas")
             elif p["dar_jours"] not in dars:
                 reasons.append(f"délai avant récolte de « {p['nom']} » faux (liste : {sorted(d for d in dars if d is not None)})")
+        # rules 10-12: the situation of the farmer (contexte), when it is known
+        ctx = answer.get("contexte") or {}
+        dth = ctx.get("days_to_harvest")
+        if dth is not None:
+            shown = p.get("dar_jours")
+            known = [x["dar_jours"] for x in usages if x["dar_jours"] is not None]
+            if (shown is not None and shown > dth) or (shown is None and known and min(known) > dth):
+                reasons.append(f"« {p['nom']} » : délai avant récolte plus long que les {dth} jours avant la récolte")
+        if ctx.get("market") == "export" and not all(x.get("ue_approuve") for x in usages):
+            reasons.append(f"« {p['nom']} » : substance non approuvée (ou inconnue) dans l'UE pour un marché export")
+        if ctx.get("organic") == "y" and not all(x.get("bio_ue") for x in usages):
+            reasons.append(f"« {p['nom']} » : substance non autorisée en agriculture biologique")
         u = usages[0]
         if u["dar_jours"] is None:
             warnings.append(f"« {u['produit']} » : {u['dar_message']}")
