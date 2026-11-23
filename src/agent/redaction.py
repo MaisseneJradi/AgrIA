@@ -13,6 +13,8 @@ from functools import lru_cache
 from src.agent import paths  # noqa: F401
 from common import query  # src/tools
 from dose_calc import TANK_L, area_text, qty_text
+from hazard import LABELS as HAZARD_LABELS
+from hazard import SEVERE
 
 MONTHS = {
     "fr": ["", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre",
@@ -65,7 +67,20 @@ P = {
         "r_proche": "cible proche, seulement après confirmation du diagnostic",
         "r_bio_debut": "substances autorisées en agriculture biologique, à privilégier en début d'attaque",
         "r_bio": "substances autorisées en agriculture biologique",
-        "r_toxicite": "classe de toxicité OMS {c}",
+        "r_toxicite": "classe de toxicité OMS {c} ({label})",
+        # step 6: applicator and bee safety, weather (no verb of treatment: rule 9 reads these lines)
+        "securite": "Sécurité :",
+        "epi": "Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes pendant la "
+               "préparation et l'application ; ne mangez, ne buvez et ne fumez pas ; lavez-vous et lavez vos vêtements "
+               "après.",
+        "tres_dangereux": "{nom} : classe OMS {c} ({label}) : jamais sans l'équipement complet indiqué sur "
+                          "l'étiquette ; gardez les enfants et les animaux à l'écart.",
+        "abeilles": "{nom} : très toxique pour les abeilles : n'appliquez pas pendant la floraison ni quand les abeilles "
+                    "butinent ; appliquez tôt le matin ou le soir, loin des ruches.",
+        "meteo_pluie": "Météo : pluie prévue dans les 24 heures ({mm} mm, probabilité jusqu'à {p} %) : attendez une "
+                       "période sèche pour appliquer le produit, sinon il sera lessivé.",
+        "meteo_vent": "Météo : vent jusqu'à {v} km/h dans les 12 prochaines heures : n'appliquez pas quand le vent "
+                      "dépasse 15 km/h (le produit dérive vers les voisins, les ruches et l'eau).",
         "r_dar": "délai avant récolte de {dar} {j}",
         "r_dar_dth": "délai avant récolte de {dar} {j}, compatible avec votre récolte dans {dth} jours",
         "r_ue": "substances approuvées dans l'Union européenne",
@@ -137,7 +152,18 @@ P = {
         "r_proche": "هدف قريب، لا يُستعمل إلا بعد تأكيد التشخيص",
         "r_bio_debut": "مواد فعالة مسموح بها في الفلاحة البيولوجية، تُفضَّل في بداية الإصابة",
         "r_bio": "مواد فعالة مسموح بها في الفلاحة البيولوجية",
-        "r_toxicite": "صنف السمية {c} حسب منظمة الصحة العالمية",
+        "r_toxicite": "صنف السمية {c} حسب منظمة الصحة العالمية ({label})",
+        "securite": "السلامة:",
+        "epi": "الوقاية: قفازات وأحذية طويلة ونظارات وكمامة وملابس تغطي الذراعين والساقين أثناء التحضير والاستعمال؛ لا "
+               "تأكل ولا تشرب ولا تدخّن؛ اغتسل واغسل ملابسك بعد ذلك.",
+        "tres_dangereux": "{nom}: صنف {c} حسب منظمة الصحة العالمية ({label}): لا يُستعمل أبدًا دون المعدات الكاملة "
+                          "المذكورة على الملصق؛ أبعد الأطفال والحيوانات.",
+        "abeilles": "{nom}: شديد السمية للنحل: لا تستعمله أثناء الإزهار ولا عندما يجمع النحل الرحيق؛ استعمله في الصباح "
+                    "الباكر أو في المساء، بعيدًا عن الخلايا.",
+        "meteo_pluie": "الطقس: أمطار متوقعة خلال 24 ساعة ({mm} مم، احتمال يصل إلى {p} %): انتظر فترة جافة لاستعمال "
+                       "المنتج، وإلا سيجرفه المطر.",
+        "meteo_vent": "الطقس: رياح تصل إلى {v} كم/س خلال الـ12 ساعة القادمة: لا تستعمل المنتج عندما تتجاوز الرياح 15 "
+                      "كم/س (ينجرف نحو الجيران والخلايا والماء).",
         "r_dar": "مدة قبل الجني {dar} {j}",
         "r_dar_dth": "مدة قبل الجني {dar} {j}، تتوافق مع الجني بعد {dth} يومًا",
         "r_ue": "مواد فعالة مصادق عليها في الاتحاد الأوروبي",
@@ -185,7 +211,7 @@ def reason_text(r, t):
     if code == "relation":
         return t["r_" + r[1]]
     if code == "toxicite":
-        return t["r_toxicite"].format(c=r[1])
+        return t["r_toxicite"].format(c=r[1], label=HAZARD_LABELS[r[1]][0 if t is P["fr"] else 1])
     if code == "dar":
         j = days_word(r[1], t)
         return t["r_dar_dth"].format(dar=r[1], j=j, dth=r[2]) if r[2] is not None else t["r_dar"].format(dar=r[1], j=j)
@@ -196,6 +222,30 @@ def reason_text(r, t):
     if code == "groupe_faible_risque":
         return t["r_groupe_faible_risque"].format(g=r[1], shared=r[2])
     return t["r_" + code]
+
+
+def number(x):
+    """3.2 -> '3,2'; 22.0 -> '22'."""
+    return f"{x:.1f}".rstrip("0").rstrip(".").replace(".", ",")
+
+
+def safety_lines(d, t, lang):
+    """Protective equipment (always with a pesticide), very hazardous products (WHO Ia, Ib), products highly toxic to
+    bees, weather of the next hours: all from validated data or the forecast, written by code."""
+    lab = 0 if lang == "fr" else 1
+    out = [t["epi"]]
+    for p in d["produits"]:
+        if p.get("classe_oms") in SEVERE:
+            out.append(t["tres_dangereux"].format(nom=p["nom"], c=p["classe_oms"],
+                                                  label=HAZARD_LABELS[p["classe_oms"]][lab]))
+        if p.get("abeilles"):
+            out.append(t["abeilles"].format(nom=p["nom"]))
+    m = d.get("meteo") or {}
+    if m.get("pluie"):
+        out.append(t["meteo_pluie"].format(mm=number(m["pluie_mm"]), p=m.get("pluie_proba") or 0))
+    if m.get("vent"):
+        out.append(t["meteo_vent"].format(v=number(m["vent_max_kmh"])))
+    return out
 
 
 def practical_line(dp, t, lang):
@@ -382,6 +432,7 @@ def compose(d, lang="fr"):
                 parts.append(t["rotation_impossible"].format(last=last))
             if d.get("rotation_conseil"):
                 parts.append(t["rotation"])
+            parts.append(t["securite"] + "\n" + bullets(safety_lines(d, t, lang)))
             if d.get("verifier_dar") is not None:
                 parts.append(t["verifier_dar"].format(dth=d["verifier_dar"]))
             if ctx.get("organic") == "y":
