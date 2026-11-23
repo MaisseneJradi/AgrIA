@@ -29,6 +29,7 @@ from target_mapping import usage_classes
 CLEAN, CTX, KNOW = PROC / "clean", PROC / "context", PROC / "knowledge"
 FILES = {
     "usage_lmr": CLEAN / "pesticides_usage_lmr.csv",
+    "eu_mrl": CLEAN / "eu_mrl.csv",  # with mrl_text: "No MRL required" (Annex IV) is not a missing value
     "pesticides_produits": CLEAN / "pesticides_produits.csv",
     "pesticides_usages": CLEAN / "pesticides_usages.csv",
     "pesticides_agrishop": CLEAN / "pesticides_agrishop.csv",
@@ -93,6 +94,9 @@ def build():
                                             "+ produits")}
     for name, path in FILES.items():
         tables[name] = (pd.read_csv(path), str(path.relative_to(ROOT)))
+    codex = PROC / "pesticides" / "codex_mrl.csv"  # phyto step 7 (build_codex_mrl.py): optional, needs the internet once
+    if codex.exists():
+        tables["codex_mrl"] = (pd.read_csv(codex), str(codex.relative_to(ROOT)))
     fiches = pd.read_json(KNOW / "fiches.jsonl", lines=True)
     tables["fiches"] = (fiches.astype(str).replace({"nan": None, "None": None}), "knowledge/fiches.jsonl")
     rules = json.load(open(KNOW / "regles_carences.json", encoding="utf-8"))

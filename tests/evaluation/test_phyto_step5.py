@@ -88,7 +88,7 @@ class TestRule14(unittest.TestCase):
 
     def answer(self, practical):
         return dict(self.BASE, produits=[self.GOOD], texte=self.LINE + "\n  " + practical
-                    + "\nProtection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes")
+                    + "\nProtection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes\nListe DGSVCIA du 22/05/2024")
 
     def test_exact_practical_dose_passes(self):
         r = check_answer(self.answer("Dose pratique : 48 g pour un pulvérisateur de 16 L ; 1,5 kg pour vos 0,5 ha"))

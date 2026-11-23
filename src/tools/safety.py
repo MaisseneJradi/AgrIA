@@ -40,6 +40,10 @@ Blocking rules
   17. a pesticide without the line of protective equipment
   18. a rain (24 h) or wind (> 15 km/h, 12 h) warning of the forecast ("meteo" of the answer) not written, or written
       with another number (rules 15-18: phyto step 6)
+  19. an answer about registered products (or saying none fits) without the date of the official list loaded
+      ("liste DGSVCIA du 22/05/2024"), or with another date (phyto step 7)
+  20. an MRL written in the text that differs from its table (EU for an export market, Codex for a local one;
+      phyto step 7)
 Warnings (the answer must mention them): restriction, provisional authorisation, relation vecteur or proche,
 DAR not given by the list, model confusions of fertilizers.py.
 """
@@ -52,7 +56,10 @@ from dose_calc import TANK_L, area_text, practical_dose
 from dose_calc import check as check_dose
 from fertilizers import get_fertilizers
 from hazard import bee_toxic, who_class
-from treatments import get_treatments
+from lexicon import crop_code
+from mrl import applicable_mrl
+from mrl import check_line as check_mrl_line
+from treatments import LIST_DATE, get_treatments
 
 
 def _squash(text):
@@ -129,6 +136,7 @@ PRACTICAL_MARKERS = ("Dose pratique", "الكمية العملية")  # first wo
 PPE_MARKERS = ("Protection :", "الوقاية:")
 WEATHER_MARKERS = ("Météo :", "الطقس:")
 RAIN_WORDS, WIND_WORDS, BEE_WORDS = ("pluie", "أمطار"), ("vent", "رياح"), ("abeilles", "النحل")
+LIST_IN_TEXT = re.compile(r"DGSVCIA\D{0,12}(\d{2}/\d{2}/\d{4})")  # "liste DGSVCIA du 22/05/2024", "DGSVCIA بتاريخ ..."
 WHO_IN_TEXT = re.compile(r"(?:OMS|صنف السمية|صنف)\s+(Ia|Ib|III|II|U)(?![A-Za-z])")
 
 
@@ -240,6 +248,10 @@ def check_answer(answer):
                     reasons.append(f"« {p['nom']} » : la dose pratique ne dit pas le volume du pulvérisateur")
                 if expected.get("surface") and area_text(ctx["area"]) not in line:
                     reasons.append(f"« {p['nom']} » : la dose pratique ne dit pas la surface")
+        # rule 20: the MRL written for this product = the one of its market (EU / Tunisian list / Codex)
+        expected_mrl = applicable_mrl(usages[0], crop_code(crop) if crop else None, ctx.get("market"))
+        for err in check_mrl_line(text, p["nom"], expected_mrl):
+            reasons.append(f"« {p['nom']} » : {err}")
         # rules 15-16: the WHO class and the bee warning of the validated tables are written for this product
         block = product_block(p, text)
         cls_expected = who_class(usages[0])
@@ -283,6 +295,15 @@ def check_answer(answer):
         reasons.append("dose pratique écrite hors de la ligne d'un produit retenu")
 
     # rule 17: protective equipment with any pesticide; rule 18: the weather warnings of the forecast, with its numbers
+    # rule 19: the date of the official list, in every answer that speaks of registered products (or of none)
+    facts = answer.get("faits") or {}
+    if text and (produits or facts.get("aucun_produit") or facts.get("aucun_adapte")):
+        dates = LIST_IN_TEXT.findall(text)
+        if not dates:
+            reasons.append(f"date de la liste officielle absente (liste DGSVCIA du {LIST_DATE})")
+        elif any(x != LIST_DATE for x in dates):
+            reasons.append(f"date de la liste officielle fausse (liste chargée : {LIST_DATE})")
+
     # (like rule 8, they read the text: an answer given without text is checked on its facts only)
     if produits and text and not any(m in text for m in PPE_MARKERS):
         reasons.append("équipement de protection non indiqué alors qu'un pesticide est conseillé")

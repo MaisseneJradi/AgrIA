@@ -15,6 +15,8 @@ from common import query  # src/tools
 from dose_calc import TANK_L, area_text, qty_text
 from hazard import LABELS as HAZARD_LABELS
 from hazard import SEVERE
+from mrl import mrl_number
+from treatments import LIST_DATE
 
 MONTHS = {
     "fr": ["", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre",
@@ -44,10 +46,11 @@ P = {
                      "a été peu observée sur votre culture.",
         "confirmer": "Pour confirmer :",
         "diagnostic": "Diagnostic : {nom} (confiance {c} %).",
-        "produits": "Produits homologués en Tunisie pour ce cas :",
+        "produits": "Produits homologués en Tunisie pour ce cas (liste DGSVCIA du {date}) :",
         "produit": "{nom} ({substances}) : dose {dose} ; délai avant récolte : {dar}",
-        "dar_jours": "{n} jours", "dar_jour": "{n} jour", "dar_inconnu": "non précisé dans la liste officielle, voir l'étiquette",
-        "aucun_produit": "Aucun produit n'est homologué en Tunisie contre ce problème.",
+        "dar_jours": "{n} jours", "dar_jour": "{n} jour", "dar_inconnu": "DAR non indiqué : vérifiez l'étiquette",
+        "dar_complete": "{v} (complété d'après {source})",
+        "aucun_produit": "Aucun produit n'est homologué en Tunisie contre ce problème (liste DGSVCIA du {date}).",
         "orientation": "Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA{gov}.",
         "prevention": "Mesures de prévention :",
         "conseils": "Extraits des fiches :",
@@ -88,6 +91,10 @@ P = {
         "r_groupe": "groupe {g}",
         "r_groupe_faible_risque": "groupe {g} ; {shared} déjà utilisé, mais à faible risque de résistance",
         # step 5: practical dose (dose_calc.py); "L" of the sprayer in capital, quantities in g, kg, ml, l
+        "lmr": "LMR de {nom} ({source}, {marche}) : ", "marche_local": "marché local",
+        "marche_export": "export vers l'Union européenne",
+        "lmr_absente": "{s} : LMR non trouvée, vérifiez auprès de l'acheteur ou du CRDA",
+        "lmr_non_requise": "{s} : pas de LMR requise dans l'UE (annexe IV)",
         "dp": "Dose pratique : ", "dp_tank": "{q} pour un pulvérisateur de {l} L", "dp_area": "{q} pour vos {a} ha",
         "dp_tank_absent": "pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir "
                           "l'étiquette",
@@ -98,7 +105,8 @@ P = {
         "rotation_impossible": "Aucun autre groupe que celui de votre dernier traitement ({last}) n'est homologué pour ce "
                                "cas : demandez conseil au CRDA avant de le répéter.",
         "ecartes": "Produits homologués écartés pour votre situation :",
-        "aucun_adapte": "Aucun des {n} produits homologués contre ce problème ne convient à votre situation :",
+        "aucun_adapte": "Aucun des {n} produits homologués contre ce problème (liste DGSVCIA du {date}) ne convient à "
+                        "votre situation :",
         "c_dar_long": "délai avant récolte plus long que les {dth} jours avant votre récolte : {n} produit(s)",
         "c_non_ue": "substance non approuvée dans l'Union européenne (export) : {n} produit(s)",
         "c_ue_inconnu": "statut inconnu dans l'Union européenne (export) : {n} produit(s)",
@@ -130,10 +138,11 @@ P = {
                      "على زراعتك.",
         "confirmer": "للتأكد:",
         "diagnostic": "التشخيص: {nom} (نسبة الثقة {c} %).",
-        "produits": "المبيدات المصادق عليها في تونس لهذه الحالة:",
+        "produits": "المبيدات المصادق عليها في تونس لهذه الحالة (قائمة DGSVCIA بتاريخ {date}):",
         "produit": "{nom} ({substances}): الجرعة {dose}؛ المدة قبل الجني: {dar}",
-        "dar_jours": "{n} أيام", "dar_inconnu": "غير محددة في القائمة الرسمية، راجع الملصق",
-        "aucun_produit": "لا يوجد أي مبيد مصادق عليه في تونس ضد هذه المشكلة.",
+        "dar_jours": "{n} أيام", "dar_inconnu": "غير مذكورة في القائمة: تحقق من الملصق",
+        "dar_complete": "{v} (أُكملت حسب {source})",
+        "aucun_produit": "لا يوجد أي مبيد مصادق عليه في تونس ضد هذه المشكلة (قائمة DGSVCIA بتاريخ {date}).",
         "orientation": "لفحص النبتة في المكان واتخاذ الإجراءات المناسبة لقطعتك، اتصل بالمندوبية الجهوية للتنمية "
                        "الفلاحية (CRDA){gov}.",
         "prevention": "إجراءات وقائية:",
@@ -170,6 +179,10 @@ P = {
         "r_rotation": "مجموعة {g} مختلفة عن آخر مداواة ({last})",
         "r_groupe": "مجموعة {g}",
         "r_groupe_faible_risque": "مجموعة {g}؛ {shared} مستعملة سابقًا لكن خطر المقاومة فيها ضعيف",
+        "lmr": "الحد الأقصى للمتبقيات في {nom} ({source}، {marche}): ", "marche_local": "السوق المحلية",
+        "marche_export": "التصدير نحو الاتحاد الأوروبي",
+        "lmr_absente": "{s}: غير موجود، تحقق لدى المشتري أو الـCRDA",
+        "lmr_non_requise": "{s}: لا يُشترط حد أقصى في الاتحاد الأوروبي (الملحق IV)",
         "dp": "الكمية العملية: ", "dp_tank": "{q} لمرشّة ظهرية سعتها {l} L", "dp_area": "{q} لمساحة {a} هكتار",
         "dp_tank_absent": "بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق",
         "dp_area_absent": "بالنسبة لمساحة {a} هكتار، الكمية حسب حجم المحلول في الهكتار: راجع الملصق",
@@ -179,7 +192,8 @@ P = {
         "rotation_impossible": "لا توجد مجموعة مصادق عليها لهذه الحالة غير مجموعة آخر مداواة ({last}): اطلب نصيحة "
                                "الـCRDA قبل تكرارها.",
         "ecartes": "مبيدات مصادق عليها استُبعدت بسبب وضعيتك:",
-        "aucun_adapte": "لا يناسب وضعيتك أيٌّ من المبيدات المصادق عليها ضد هذه المشكلة ({n}):",
+        "aucun_adapte": "لا يناسب وضعيتك أيٌّ من المبيدات المصادق عليها ضد هذه المشكلة ({n}، قائمة DGSVCIA بتاريخ "
+                        "{date}):",
         "c_dar_long": "مدة قبل الجني أطول من {dth} يومًا المتبقية قبل الجني: {n} منتج",
         "c_non_ue": "مادة فعالة غير مصادق عليها في الاتحاد الأوروبي (تصدير): {n} منتج",
         "c_ue_inconnu": "وضعية غير معروفة في الاتحاد الأوروبي (تصدير): {n} منتج",
@@ -222,6 +236,33 @@ def reason_text(r, t):
     if code == "groupe_faible_risque":
         return t["r_groupe_faible_risque"].format(g=r[1], shared=r[2])
     return t["r_" + code]
+
+
+def dar_text(p, t):
+    """DAR of a product line: '3 jours'; a validated completion says so ('non requis (DAR absent de la liste, complété
+    d'après ...)'); unknown: 'DAR non indiqué : vérifiez l'étiquette'."""
+    if p["dar_jours"] is None:
+        return t["dar_inconnu"]
+    v = p.get("dar_texte") or f"{p['dar_jours']} {days_word(p['dar_jours'], t)}"
+    if p.get("dar_source") == "complement":
+        return t["dar_complete"].format(v=v, source=p.get("dar_source_detail") or "")
+    return v
+
+
+def mrl_line(p, t, ctx):
+    """'LMR de X (Codex, marché local) : Azoxystrobin 3 mg/kg (Tomatoes (subgroup)) ; ...' - the product name is on the
+    line (the substances are chemistry: rule 9 reads only the lines without a product)."""
+    items = []
+    for m in p["lmr_marche"]:
+        if m["valeur"] is None and m.get("non_requise"):
+            items.append(t["lmr_non_requise"].format(s=m["substance"]))
+        elif m["valeur"] is None:
+            items.append(t["lmr_absente"].format(s=m["substance"]))
+        else:
+            items.append(f"{m['substance']} {mrl_number(m['valeur'])} mg/kg"
+                         + (f" ({m['denree']})" if m.get("denree") else ""))
+    market = t["marche_" + ctx.get("market", "local")]
+    return t["lmr"].format(nom=p["nom"], source=p["lmr_marche"][0]["source"], marche=market) + t["sep"].join(items)
 
 
 def number(x):
@@ -416,12 +457,12 @@ def compose(d, lang="fr"):
             parts.append(t["diagnostic"].format(nom=nom, c=diag["confiance"]))
         ctx = d.get("contexte") or {}
         if d.get("produits"):
-            parts.append(t["produits"] + "\n" + bullets(
+            parts.append(t["produits"].format(date=LIST_DATE) + "\n" + bullets(
                 t["produit"].format(nom=p["nom"], substances=p["substances"], dose=p["dose"],
-                                    dar=f"{p['dar_jours']} {days_word(p['dar_jours'], t)}" if p["dar_jours"] is not None
-                                    else t["dar_inconnu"])
+                                    dar=dar_text(p, t))
                 # the reasons go on their own line: the product line keeps exactly its registered dose (rule 8)
                 + (("\n  " + practical_line(p["dose_pratique"], t, lang)) if p.get("dose_pratique") else "")
+                + (("\n  " + mrl_line(p, t, ctx)) if p.get("lmr_marche") else "")
                 + ("\n  " + t["pourquoi"] + t["sep"].join(reason_text(r, t) for r in p["raisons"])
                    if p.get("raisons") else "")
                 for p in d["produits"]))
@@ -438,11 +479,11 @@ def compose(d, lang="fr"):
             if ctx.get("organic") == "y":
                 parts.append(t["bio_etiquette"])
         elif d.get("aucun_adapte"):
-            parts.append(t["aucun_adapte"].format(n=d.get("n_candidats", 0)) + "\n"
+            parts.append(t["aucun_adapte"].format(n=d.get("n_candidats", 0), date=LIST_DATE) + "\n"
                          + bullets(set_aside_lines(d.get("ecartes", []), ctx, t,
                                                    " + ".join(d.get("dernier_groupe") or []))))
         elif d.get("aucun_produit"):
-            parts.append(t["aucun_produit"])
+            parts.append(t["aucun_produit"].format(date=LIST_DATE))
         if d.get("questions_contexte"):
             parts.append(t["affiner"] + "\n" + bullets(t["q_" + q] for q in d["questions_contexte"]))
         if d.get("prevention"):  # validated rows of docs/conseils_prevention.csv, in the language of the answer

@@ -123,7 +123,7 @@ class TestRule13AndAnswer(WithValidated):
     BASE = {"task": "diseases", "classe": "tomato__late_blight", "culture": "tomate", "fiable": True}
     GOOD = {"nom": "CIMOXATE C WG", "dose": "3 kg/ha (300 g/hl)", "dar_jours": 3}  # cymoxanil (27) + copper (M01)
     TEXT = ("- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours"
-            "\nProtection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes")
+            "\nProtection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes\nListe DGSVCIA du 22/05/2024")
 
     def test_repeating_the_last_group_is_blocked(self):
         ok = check_answer(dict(self.BASE, produits=[self.GOOD], texte=self.TEXT,
