@@ -43,7 +43,9 @@ from langgraph.graph import START, StateGraph
 
 from src.agent import paths  # noqa: F401
 from common import fold, query  # src/tools
-from safety import _named_in_text, _same_product, _squash, chemical_terms
+from dose_calc import check as check_dose
+from dose_calc import practical_dose, written_quantities
+from safety import _named_in_text, _same_product, _squash, chemical_terms, practical_line_of
 from treatments import GROUPS
 import ranking
 from src.agent.agents.aides import class_name
@@ -61,7 +63,8 @@ LOG = ROOT / "docs" / "phyto_experiments.csv"
 LOG_COLUMNS = ["date", "step", "branch", "change", "n_cases", "safety_pct", "hors_cible_pct", "coverage_pct",
                "recall_or_pct", "absence_dite_pct", "prevention_crda_pct", "engrais_bons_pct", "dose_dar_exact_pct", "n_produits", "blocage_pct", "crda_pct",
                "liens_corrects", "liens_faux", "liens_attendus", "dar_trop_long", "export_non_ue", "bio_non_bio",
-               "rotation", "rotation_cas", "ligne_rotation_pct", "questions_moy", "bio_debut_pct", "pourquoi_pct",
+               "rotation", "rotation_cas", "ligne_rotation_pct", "dose_pratique_pct", "dose_pratique_exacte_pct",
+               "questions_moy", "bio_debut_pct", "pourquoi_pct",
                "latence_med_ms", "latence_p95_ms", "notes"]
 FRUIT_CLASSES = {"citrus__black_spot", "citrus__canker", "citrus__scab", "orange__citrus_greening",
                  "pomegranate__alternaria_spot", "pomegranate__anthracnose", "pomegranate__bacterial_blight",
@@ -256,6 +259,16 @@ def score(case, out, ms):
     repeat = [p["nom"] for p in shown if last and ranking.shared_groups(ranking.moa_groups(p), last)]
     rotation_viol = bool(repeat) and _other_group_fits(case, last)
     with_group = any(ranking.moa_groups(p) for p in shown)
+    # practical dose (step 5): the quantities written under each product, against the OFFICIAL clean dose converted
+    area = float(str(case.get("area")).replace(",", ".")) if str(case.get("area") or "").strip() else None
+    practical = []
+    for p in shown:
+        line = practical_line_of(p, text)
+        if line is None or not written_quantities(line):  # a line that only says "see the label" is not counted
+            continue
+        uses = [u for u in official_uses(p["product_id"], crop) if _squash(u["dose"]) == _squash(p["dose"])]
+        exp = practical_dose(uses[0]["dose"], area) if uses else None
+        practical.append(["dose officielle introuvable"] if exp is None else check_dose(line, exp))
     fert_ok = None
     if kind == "deficiency":
         need = [a.split(":", 1)[1] for a in acceptable if a.startswith("nutriment:")]
@@ -285,6 +298,7 @@ def score(case, out, ms):
         "n_pourquoi": sum(bool(p.get("raisons")) for p in shown),
         "rotation_connue": bool(last), "rotation_viol": " | ".join(repeat) if rotation_viol else "",
         "avec_groupe": with_group, "ligne_rotation": with_group and ROTATION_LINE in text,
+        "n_dose_pratique": len(practical), "n_dose_pratique_exacte": sum(not e for e in practical),
     }
 
 
@@ -319,6 +333,9 @@ def summarize(rows):
         else "n/a (aucun groupe validé)",
         "rotation_cas": sum(r["rotation_connue"] for r in rows),
         "ligne_rotation_pct": pct(sum(r["ligne_rotation"] for r in rows), sum(r["avec_groupe"] for r in rows)),
+        "dose_pratique_pct": pct(sum(r["n_dose_pratique"] for r in rows), shown),
+        "dose_pratique_exacte_pct": pct(sum(r["n_dose_pratique_exacte"] for r in rows),
+                                        sum(r["n_dose_pratique"] for r in rows)),
         "questions_moy": round(sum(r["n_questions"] for r in rows) / n, 2),
         "bio_debut_pct": pct(sum(r["bio_en_tete"] for r in rows if r["bio_possible"]),
                              sum(bool(r["bio_possible"]) for r in rows)),
@@ -332,9 +349,11 @@ def read_cases(path=CASES):
         return list(csv.DictReader(f))
 
 
-def evaluate(cases, with_context=True):
+def evaluate(cases, with_context=True, area=None):
     rows = []
     for c in cases:
+        if area and not str(c.get("area") or "").strip():
+            c = dict(c, area=str(area))
         out, ms = run_case(c, with_context=with_context)
         r = score(c, out, ms)
         r["expected"] = c["expected_shop_link"].strip()
@@ -383,6 +402,8 @@ TABLE = [("Sécurité : réponses avec un pesticide non homologué ou interdit (
          ("Rotation : même groupe que le dernier traitement alors qu'un autre convient (cas)", "rotation", ""),
          ("Cas dont le dernier traitement a un groupe reconnu", "rotation_cas", ""),
          ("Réponses avec un groupe connu qui expliquent la rotation", "ligne_rotation_pct", " %"),
+         ("Produits avec une dose pratique (pulvérisateur de 16 L ou surface)", "dose_pratique_pct", " %"),
+         ("Doses pratiques exactes / dose officielle convertie (visé 100 %)", "dose_pratique_exacte_pct", " %"),
          ("Début d'attaque : produit bio en tête quand il en existe un", "bio_debut_pct", " %"),
          ("Produits avec une ligne « pourquoi »", "pourquoi_pct", " %"),
          ("Questions de contexte par réponse (moyenne)", "questions_moy", ""),
@@ -403,6 +424,7 @@ def main():
     ap.add_argument("--no-log", action="store_true", help="trial run: table on screen only, no file written")
     ap.add_argument("--sans-contexte", action="store_true",
                     help="the agents do not receive the context of the cases (measures the questions asked)")
+    ap.add_argument("--surface", type=float, help="area (ha) given to every case without one (practical doses)")
     ap.add_argument("--supposer-valides", action="store_true",
                     help="SIMULATION: the proposed rows of docs/moa_groups.csv are read as validated")
     a = ap.parse_args()
@@ -410,7 +432,7 @@ def main():
         assume_validated(ranking.MOA)
         print("SIMULATION : groupes FRAC/IRAC proposés lus comme validés")
     cases = read_cases()
-    rows = evaluate(cases, with_context=not a.sans_contexte)
+    rows = evaluate(cases, with_context=not a.sans_contexte, area=a.surface)
     s = summarize(rows)
     if a.no_log:
         print(f"{len(rows)} cas (essai : aucun fichier écrit)")

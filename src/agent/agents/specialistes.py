@@ -15,7 +15,8 @@ import datetime
 import time
 
 from src.agent import paths  # noqa: F401
-from fertilizers import get_fertilizers  # src/tools
+from dose_calc import practical_dose  # src/tools
+from fertilizers import get_fertilizers
 from prevention import cultural_sentences, prevention_advice
 from rag import search_knowledge
 from ranking import decisive_fields, rank
@@ -50,7 +51,9 @@ def phytosanitaire(d):
     passages = search_knowledge("lutte prévention traitement", k=2, classe=cls)
     produits = [{"nom": u["produit"], "substances": u["substances"], "dose": u["dose"], "dar_jours": u["dar_jours"],
                  "dar_message": u["dar_message"], "relation": u["relation"], "product_id": u["product_id"],
-                 "bio_ue": u["bio_ue"], "ue_approuve": u["ue_approuve"], "raisons": u["raisons"]}
+                 "bio_ue": u["bio_ue"], "ue_approuve": u["ue_approuve"], "raisons": u["raisons"],
+                 # the registered dose for a 16 L sprayer and the farmer's area (dose_calc.py): None when unreadable
+                 "dose_pratique": practical_dose(u["dose"], ctx.get("area"))}
                 for u in chosen]
     # advice never carries a product: sentences of the sheets without chemistry, and, when nothing is registered,
     # the validated prevention advice of docs/conseils_prevention.csv and the CRDA referral
