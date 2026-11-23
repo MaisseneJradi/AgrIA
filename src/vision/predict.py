@@ -5,6 +5,8 @@
   -> {"task": "routing", "class": "leaf", "confidence": 0.98,
       "top3": [["leaf", 0.98], ["other", 0.015], ["fruit", 0.005]], "reliable": True}
 
+AGRIA_TTA=1 averages test-time augmentation views (mirror + 3 crops, evaluate.tta_views): 5 passes per photo.
+Each model reads the photo at the side it was trained at (model.pt "size", 224 by default).
 `reliable` is True when the confidence reaches the threshold of the task: "threshold" in models/<task>/metrics.json
 (calibrated in step 2), else DEFAULT_THRESHOLD. Models are loaded once and kept in memory.
 Command line: python src/vision/predict.py routing path/to/photo.jpg
@@ -18,13 +20,48 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(__file__))
 from dataset import ROOT, make_transform  # noqa: E402
-from evaluate import load_model  # noqa: E402
+from evaluate import load_model, tta_views  # noqa: E402
 
 DEFAULT_THRESHOLD = 0.6
 # AGRIA_DEVICE=cpu forces the CPU (tests while a training uses the GPU, or a server without GPU)
 _DEVICE = torch.device(os.environ.get("AGRIA_DEVICE") or ("cuda" if torch.cuda.is_available() else "cpu"))
 _CACHE = {}
-_TRANSFORM = make_transform(train=False)
+_TRANSFORMS = {}
+
+
+def _tensor(net, image_path):
+    size = getattr(net, "input_size", 224)
+    if size not in _TRANSFORMS:
+        _TRANSFORMS[size] = make_transform(train=False, size=size)
+    with Image.open(image_path) as im:
+        im = im.convert("RGB")
+    if getattr(net, "leaf_crop", False):  # model trained on leaf-cropped field photos (plan step 5)
+        im = _leaf_crop(im)
+    return _TRANSFORMS[size](im).unsqueeze(0).to(_DEVICE)
+
+
+_DETECTOR = []
+
+
+def _leaf_crop(im):
+    """The photo cropped on its leaf box (OWL-ViT, src/preparation/leaf_boxes.py), or unchanged when unsure."""
+    sys.path.insert(0, str(ROOT / "src" / "preparation"))
+    from leaf_boxes import LeafDetector, crop_box
+    if not _DETECTOR:
+        _DETECTOR.append(LeafDetector(str(_DEVICE)))
+    small = im.resize((224, 224))  # boxes were learnt on the 224 x 224 processed photos
+    box, score = _DETECTOR[0]([small])[0]
+    c = crop_box(box, 224, 224, score)
+    if c is None:
+        return im
+    sx, sy = im.size[0] / 224, im.size[1] / 224
+    return im.crop((int(c[0] * sx), int(c[1] * sy), int(c[2] * sx), int(c[3] * sy)))
+
+
+def _probs(net, image_path):
+    x = _tensor(net, image_path)
+    views = tta_views(x) if os.environ.get("AGRIA_TTA") == "1" else [x]
+    return torch.stack([torch.softmax(net(v).float(), 1)[0] for v in views]).mean(0).cpu()
 
 
 def _get(task):
@@ -52,9 +89,7 @@ def predict(task, image_path, allowed=None):
     Probabilities are then renormalised over these classes, and "mass" tells how much of the model's belief they
     held before (a small mass = the photo does not look like that crop to the model)."""
     net, classes, threshold = _get(task)
-    with Image.open(image_path) as im:
-        x = _TRANSFORM(im.convert("RGB")).unsqueeze(0).to(_DEVICE)
-    probs = torch.softmax(net(x).float(), 1)[0].cpu()
+    probs = _probs(net, image_path)
     mass = 1.0
     if allowed:
         keep = torch.tensor([c in set(allowed) for c in classes])
@@ -72,9 +107,7 @@ def probabilities(task, image_path):
     """Full probability vector of a model as {class: probability} (task = folder under models/, e.g. "crop_v3a").
     Used by the model combinations of the agents (src/agent/ensemble.py)."""
     net, classes, _ = _get(task)
-    with Image.open(image_path) as im:
-        x = _TRANSFORM(im.convert("RGB")).unsqueeze(0).to(_DEVICE)
-    probs = torch.softmax(net(x).float(), 1)[0].cpu().tolist()
+    probs = _probs(net, image_path).tolist()
     return dict(zip(classes, probs))
 
 

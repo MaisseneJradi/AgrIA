@@ -13,7 +13,8 @@ Open:  http://localhost:8000          the app (phone: http://<IP of the computer
   GET  /gouvernorats  the 24 governorates (French and Arabic names) for the app
   GET  /health        models loaded, device
 
-  POST /feedback      form-data: journal_id, correct (oui | non), vraie_reponse -> stored with the analysis
+  POST /feedback      form-data: journal_id, correct (oui | non), vraie_reponse, garder_photo (oui | non, default
+                      non: the tester's consent to keep the photo for the Tunisian test set) -> stored with the analysis
 
 Privacy: the photo is written to a temporary file for the models and deleted right after; nothing is stored.
 Test mode only (AGRIA_JOURNAL=1, never for real users without their consent): every analysis is kept in
@@ -164,7 +165,8 @@ def keep_in_journal(path, answer, inputs):
 
 
 @app.post("/feedback")
-def feedback(journal_id: str = Form(...), correct: str = Form(...), vraie_reponse: str = Form("")):
+def feedback(journal_id: str = Form(...), correct: str = Form(...), vraie_reponse: str = Form(""),
+             garder_photo: str = Form("non")):
     if not journal_on():
         raise HTTPException(404, "journal désactivé")
     if not re.fullmatch(r"[0-9]{8}-[0-9]{6}-[0-9a-f]{6}", journal_id):
@@ -174,6 +176,7 @@ def feedback(journal_id: str = Form(...), correct: str = Form(...), vraie_repons
         raise HTTPException(404, "analyse inconnue")
     record = json.loads(f.read_text(encoding="utf-8"))
     record["avis"] = {"correct": correct == "oui", "vraie_reponse": vraie_reponse.strip() or None,
+                      "garder_photo": garder_photo == "oui",
                       "date": datetime.datetime.now().isoformat(timespec="seconds")}
     f.write_text(json.dumps(record, ensure_ascii=False, indent=1), encoding="utf-8")
     return {"statut": "enregistré"}

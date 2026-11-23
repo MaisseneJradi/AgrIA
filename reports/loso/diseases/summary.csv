@@ -1,0 +1,4 @@
+source,photos_all,learnable_share,loso_all_acc,loso_all_learnable_acc,loso_all_macro_f1,loso_all_ece,test_field_n,baseline_test_field_acc,loso_test_field_acc,gap_points,mcnemar_p,baseline_lab_acc,loso_lab_acc
+plantdoc,2075,1.0,0.5017,0.5017,0.4391,0.315,197,0.7157,0.4873,22.8,0.0,0.991,0.9889
+plantwild,2693,1.0,0.5199,0.5199,0.4648,0.3333,425,0.7906,0.5176,27.3,0.0,0.991,0.993
+potato_field,508,1.0,0.3602,0.3602,0.3375,0.3785,81,0.9877,0.3704,61.7,0.0,0.991,0.9917

@@ -25,19 +25,34 @@ from models import build  # noqa: E402
 
 
 def load_model(folder, device):
+    """(network in eval mode, classes). net.input_size = the side the model was trained at (224 unless --size)."""
     ckpt = torch.load(os.path.join(folder, "model.pt"), map_location="cpu")  # opens on machines without a GPU too
     net = build(ckpt["arch"], len(ckpt["classes"]), pretrained=False)
     net.load_state_dict(ckpt["state_dict"])
+    net.input_size = int(ckpt.get("size", 224))
+    net.leaf_crop = bool(ckpt.get("leaf_crop", False))
     return net.to(device).eval(), ckpt["classes"]
 
 
+def tta_views(x):
+    """Test-time augmentation views of a batch (B, 3, S, S), all at size S: the photo, its mirror, and three crops
+    of 85 % of the side (centre, top-left, bottom-right) brought back to S."""
+    s = x.shape[-1]
+    c = int(round(s * 0.85))
+    o = (s - c) // 2
+    up = lambda t: torch.nn.functional.interpolate(t, size=(s, s), mode="bilinear", align_corners=False)  # noqa: E731
+    return [x, torch.flip(x, dims=[3]), up(x[..., o:o + c, o:o + c]), up(x[..., :c, :c]), up(x[..., s - c:, s - c:])]
+
+
 @torch.no_grad()
-def predict_all(net, ds, device, batch, workers):
-    """Softmax probabilities for every image of `ds` (in order)."""
+def predict_all(net, ds, device, batch, workers, tta=False):
+    """Softmax probabilities for every image of `ds` (in order); tta=True averages the tta_views."""
     probs = []
     for x, _ in DataLoader(ds, batch, num_workers=workers, pin_memory=True):
+        x = x.to(device)
         with torch.autocast(device_type=device.type, enabled=device.type == "cuda"):
-            probs.append(torch.softmax(net(x.to(device)).float(), 1).cpu())
+            views = tta_views(x) if tta else [x]
+            probs.append(torch.stack([torch.softmax(net(v).float(), 1) for v in views]).mean(0).cpu())
     return torch.cat(probs).numpy()
 
 
@@ -54,6 +69,9 @@ def main():
     ap.add_argument("--splits", nargs="+", default=None)
     ap.add_argument("--batch", type=int, default=64)
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--tta", action="store_true", help="test-time augmentation (mirror + 3 crops)")
+    ap.add_argument("--leaf-crop", action="store_true",
+                    help="crop field photos on their leaf box (always on for a model trained with --leaf-crop)")
     args = ap.parse_args()
     folder = args.model_dir or str(ROOT / "models" / args.task)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -61,8 +79,9 @@ def main():
 
     splits = args.splits or ["test"] + (["test_field"] if len(load_split(args.task, "test_field")) else [])
     for split in splits:
-        ds = ManifestDataset(args.task, split, classes)
-        probs = predict_all(net, ds, device, args.batch, args.workers)
+        crop = args.leaf_crop or net.leaf_crop
+        ds = ManifestDataset(args.task, split, classes, size=net.input_size, leaf_crop=crop)
+        probs = predict_all(net, ds, device, args.batch, args.workers, tta=args.tta)
         df = ds.df.copy()
         df["true"] = df["class"]
         df["pred"] = [classes[i] for i in probs.argmax(1)]
@@ -81,12 +100,14 @@ def main():
             "per_crop": group_scores(df, "crop"),
             "per_source": group_scores(df, "source"),
         }
-        with open(os.path.join(folder, f"eval_{split}.json"), "w", encoding="utf-8") as f:
+        tag = ("_tta" if args.tta else "") + ("_crop" if args.leaf_crop and not net.leaf_crop else "")
+        result["tta"] = args.tta
+        with open(os.path.join(folder, f"eval_{split}{tag}.json"), "w", encoding="utf-8") as f:
             json.dump(result, f, indent=1)
         cm = confusion_matrix(df["true"], df["pred"], labels=classes)
-        pd.DataFrame(cm, index=classes, columns=classes).to_csv(os.path.join(folder, f"confusion_{split}.csv"))
+        pd.DataFrame(cm, index=classes, columns=classes).to_csv(os.path.join(folder, f"confusion_{split}{tag}.csv"))
         df[["path", "true", "pred", "confidence", "crop", "source"]].to_csv(
-            os.path.join(folder, f"predictions_{split}.csv"), index=False)
+            os.path.join(folder, f"predictions_{split}{tag}.csv"), index=False)
 
         print(f"\n== {args.task} · {split}: {result['n']} images · accuracy {result['accuracy']} · "
               f"macro-F1 {result['macro_f1']}")
