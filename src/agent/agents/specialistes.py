@@ -69,7 +69,12 @@ def phytosanitaire(d):
                             "aucun_produit": not usages, "avertissements": warnings, "conseils": conseils,
                             "prevention": prevention, "orientation_crda": not usages or none_fits,
                             "ecartes": ranked["ecartes"], "aucun_adapte": none_fits,
-                            "n_candidats": ranked["n_candidats"], "questions_contexte": questions},
+                            "n_candidats": ranked["n_candidats"], "questions_contexte": questions,
+                            "dernier_groupe": ranked["dernier_groupe"],
+                            "rotation_impossible": ranked["rotation_impossible"],
+                            # one line on rotation when a product of the answer has a known FRAC / IRAC group
+                            "rotation_conseil": any(r[0] in ("groupe", "rotation") for p in produits
+                                                    for r in p["raisons"])},
             "sources": [{"fiche": p["nom"], "lien": p["source"], "licence": p["licence"]} for p in passages],
             "trace": step("Phytosanitaire", note, t0)}
 

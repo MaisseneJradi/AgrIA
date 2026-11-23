@@ -65,6 +65,8 @@ def rediger(d):
                  "sources": list({s["lien"]: s for s in d.get("sources", [])}.values()),
                  "contexte": ctx, "ecartes": tr.get("ecartes", []), "aucun_adapte": tr.get("aucun_adapte", False),
                  "n_candidats": tr.get("n_candidats", 0), "questions_contexte": tr.get("questions_contexte", []),
+                 "dernier_groupe": tr.get("dernier_groupe", []), "rotation_impossible": tr.get("rotation_impossible"),
+                 "rotation_conseil": tr.get("rotation_conseil"),
                  "verifier_dar": ctx.get("days_to_harvest")
                  if any(p["dar_jours"] is None for p in produits) else None}
     text = compose(facts, "fr")
