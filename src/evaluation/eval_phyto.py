@@ -48,7 +48,7 @@ from src.agent import paths  # noqa: F401
 from common import fold, query  # src/tools
 from dose_calc import check as check_dose
 from dose_calc import practical_dose, written_quantities
-from safety import _named_in_text, _same_product, _squash, chemical_terms, practical_line_of
+from safety import _named_in_text, _same_product, _squash, _without_pack, chemical_terms, practical_line_of
 from treatments import GROUPS, LIST_DATE
 import hazard
 import ranking
@@ -69,7 +69,8 @@ LOG_COLUMNS = ["date", "step", "branch", "change", "n_cases", "safety_pct", "hor
                "liens_corrects", "liens_faux", "liens_attendus", "dar_trop_long", "export_non_ue", "bio_non_bio",
                "rotation", "rotation_cas", "ligne_rotation_pct", "dose_pratique_pct", "dose_pratique_exacte_pct",
                "questions_moy", "bio_debut_pct", "pourquoi_pct", "epi_pct", "classe_oms_pct", "abeilles_pct",
-               "date_liste_pct", "lmr_pct", "dar_inconnu_pct",
+               "date_liste_pct", "lmr_pct", "dar_inconnu_pct", "offres_pct", "a_demander_pct", "liens_montres",
+               "engrais_offre_pct", "besoin_dit_pct",
                "latence_med_ms", "latence_p95_ms", "notes"]
 FRUIT_CLASSES = {"citrus__black_spot", "citrus__canker", "citrus__scab", "orange__citrus_greening",
                  "pomegranate__alternaria_spot", "pomegranate__anthracnose", "pomegranate__bacterial_blight",
@@ -157,17 +158,22 @@ def _product_info():
 
 @lru_cache(maxsize=1)
 def _chelates():
-    return {fold(r["nom"]): r["chelate"] for r in query("SELECT nom, chelate FROM carence_engrais")}
+    return {fkey(r["nom"]): r["chelate"] for r in query("SELECT nom, chelate FROM carence_engrais")}
 
 
 OXIDES = {"P2O5": "P", "K2O": "K", "CaO": "Ca", "MgO": "Mg"}  # the agriclic sheets give oxides
+
+
+def fkey(name):
+    """Fertilizer name without its pack size ('CUAJEMAX 1KG' = 'CUAJEMAX'), folded."""
+    return fold(_without_pack(name))
 
 
 @lru_cache(maxsize=1)
 def _fert_nutrients():
     out = {}
     for r in query("SELECT nom, nutriment FROM carence_engrais"):
-        out.setdefault(fold(r["nom"]), set()).add(OXIDES.get(r["nutriment"], r["nutriment"]))
+        out.setdefault(fkey(r["nom"]), set()).add(OXIDES.get(r["nutriment"], r["nutriment"]))
     return out
 
 
@@ -226,6 +232,22 @@ def assume_validated(path):
     for r in ranking._rows(mrl.MAPPING, both):
         codex.setdefault(r["culture"], []).append((r["denree_codex"], r["niveau"]))
     mrl._mapping = lambda: codex
+    # step 10: shop mappings (only the rows the matching calls "apparié", as a careful reviewer would) and dose ranges
+    import fertiliser_dose
+    import shop
+    offers = {}
+    for r in sorted(ranking._rows(shop.MAPPING, both), key=lambda r: -float(r["match_score"] or 0)):
+        if r["verdict"] == "apparié" and r["target_id"]:
+            offers.setdefault(r["target_id"], []).append(r["shop_product_id"])
+    shop._mapping = lambda: offers
+    ranges = []
+    for r in ranking._rows(fertiliser_dose.RANGES, both):
+        m = re.fullmatch(r"(kg|g|l|ml)/(hl|ha|plant)", r["unite"].strip())
+        if m:
+            k = fertiliser_dose.TO_BASE[m.group(1)]
+            ranges.append({"nutriments": set(r["nutriment"].split("|")), "culture": r["culture"],
+                           "min": float(r["min"]) * k, "max": float(r["max"]) * k, "base": m.group(2)})
+    fertiliser_dose._ranges = lambda: ranges
 
 
 def _split(cell):
@@ -298,9 +320,9 @@ def score(case, out, ms):
     if kind == "deficiency":
         need = [a.split(":", 1)[1] for a in acceptable if a.startswith("nutriment:")]
         chel = [a.split(":", 1)[1] for a in acceptable if a.startswith("chelate:")]
-        fert_ok = bool(fert) and all(any(n in _fert_nutrients().get(fold(e["nom"]), set()) for e in fert) for n in need)
+        fert_ok = bool(fert) and all(any(n in _fert_nutrients().get(fkey(e["nom"]), set()) for e in fert) for n in need)
         if chel and fert:
-            fert_ok = fert_ok and _chelates().get(fold(fert[0]["nom"])) in chel
+            fert_ok = fert_ok and _chelates().get(fkey(fert[0]["nom"])) in chel
     return {
         "case_id": case["case_id"], "classe": case["disease_or_deficiency"], "crop": crop, "kind": kind,
         "issue": rep["issue"], "produits": " | ".join(p["nom"] for p in rep["produits"]),
@@ -314,7 +336,8 @@ def score(case, out, ms):
         "fert_ok": fert_ok, "n_exact": sum(exact), "n_shown": len(exact),
         "blocked": blocked, "crda": rep["issue"] == "crda" or bool((rep.get("verification") or {}).get("secours")),
         "links": " ".join(links), "link_ok": bool(expected) and expected in links,
-        "link_wrong": [u for u in links if u != expected],
+        # a wrong link: not the expected one when the gold gives one, else a page outside shop_products (rule 22)
+        "link_wrong": [u for u in links if (expected and u != expected) or u not in shop_urls()],
         **{k: " | ".join(v) for k, v in ctx.items()}, "ms": round(ms), "texte": text,
         "n_questions": len(rep.get("questions_contexte") or []),
         "questions_contexte": " | ".join(rep.get("questions_contexte") or []),
@@ -338,7 +361,18 @@ def score(case, out, ms):
         "n_lmr": sum(f"LMR de {p['nom']} (" in text for p in shown) if case.get("market") in ("local", "export")
         else 0,
         "n_dar_inconnu": sum(p["dar_jours"] is None for p in shown),
+        # step 10: shop offers after the ranking, else what to ask for
+        "n_offre": sum(bool(p.get("boutique")) for p in shown),
+        "n_a_demander": sum("boutique" in p and not p["boutique"] for p in shown),
+        "n_liens": len(links),
+        "engrais_offre": kind == "deficiency" and bool(fert),
+        "besoin_dit": kind == "deficiency" and ("Besoin : un apport" in text),
     }
+
+
+@lru_cache(maxsize=1)
+def shop_urls():
+    return {r["product_url"] for r in query("SELECT product_url FROM shop_products") if r["product_url"]}
 
 
 def pct(n, d):
@@ -385,6 +419,11 @@ def summarize(rows):
         "date_liste_pct": pct(sum(r["date_liste"] for r in rows if r["phyto"]), sum(r["phyto"] for r in rows)),
         "lmr_pct": pct(sum(r["n_lmr"] for r in rows), sum(r["n_lmr_attendue"] for r in rows)),
         "dar_inconnu_pct": pct(sum(r["n_dar_inconnu"] for r in rows), shown),
+        "offres_pct": pct(sum(r["n_offre"] for r in rows), shown),
+        "a_demander_pct": pct(sum(r["n_a_demander"] for r in rows), shown),
+        "liens_montres": sum(r["n_liens"] for r in rows),
+        "engrais_offre_pct": pct(sum(r["engrais_offre"] for r in rows), sum(r["kind"] == "deficiency" for r in rows)),
+        "besoin_dit_pct": pct(sum(r["besoin_dit"] for r in rows), sum(r["kind"] == "deficiency" for r in rows)),
         "latence_med_ms": round(statistics.median(ms)), "latence_p95_ms": ms[min(n - 1, int(0.95 * n))],
     }
 
@@ -458,6 +497,11 @@ TABLE = [("Sécurité : réponses avec un pesticide non homologué ou interdit (
          ("Réponses phyto qui citent la liste DGSVCIA et sa date", "date_liste_pct", " %"),
          ("Produits avec la LMR de leur marché (cas au marché connu)", "lmr_pct", " %"),
          ("Produits montrés dont le DAR reste inconnu", "dar_inconnu_pct", " %"),
+         ("Produits montrés avec une offre de boutique validée", "offres_pct", " %"),
+         ("Produits montrés avec « non trouvé : demandez un produit à base de… »", "a_demander_pct", " %"),
+         ("Liens de pages produits écrits", "liens_montres", ""),
+         ("Carences : besoin écrit (élément, chélate)", "besoin_dit_pct", " %"),
+         ("Carences : au moins un engrais de boutique validé", "engrais_offre_pct", " %"),
          ("Latence médiane / p95 (ms, sans la vision)", ("latence_med_ms", "latence_p95_ms"), "")]
 
 

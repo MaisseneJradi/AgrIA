@@ -25,8 +25,8 @@ AgrIA est un **système de sept agents** qui coopèrent autour d'un dossier part
 | **Identification de la culture** | reconnaît la plante sur la photo (14 cultures du projet ou « autre plante ») ; sans culture indiquée, la culture reconnue limite le diagnostic ; si la photo contredit nettement la culture indiquée, ou si elle est incertaine, une question est posée | `ensemble.crop_decision`, `vlm.observe` | vote du modèle de culture (v4, 15 classes), du modèle des maladies et du VLM (poids 0,25) ; VLM NVIDIA aussi en contrôle et en secours (`AGRIA_VLM=nvidia`) |
 | **Diagnostic** | lit la photo (routeur puis modèle maladies, carences ou fruits) ; décide si le diagnostic est fiable, sinon pose des questions | `predict()`, `ensemble.kind_share` | routeur + combinaison : modèle feuille (carence ou maladie) + avis du VLM, puis modèle des maladies restreint à la culture ou carence du modèle feuille |
 | **Phytosanitaire** | choisit les traitements homologués (dose, DAR, LMR, restrictions), écarte ceux qui ne conviennent pas à la situation (DAR plus long que la récolte, export UE, bio), classe les autres par un score écrit en code avec une ligne « pourquoi », et des conseils des fiches sans aucune lutte chimique | `get_treatments`, `ranking.rank`, `ranking.decisive_fields`, `dose_calc.practical_dose`, `hazard`, `weather.spray_conditions`, `search_knowledge`, `prevention` | base SQLite + règles + recherche TF-IDF |
-| **Agronome** | engrais pour une carence (fiabilité selon la culture, sol du gouvernorat) et besoin en eau du mois | `get_fertilizers`, `get_water_need` | base SQLite + règles |
-| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **21 règles codées** |
+| **Agronome** | besoin d'une carence (élément ; chélate EDDHA, EDDHSA ou HBED si le sol du gouvernorat est calcaire), engrais de boutique seulement par correspondance validée vers ce besoin, et besoin en eau du mois | `get_fertilizers`, `get_water_need` | base SQLite + règles |
+| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **26 règles codées** |
 
 **Pas de LLM pour écrire.** Le seul modèle de langage est un VLM (NVIDIA, optionnel) qui **regarde** la photo et donne un avis (culture, carence ou maladie, symptômes) ; il n'écrit jamais la réponse, ne choisit aucun produit et ne peut pas contredire la culture donnée par l'agriculteur (docs/results_vision.md, section 13). AgrIA répond en **français ou en arabe** (pas de darija). Toutes les phrases sont écrites par le code (`src/agent/redaction.py`), donc aucun fait (produit, dose, délai) ne peut être inventé ni mal traduit. Un essai avec un petit LLM local (`derja`, Qwen3 4B, Ollama) l'a montré : il changeait des doses (« 300 g/hl » devenu « 300 g/l ») et traduisait mal les termes agricoles. Dans une réponse en arabe, les passages des fiches (français ou anglais) sont remplacés par leurs liens.
 
@@ -173,6 +173,10 @@ normalize_terms(text: str) -> dict
 # cultures, maladies, ravageurs, symptômes, organes reconnus en français, arabe, darija, arabizi ; classes possibles
 check_answer(answer: dict) -> dict
 # answer : task, classe, culture, fiable, hypothese, produits [{nom, dose, dar_jours}], engrais [{nom}], texte
+shop.pesticide_offers(usage) / shop.fertiliser_offers(deficiency, calcareous) -> list[dict]
+# offres des boutiques par correspondance validée seulement, ajoutées après le tri : nom, résumé écrit par le code, stock, url
+shop.registry_composition(product_id) -> str
+# « Difenoconazole 250 g/L » : ce qu'il faut demander en boutique quand aucune offre n'est validée
 # -> {valide, raisons (bloquantes), avertissements (à dire), produits_verifies}
 ```
 

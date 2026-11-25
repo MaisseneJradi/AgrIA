@@ -58,7 +58,7 @@ def rediger(d):
         # blocked for chemical control outside the registered products: the quoted passages go, the facts stay
         conseils = [] if "lutte chimique" in blocked else tr.get("conseils", [])
         facts = {"issue": issue, "diagnostic": diag, "produits": produits, "aucun_produit": tr.get("aucun_produit"),
-                 "conseils": conseils, "prevention": tr.get("prevention", []),
+                 "conseils": conseils, "prevention": tr.get("prevention", []), "besoin": eng.get("besoin"),
                  "orientation_crda": tr.get("orientation_crda", False), "engrais": engrais, "hypothese": hypothese,
                  "questions": eng.get("questions", []) if hypothese else [], "eau": ag.get("eau"),
                  "avertissements": warnings, "gouvernorat": d.get("gouvernorat_officiel"),

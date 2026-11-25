@@ -17,7 +17,12 @@ import time
 from src.agent import paths  # noqa: F401
 from dose_calc import practical_dose  # src/tools
 from fertilizers import get_fertilizers
+from common import query
+from fertiliser_dose import label_dose
 from hazard import bee_toxic, who_class
+from safety import _same_product, _without_pack
+from shop import fertiliser_offers, pesticide_offers, registry_composition
+from shop import _composition as _shop_compositions
 from lexicon import crop_code
 from mrl import applicable_mrl
 from weather import spray_conditions
@@ -63,7 +68,12 @@ def phytosanitaire(d):
                  # applicator and bee safety (validated rows of docs/substance_hazard.csv and docs/bee_hazard.csv)
                  "classe_oms": who_class(u), "abeilles": bool(bee_toxic(u)),
                  # MRL of the market (EU for export, Tunisian or Codex for local): mrl.py; [] when the market is unknown
-                 "lmr_marche": applicable_mrl(u, crop_code(crop) if crop else None, ctx.get("market"))}
+                 "lmr_marche": applicable_mrl(u, crop_code(crop) if crop else None, ctx.get("market")),
+                 # step 10, AFTER the ranking: shop offers of the same composition (validated mappings) whose trade
+                 # name is registered for this case; else what to ask for in a shop
+                 "boutique": pesticide_offers(u, lambda name: any(_same_product(_without_pack(name), x["produit"])
+                                                                  for x in usages)),
+                 "a_demander": registry_composition(u["product_id"])}
                 for u in chosen]
     # weather of the next hours (Open-Meteo, cached; nothing when unreachable; not under a greenhouse)
     meteo = spray_conditions(d.get("gouvernorat_officiel")) if produits and ctx.get("greenhouse") != "y" else None
@@ -94,18 +104,36 @@ def phytosanitaire(d):
             "trace": step("Phytosanitaire", note, t0)}
 
 
+def shop_composition(shop_id):
+    return _shop_compositions().get(shop_id) or {}
+
+
 def agronome(d):
     t0 = time.time()
     diag, crop, gov = d["diagnostic"], d.get("culture_code"), d.get("gouvernorat_officiel")
     out, notes = {}, []
     if diag["task"] == "deficiency" and not diag["sain"]:
-        f = get_fertilizers(diag["classe"], crop, gov, max_products=3)
-        out["engrais"] = {"produits": [{"nom": p["nom"], "nutriment": p["nutriment"], "teneur_pct": p["teneur_pct"],
-                                        "doses": p["doses"][:2], "url": p["url"]} for p in f["produits"]],
+        cls = diag["classe"]
+        f = get_fertilizers(cls, crop, gov, max_products=3)
+        # step 10: the need decides (nutrient, chelate for the soil), then the shop products of VALIDATED mappings
+        # to that need, kept only when they are in the fertilizer catalogue of the deficiency (Vérificateur rule 7)
+        calcareous = bool(f["sol"]) and (f["sol"].get("pH") or 0) >= 7.8
+        catalogue = [r["nom"] for r in query("SELECT nom FROM carence_engrais WHERE unified_class = ?", (cls,))]
+        nut = f["nutriment"]
+        produits = []
+        for o in fertiliser_offers(cls, calcareous):
+            if not any(_same_product(_without_pack(o["nom"]), _without_pack(c)) for c in catalogue):
+                continue
+            compo = shop_composition(o["shop_id"])
+            produits.append({**o, "nutriment": nut, "dose": label_dose(compo.get("doses_etiquette"), nut,
+                                                                         crop or "*")})
+        out["engrais"] = {"produits": produits, "besoin": {"nutriment": nut, "chelate_calcaire": calcareous
+                                                           and cls == "Fe_deficiency"},
                           "fiabilite": f["fiabilite"], "hypothese": f["fiabilite"] == "hypothese",
                           "questions": f["questions_confirmation"], "message": f["message"],
                           "avertissement_modele": f.get("avertissement_modele"), "sol": f["sol"]}
-        notes.append(f"{len(f['produits'])} engrais, fiabilité {f['fiabilite']}")
+        notes.append(f"besoin : {nut}{' (chélate EDDHA, sol calcaire)' if out['engrais']['besoin']['chelate_calcaire'] else ''}"
+                     f" ; {len(produits)} offre(s) validée(s) ; fiabilité {f['fiabilite']}")
     month = d.get("mois") or datetime.date.today().month
     if gov and crop:
         try:
