@@ -3,7 +3,7 @@
 One row = one name of a disease or pest (French, scientific, spelling of the list, synonym, group name) as a regular
 expression on the target text of a registered use, for one image class and its crops:
   unified_class, crops ("tomato" or "squash|cucumber|melon|watermelon"), nom, type_nom, motif, exclure, relation
-  (direct | vecteur | proche), groupe, source, status (proposed | validated), note.
+  (direct | vecteur | proche), groupe, source, status (proposed | validated | rejected), note.
 Only status = validated rows link a use to a class (rule: proposed rows wait for the agronomist's review).
 A use counts when its crop is one of the row crops, or a crop group that contains one (then relation "groupe"), and
 its target matches `motif` but not `exclure`.
@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MAPPING = ROOT / "docs" / "disease_target_mapping.csv"
 COLUMNS = ["unified_class", "crops", "nom", "type_nom", "motif", "exclure", "relation", "groupe", "source",
            "n_usages", "n_produits", "exemples_cibles", "status", "note"]
-STATUSES = ("proposed", "validated")
+STATUSES = ("proposed", "validated", "rejected")  # rejected: never used, like proposed (review_workbook.py)
 # crop groups of the list: same as src/preparation/build_pesticide_refs.py ("Cereales" = small-grain cereals, no maize)
 GROUPS = {"vegetables": ["tomato", "pepper", "potato", "squash", "cucumber", "melon", "eggplant"],
           "cucurbits": ["squash", "cucumber", "melon", "watermelon"],

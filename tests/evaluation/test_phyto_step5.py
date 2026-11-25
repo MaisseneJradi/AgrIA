@@ -84,7 +84,8 @@ class TestRule14(unittest.TestCase):
     BASE = {"task": "diseases", "classe": "tomato__late_blight", "culture": "tomate", "fiable": True,
             "contexte": {"area": 0.5}}
     GOOD = {"nom": "CIMOXATE C WG", "dose": "3 kg/ha (300 g/hl)", "dar_jours": 3}
-    LINE = "- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours"
+    LINE = ("- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours"
+            " ; classe de toxicité OMS II (modérément dangereux)")  # rule 15, since the WHO table is validated
 
     def answer(self, practical):
         return dict(self.BASE, produits=[self.GOOD], texte=self.LINE + "\n  " + practical
@@ -116,7 +117,9 @@ class TestAnswers(unittest.TestCase):
                              "stage": "spread"})
         r = out["reponse"]
         self.assertTrue(r["verification"]["valide"], r["verification"])
-        self.assertIn("Dose pratique : 48 g pour un pulvérisateur de 16 L ; 1,5 kg pour vos 0,5 ha", r["texte"])
+        # the products shown depend on the ranking (toxicity first since the WHO table is validated); the exact
+        # quantities are checked by the Vérificateur (rule 14), passed above
+        self.assertRegex(r["texte"], r"Dose pratique : [^\n]+ pour un pulvérisateur de 16 L ; [^\n]+ pour vos 0,5 ha")
 
     def test_without_area_only_the_sprayer(self):
         out, _ = E.run_case({"crop": "tomato", "disease_or_deficiency": "tomato__late_blight", "governorate": "Nabeul"})

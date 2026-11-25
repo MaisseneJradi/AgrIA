@@ -1,33 +1,33 @@
 substance,tres_toxique_abeilles,nom_pan,cas,correspondance,source,status,note
-Abamectin (aka avermectin),oui,Abamectin,71751-41-2,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Acrinathrin,oui,Acrinathrin,101007-06-1,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Alpha-Cypermethrin (aka alphamethrin),oui,"Cypermethrin, alpha",67375-30-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Aluminium phosphide,oui,Aluminum phosphide,20859-73-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Chlorpyrifos,oui,Chlorpyrifos,2921-88-2,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Cypermethrin,oui,Cypermethrin,52315-07-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Deltamethrin,oui,Deltamethrin,52918-63-5,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Diafenthiuron,oui,Diafenthiuron,80060-09-9,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Dichlorvos,oui,Dichlorvos; DDVP,62-73-7,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Dimethoate,oui,Dimethoate,60-51-5,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Dinotefuran,oui,Dinotefuran,165252-70-0,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Esfenvalerate,oui,Esfenvalerate,66230-04-4,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Etofenprox,oui,Etofenprox; Ethofenprox,80844-07-1,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Fenazaquin,oui,Fenazaquin,120928-09-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Flupyradifurone,oui,Flupyradifurone,951659-40-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Gamma-cyhalothrin,oui,"Cyhalothrin, gamma",76703-62-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Imidacloprid,oui,Imidacloprid,138261-41-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Indoxacarb,oui,Indoxacarb,173584-44-6,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Malathion,oui,Malathion,121-75-5,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Metaflumizone,oui,Metaflumizone,139968-49-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Milbemectin,oui,Milbemectin,51596-10-2s,nom (exact),"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Oxamyl,oui,Oxamyl,23135-22-0,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Phosmet,oui,Phosmet,732-11-6,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Pirimiphos-methyl,oui,Pirimiphos-methyl,29232-93-7,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Pyrethrins,oui,"Pyrethrins, Pyrethrum extract",8003-34-7,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Pyridaben,oui,Pyridaben,96489-71-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Spinetoram,oui,Spinetoram,187166-15-0,nom (exact),"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Spinosad,oui,Spinosad,168316-95-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Sulfoxaflor,oui,Sulfoxaflor,946578-00-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Tefluthrin,oui,Tefluthrin,79538-32-2,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-Thiamethoxam,oui,Thiamethoxam,153719-23-4,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
-lambda-Cyhalothrin,oui,Lambda-cyhalothrin,91465-08-6,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",proposed,
+Abamectin (aka avermectin),oui,Abamectin,71751-41-2,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (71751-41-2) : même substance
+Acrinathrin,oui,Acrinathrin,101007-06-1,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (101007-06-1) : même substance
+Alpha-Cypermethrin (aka alphamethrin),oui,"Cypermethrin, alpha",67375-30-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (67375-30-8) : même substance
+Aluminium phosphide,oui,Aluminum phosphide,20859-73-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,"relecture 2026-11-25 : CAS identique ; fumigant de stockage, peu d'exposition des abeilles au champ mais classement PAN correct"
+Chlorpyrifos,oui,Chlorpyrifos,2921-88-2,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (2921-88-2) : même substance
+Cypermethrin,oui,Cypermethrin,52315-07-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (52315-07-8) : même substance
+Deltamethrin,oui,Deltamethrin,52918-63-5,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (52918-63-5) : même substance
+Diafenthiuron,oui,Diafenthiuron,80060-09-9,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (80060-09-9) : même substance
+Dichlorvos,oui,Dichlorvos; DDVP,62-73-7,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (62-73-7) : même substance
+Dimethoate,oui,Dimethoate,60-51-5,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (60-51-5) : même substance
+Dinotefuran,oui,Dinotefuran,165252-70-0,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (165252-70-0) : même substance
+Esfenvalerate,oui,Esfenvalerate,66230-04-4,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (66230-04-4) : même substance
+Etofenprox,oui,Etofenprox; Ethofenprox,80844-07-1,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (80844-07-1) : même substance
+Fenazaquin,oui,Fenazaquin,120928-09-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (120928-09-8) : même substance
+Flupyradifurone,oui,Flupyradifurone,951659-40-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (951659-40-8) : même substance
+Gamma-cyhalothrin,oui,"Cyhalothrin, gamma",76703-62-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (76703-62-3) : même substance
+Imidacloprid,oui,Imidacloprid,138261-41-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (138261-41-3) : même substance
+Indoxacarb,oui,Indoxacarb,173584-44-6,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (173584-44-6) : même substance
+Malathion,oui,Malathion,121-75-5,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (121-75-5) : même substance
+Metaflumizone,oui,Metaflumizone,139968-49-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (139968-49-3) : même substance
+Milbemectin,oui,Milbemectin,51596-10-2s,nom (exact),"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : Même substance (CAS PAN « 51596-10-2s » = coquille de 51596-10-2)
+Oxamyl,oui,Oxamyl,23135-22-0,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (23135-22-0) : même substance
+Phosmet,oui,Phosmet,732-11-6,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (732-11-6) : même substance
+Pirimiphos-methyl,oui,Pirimiphos-methyl,29232-93-7,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (29232-93-7) : même substance
+Pyrethrins,oui,"Pyrethrins, Pyrethrum extract",8003-34-7,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (8003-34-7) : même substance
+Pyridaben,oui,Pyridaben,96489-71-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (96489-71-3) : même substance
+Spinetoram,oui,Spinetoram,187166-15-0,nom (exact),"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : Même substance (187166-15-0 = composant L du spinétorame)
+Spinosad,oui,Spinosad,168316-95-8,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (168316-95-8) : même substance
+Sulfoxaflor,oui,Sulfoxaflor,946578-00-3,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (946578-00-3) : même substance
+Tefluthrin,oui,Tefluthrin,79538-32-2,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (79538-32-2) : même substance
+Thiamethoxam,oui,Thiamethoxam,153719-23-4,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (153719-23-4) : même substance
+lambda-Cyhalothrin,oui,Lambda-cyhalothrin,91465-08-6,CAS,"PAN International List of HHPs, December 2024 (US EPA, < 2 µg/bee)",validated,relecture 2026-11-25 : CAS identique (91465-08-6) : même substance
