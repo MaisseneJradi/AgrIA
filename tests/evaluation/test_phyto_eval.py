@@ -1,6 +1,7 @@
 """Phyto plan, step 1: the gold set and the measures of src/evaluation/eval_phyto.py."""
 import copy
 import unittest
+from unittest import mock
 
 from src.evaluation import eval_phyto as E
 
@@ -94,8 +95,15 @@ class TestMeasures(unittest.TestCase):
         self.assertEqual(r["link_wrong"], ["https://www.agriclic.tn/1-x.html"])
 
     def test_fertiliser_need_read_through_oxides(self):
+        # since phyto step 10 the Agronome shows the need, then only the shop products of a VALIDATED mapping
         c = case("P_deficiency", kind="deficiency", acceptable_products="nutriment:P")
         out, ms = E.run_case(c)
+        self.assertIn("Besoin : un apport de phosphore (P)", out["reponse"]["texte"])
+        self.assertEqual(E.score(c, out, ms)["unsafe"], "")
+        import shop
+        ids = [sid for sid, p in shop._products().items() if p["name"] == "PLANTIFOL 10-50-10"]
+        with mock.patch.object(shop, "_mapping", lambda: {"besoin:P_deficiency": ids}):
+            out, ms = E.run_case(c)
         r = E.score(c, out, ms)
         self.assertTrue(r["fert_ok"], r["engrais"])  # agriclic gives P2O5: it counts as P
         self.assertEqual(r["unsafe"], "")

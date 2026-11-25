@@ -42,6 +42,9 @@ Blocking rules
       with another number (rules 15-18: phyto step 6)
   19. an answer about registered products (or saying none fits) without the date of the official list loaded
       ("liste DGSVCIA du 22/05/2024"), or with another date (phyto step 7)
+  22-26 (phyto step 10, shop_rules): unknown shop address; shop offer without a validated mapping to the advised
+      product or need; offer of another composition; dose on a shop line; manufacturer's fertilizer dose not passing
+      its validated range
   21. a shop product claiming a protection effect without a registered product of its name
       (docs/shop_unapproved_claims.csv, unless the reviewer marks the row "rejected"), named in the text or advised,
       as a treatment or as a fertilizer (phyto step 8; rule 1 also knows the names of both shops' products)
@@ -56,7 +59,9 @@ from functools import lru_cache
 
 from common import ROOT, fold, query
 import ranking
+import shop
 from dose_calc import TANK_L, area_text, practical_dose
+from fertiliser_dose import label_dose
 from dose_calc import check as check_dose
 from fertilizers import get_fertilizers
 from hazard import bee_toxic, who_class
@@ -149,6 +154,103 @@ def _claim_names():
         return []
     with open(CLAIMS, encoding="utf-8") as f:
         return [_without_pack(r["name"]) for r in csv.DictReader(f) if r.get("status") != "rejected"]
+
+
+SHOP_URL = re.compile(r"https?://(?:www\.)?(?:agrishop|agriclic)\.tn[^\s)]*", re.I)
+SHOP_LINE = ("En boutique pour ", "في المتجر لـ")
+SHOP_DOSE = re.compile(r"\d+(?:[.,]\d+)?\s*(?:g|kg|ml|cc|l)\s*/\s*(?:ha|hl|100\s*l)\b", re.I)
+FERT_DOSE = ("Dose indiquée par le fabricant : ", "الجرعة حسب المصنّع: ")
+
+
+def _shop_by_url():
+    return {p["product_url"]: sid for sid, p in shop._products().items() if p.get("product_url")}
+
+
+def _shop_ids_in(line):
+    """Shop products whose name (pack size left out) is written in a line."""
+    folded = fold(line)
+    return [sid for sid, p in shop._products().items()
+            if len(_without_pack(p["name"])) >= 4 and fold(_without_pack(p["name"])) in folded]
+
+
+def shop_rules(answer, text, produits, engrais, registered, cls):
+    """Rules 22-26 of phyto step 10.
+    22 a shop address that is not the product_url of a product of the table shop_products;
+    23 a shop offer (line "En boutique pour <product> : ..." or a fertilizer of the answer) without a VALIDATED mapping
+       to that registered product (pesticide) or to the need of the deficiency (fertilizer);
+    24 a pesticide offer whose substances or concentrations differ from the registered product it is offered for;
+    25 a dose written on a shop line (a pesticide dose comes from the official list only);
+    26 a manufacturer's dose of a fertilizer that is not exactly the one that passes its VALIDATED range."""
+    out = []
+    by_url = _shop_by_url()
+    for url in SHOP_URL.findall(text):
+        if url not in by_url:
+            out.append(f"adresse de boutique inconnue de la table shop_products : {url}")
+    for line in text.splitlines():
+        marker = next((m for m in SHOP_LINE if m in line), None)
+        if marker is None:
+            continue
+        if SHOP_DOSE.search(line):
+            out.append("dose écrite sur une ligne de boutique (une dose vient de la liste officielle seulement)")
+        # "En boutique pour <registered product> : <offer>": the product is read before the colon only
+        name, _, offer = line.split(marker, 1)[1].partition(":")
+        p = next((p for p in produits if p.get("nom") and p["nom"].strip() == name.strip()), None)
+        usages = registered(p["nom"]) if p else []
+        if not usages:
+            out.append("ligne de boutique sans produit homologué de la réponse")
+            continue
+        ids = {u["product_id"] for u in usages}
+        for sid in _shop_ids_in(offer):
+            if not shop.validated_targets(sid) & ids:
+                out.append(f"« {shop._products()[sid]['name']} » : lien sans correspondance validée vers {p['nom']}")
+            elif not same_composition(sid, ids):
+                out.append(f"« {shop._products()[sid]['name']} » : substances ou concentrations différentes de "
+                           f"{p['nom']}")
+    if engrais and cls.endswith("_deficiency"):
+        need = {f"besoin:{cls}", f"besoin:{cls}:calcaire"}
+        lines = text.splitlines()
+        for e in engrais:
+            sids = [sid for sid, s in shop._products().items() if _same_product(s["name"], e.get("nom", ""))]
+            if sids and not any(shop.validated_targets(s) & need for s in sids):
+                out.append(f"« {e.get('nom')} » : engrais sans correspondance validée vers le besoin {cls}")
+            for i, line in enumerate(lines):
+                if e.get("nom") and e["nom"] in line:
+                    for nxt in lines[i + 1:i + 2]:
+                        written = next((nxt.split(m, 1)[1].strip() for m in FERT_DOSE if m in nxt), None)
+                        if written is None:
+                            continue
+                        compo = shop._composition().get(sids[0], {}) if sids else {}
+                        ok = label_dose(compo.get("doses_etiquette"), cls.split("_")[0],
+                                        crop_code(answer.get("culture")) or "*" if answer.get("culture") else "*")
+                        if not ok.get("montrer") or ok.get("texte") != written:
+                            out.append(f"« {e['nom']} » : dose du fabricant non validée ({written})")
+    return out
+
+
+def same_composition(shop_id, product_ids):
+    """The shop product has the substances and concentrations of one of these registered products (match rules of
+    src/preparation/match_shop_products.py, recomputed: a validated row is checked again)."""
+    M = _matcher()
+    row = shop._composition().get(shop_id) or {}
+    reg = _registry()
+    return any(r["target_id"] in product_ids and r["match_score"] >= 0.6
+               for r in M.match_pesticide({"name": shop._products().get(shop_id, {}).get("name", ""),
+                                           "substances": row.get("substances", ""),
+                                           "formulation": row.get("formulation", "")}, reg))
+
+
+def _matcher():
+    import sys
+    path = str(ROOT / "src" / "preparation")
+    if path not in sys.path:
+        sys.path.insert(0, path)
+    import match_shop_products
+    return match_shop_products
+
+
+@lru_cache(maxsize=1)
+def _registry():
+    return _matcher().registry()
 
 
 def _named_in_text(text):
@@ -350,6 +452,9 @@ def check_answer(answer):
     for name in _named_in_text(text):
         if not registered(name) and not any(_same_product(name, e.get("nom", "")) for e in engrais):
             reasons.append(f"le texte cite « {name} », non homologué pour {cls}" + (f" sur {crop}" if crop else ""))
+
+    # rules 22-26 (phyto step 10): shop links and fertilizer doses
+    reasons.extend(shop_rules(answer, text, produits, engrais, registered, cls))
 
     # rule 21: a shop product that claims a protection effect without a registered product of its name is never in
     # an answer, as a treatment nor as a fertilizer (plan rule 4)

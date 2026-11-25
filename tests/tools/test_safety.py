@@ -1,4 +1,5 @@
 import unittest
+from unittest import mock
 
 from tests.tools import _path  # noqa: F401
 from safety import check_answer
@@ -62,7 +63,11 @@ class TestSafety(unittest.TestCase):
         a = {"task": "deficiency", "classe": "Fe_deficiency", "culture": "olivier", "fiable": True,
              "engrais": [{"nom": "Sequestrene 138 FE"}]}
         self.assertBlocked(a, "hypothèse")
-        self.assertTrue(check_answer(dict(a, hypothese=True))["valide"])
+        # since phyto step 10 a fertilizer also needs a validated mapping to the need (rule 23): given here
+        import shop
+        ids = [sid for sid, p in shop._products().items() if p["name"] == "Sequestrene 138 FE"]
+        with mock.patch.object(shop, "_mapping", lambda: {"besoin:Fe_deficiency": ids}):
+            self.assertTrue(check_answer(dict(a, hypothese=True))["valide"])
 
     def test_blocks_invented_fertilizer(self):
         self.assertBlocked({"task": "deficiency", "classe": "Fe_deficiency", "culture": "piment", "fiable": True,

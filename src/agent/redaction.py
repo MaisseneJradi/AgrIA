@@ -91,6 +91,18 @@ P = {
         "r_groupe": "groupe {g}",
         "r_groupe_faible_risque": "groupe {g} ; {shared} déjà utilisé, mais à faible risque de résistance",
         # step 5: practical dose (dose_calc.py); "L" of the sprayer in capital, quantities in g, kg, ml, l
+        # step 10: shop offers (after the ranking), fertilizer need
+        "boutique": "En boutique pour {nom} : {offre}", "boutique_sans_lien": "{boutique} (adresse de la page non "
+                                                                              "disponible)",
+        "stock_en_stock": " — en stock", "stock_rupture": " — en rupture de stock",
+        "boutique_absente": "Pour {nom} : non trouvé sur agrishop.tn : demandez un produit à base de {compo}",
+        "besoin": "Besoin : un apport de {x} ({sym})",
+        "besoin_calcaire": " ; sur sol calcaire, un chélate EDDHA, EDDHSA ou HBED",
+        "engrais_absent": "Non trouvé sur agrishop.tn ni agriclic.tn : demandez un produit à base de {x} ({sym}){chel}.",
+        "chel_calcaire": ", en chélate EDDHA, EDDHSA ou HBED",
+        "dose_fabricant": "Dose indiquée par le fabricant : {d}",
+        "dose_etiquette": "Dose : suivez l'étiquette / demandez au CRDA",
+        "mot_chelate": "chélate",
         "lmr": "LMR de {nom} ({source}, {marche}) : ", "marche_local": "marché local",
         "marche_export": "export vers l'Union européenne",
         "lmr_absente": "{s} : LMR non trouvée, vérifiez auprès de l'acheteur ou du CRDA",
@@ -179,6 +191,16 @@ P = {
         "r_rotation": "مجموعة {g} مختلفة عن آخر مداواة ({last})",
         "r_groupe": "مجموعة {g}",
         "r_groupe_faible_risque": "مجموعة {g}؛ {shared} مستعملة سابقًا لكن خطر المقاومة فيها ضعيف",
+        "boutique": "في المتجر لـ{nom}: {offre}", "boutique_sans_lien": "{boutique} (رابط الصفحة غير متوفر)",
+        "stock_en_stock": " — متوفر", "stock_rupture": " — غير متوفر حاليًا",
+        "boutique_absente": "بالنسبة لـ{nom}: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على {compo}",
+        "besoin": "الحاجة: تزويد بـ{x} ({sym})",
+        "besoin_calcaire": "؛ في التربة الكلسية، مخلّب EDDHA أو EDDHSA أو HBED",
+        "engrais_absent": "غير موجود في agrishop.tn ولا في agriclic.tn: اطلب منتجًا يحتوي على {x} ({sym}){chel}.",
+        "chel_calcaire": "، في شكل مخلّب EDDHA أو EDDHSA أو HBED",
+        "dose_fabricant": "الجرعة حسب المصنّع: {d}",
+        "dose_etiquette": "الجرعة: اتبع الملصق / اسأل الـCRDA",
+        "mot_chelate": "مخلّب",
         "lmr": "الحد الأقصى للمتبقيات في {nom} ({source}، {marche}): ", "marche_local": "السوق المحلية",
         "marche_export": "التصدير نحو الاتحاد الأوروبي",
         "lmr_absente": "{s}: غير موجود، تحقق لدى المشتري أو الـCRDA",
@@ -247,6 +269,40 @@ def dar_text(p, t):
     if p.get("dar_source") == "complement":
         return t["dar_complete"].format(v=v, source=p.get("dar_source_detail") or "")
     return v
+
+
+def _offer_text(o, t):
+    stock = {"en_stock": t["stock_en_stock"], "rupture": t["stock_rupture"]}.get(o.get("stock"), "")
+    where = o["url"] or t["boutique_sans_lien"].format(boutique=o["boutique"])
+    resume = (o.get("resume") or "").replace("chélate", t["mot_chelate"])  # the summary of shop.py is French
+    return f"{o['nom']} ({resume}){stock} — {where}" if resume else f"{o['nom']}{stock} — {where}"
+
+
+def shop_lines(p, t):
+    """Under a registered product: its validated shop offers (composition written by code, stock, page), or what to
+    ask for in a shop. The product name is on the line (rule 9 reads only the lines without a product)."""
+    if "boutique" not in p:
+        return []
+    if p["boutique"]:
+        return [t["boutique"].format(nom=p["nom"], offre=_offer_text(o, t)) for o in p["boutique"]]
+    return [t["boutique_absente"].format(nom=p["nom"], compo=p.get("a_demander") or p.get("substances") or "")]
+
+
+def fertiliser_section(d, t, lang):
+    """The need of the deficiency (nutrient, chelate for a calcareous soil), the validated offers with the label dose
+    when it passes its validated range, else what to ask for."""
+    b = d["besoin"]
+    x = NUTRIENTS.get(b["nutriment"], (b["nutriment"], b["nutriment"]))[0 if lang == "fr" else 1]
+    need = t["besoin"].format(x=x, sym=b["nutriment"]) + (t["besoin_calcaire"] if b.get("chelate_calcaire") else "")
+    if not d.get("engrais"):
+        return need + "\n" + t["engrais_absent"].format(x=x, sym=b["nutriment"], chel=t["chel_calcaire"]
+                                                        if b.get("chelate_calcaire") else "")
+    lines = []
+    for e in d["engrais"]:
+        dose = e.get("dose") or {}
+        lines.append(_offer_text(e, t) + "\n  " + (t["dose_fabricant"].format(d=dose["texte"]) if dose.get("montrer")
+                                                   else t["dose_etiquette"]))
+    return need + "\n" + t["engrais"] + "\n" + "\n".join(f"- {x}" for x in lines)
 
 
 def mrl_line(p, t, ctx):
@@ -463,6 +519,7 @@ def compose(d, lang="fr"):
                 # the reasons go on their own line: the product line keeps exactly its registered dose (rule 8)
                 + (("\n  " + practical_line(p["dose_pratique"], t, lang)) if p.get("dose_pratique") else "")
                 + (("\n  " + mrl_line(p, t, ctx)) if p.get("lmr_marche") else "")
+                + "".join("\n  " + x for x in shop_lines(p, t))
                 + ("\n  " + t["pourquoi"] + t["sep"].join(reason_text(r, t) for r in p["raisons"])
                    if p.get("raisons") else "")
                 for p in d["produits"]))
@@ -496,7 +553,9 @@ def compose(d, lang="fr"):
             gov = t["crda_gov"].format(gov=gov_label(d["gouvernorat"], lang)) if d.get("gouvernorat") \
                 else t["crda_sans_gov"]
             parts.append(t["orientation"].format(gov=gov))
-        if d.get("engrais"):
+        if d.get("besoin"):  # step 10: the need first, then the validated shop offers, else what to ask for
+            parts.append(fertiliser_section(d, t, lang))
+        elif d.get("engrais"):
             parts.append(t["engrais"] + "\n" + bullets(
                 f"{e['nom']} ({e['nutriment']} {e['teneur_pct']} %)" if e.get("teneur_pct") else e["nom"]
                 for e in d["engrais"]))
