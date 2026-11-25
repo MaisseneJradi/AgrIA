@@ -44,8 +44,9 @@ OLD = catalogue([
 class FakeHTTP:
     """urlopen replacement: robots.txt text and a status per page; records the time of each page request."""
 
-    def __init__(self, robots="User-agent: *\nDisallow: /private\n", pages=None, offline=False):
+    def __init__(self, robots="User-agent: *\nDisallow: /private\n", pages=None, offline=False, silent=()):
         self.robots, self.pages, self.offline, self.calls = robots, pages or {}, offline, []
+        self.silent = set(silent)  # pages that never answer (timeout)
 
     def __call__(self, req, timeout=None):
         url = req.full_url
@@ -54,6 +55,8 @@ class FakeHTTP:
         if url.endswith("/robots.txt"):
             return io.BytesIO(self.robots.encode())
         self.calls.append((time.time(), req.get_method(), url))
+        if url in self.silent:
+            raise TimeoutError("The read operation timed out")
         code = self.pages.get(url, 200)
         if code != 200:
             raise urllib.error.HTTPError(url, code, "x", {}, None)
@@ -124,6 +127,20 @@ class TestNetwork(unittest.TestCase):
         gaps = [b[0] - a[0] for a, b in zip(http.calls, http.calls[1:])]
         self.assertTrue(all(g >= 0.29 for g in gaps), gaps)
 
+    def test_one_silent_page_is_not_a_network_failure(self):
+        # 25/11/2026: one page timed out and the whole check stopped ("réseau indisponible"): no more
+        http = FakeHTTP(silent={"https://www.agriclic.tn/1-fer.html"})
+        out, report = R.check_links(OLD, R.Polite(delay=0.0, opener=http), "2026-12-01")
+        out = out.set_index("id")
+        self.assertEqual(out.at["agriclic:1", "lien_http"], "sans réponse")
+        self.assertEqual(out.at["agriclic:1", "stock_status"], "en_stock")    # not removed
+        self.assertEqual(out.at["agriclic:2", "lien_http"], "200")
+        many = [f"https://www.agriclic.tn/{i}-x.html" for i in range(6)]
+        polite = R.Polite(delay=0.0, opener=FakeHTTP(silent=set(many)))
+        with self.assertRaises(R.NoNetwork):
+            for u in many:
+                polite.status(u)
+
     def test_crawl_delay_of_robots_is_obeyed(self):
         polite = R.Polite(delay=0.0, opener=FakeHTTP(robots="User-agent: *\nCrawl-delay: 2\n"))
         polite._robots("https://www.agriclic.tn/x")
@@ -173,6 +190,16 @@ class TestApply(unittest.TestCase):
             self.assertEqual(cat.at["agriclic:2", "stock_status"], "retire")
             self.assertEqual(pd.read_csv(mapping).at[0, "status"], "validated")
             self.assertTrue(run.called)  # build_db.py
+
+
+class TestAvailability(unittest.TestCase):
+    def test_both_words_of_prestashop(self):
+        for word, status in [("available", "en_stock"), ("in_stock", "en_stock"), ("unavailable", "rupture")]:
+            with tempfile.TemporaryDirectory() as d:
+                (Path(d) / "html").mkdir()
+                (Path(d) / "html" / "p_1.html").write_text(
+                    '<div data-product="{&quot;availability&quot;:&quot;%s&quot;}"></div>' % word, encoding="utf-8")
+                self.assertEqual(R.B.page_facts("1", d)[0], status)
 
 
 class TestSitemap(unittest.TestCase):

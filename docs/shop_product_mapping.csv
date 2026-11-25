@@ -1174,7 +1174,6 @@ agriclic:378,Gypsophyle,semence,,,0.0,non_apparié,aucune variété du catalogue
 agriclic:364,Cosmos Rouge Sensation,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,
 agriclic:360,Coloquinte petit fruit,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,
 agriclic:357,Cleome,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,
-agriclic:356,Clarkia,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,
 agriclic:341,Violette Pourpre,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,
 agriclic:248,SEMENCE CHOU RAVE HATIF DE VIENNE BADDAR,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,
 agriclic:232,SEMENCE FENOUIL LATINA BADDAR,semence,variete:Fenouil|Latina,Fenouil Latina,1.0,apparié,variété « Latina » et espèce « Fenouil » dans le nom,proposed,
@@ -1246,3 +1245,5 @@ agriclic:423,Rose trémière simple,semence,,,0.0,non_apparié,aucune variété 
 agriclic:359,Coleus,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,
 agriclic:242,SEMENCE PASTEQUE CHARLESTON,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,
 agriclic:243,SEMENCE MELON ANANAS AMERIQUE,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,
+agriclic:567,BIOPOWER®,pesticide,,,0.0,non_apparié,aucune substance lue,proposed,
+agriclic:356,Clarkia,semence,,,0.0,non_apparié,aucune variété du catalogue officiel,proposed,produit modifié le 2026-11-25 : à relire

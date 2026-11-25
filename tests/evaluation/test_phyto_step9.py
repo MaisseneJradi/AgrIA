@@ -40,8 +40,9 @@ class TestExtraction(unittest.TestCase):
 
     def test_file(self):
         rows = read(X.OUT)
-        self.assertEqual(len(rows), 614)
-        self.assertEqual({r["status"] for r in rows}, {"proposed"})
+        from common import query
+        self.assertEqual(len(rows), len(query("SELECT id FROM shop_products")))  # one row per product
+        self.assertLessEqual({r["status"] for r in rows}, {"proposed", "validated", "rejected"})  # rows the reviewer validates or rejects stay valid
 
 
 class TestMatching(unittest.TestCase):
@@ -82,7 +83,7 @@ class TestMatching(unittest.TestCase):
         self.assertEqual(low[0]["verdict"], "incertain")
 
     def test_file_is_proposed_with_reasons(self):
-        self.assertEqual({r["status"] for r in self.rows}, {"proposed"})
+        self.assertLessEqual({r["status"] for r in self.rows}, {"proposed", "validated", "rejected"})  # rows the reviewer validates or rejects stay valid
         self.assertTrue(all(r["reasons"] for r in self.rows))
         seeds = [r for r in self.rows if r["kind"] == "semence" and r["verdict"] == "apparié"]
         self.assertTrue(any("Rio grande" in r["target_label"] for r in seeds))

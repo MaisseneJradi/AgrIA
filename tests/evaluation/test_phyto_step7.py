@@ -49,7 +49,7 @@ class TestPhi(unittest.TestCase):
         with open(T.COMPLETIONS, encoding="utf-8") as f:
             rows = list(csv.DictReader(f))
         self.assertTrue(rows)
-        self.assertEqual({r["status"] for r in rows}, {"proposed"})
+        self.assertLessEqual({r["status"] for r in rows}, {"proposed", "validated", "rejected"})  # rows the reviewer validates or rejects stay valid
         u = next(u for u in T.get_treatments("olive__peacock_spot", "olive") if u["produit"] == "DECIBEL MAX WG")
         self.assertIsNone(u["dar_jours"])
         self.assertEqual(u["dar_message"], "DAR non indiqué : vérifiez l'étiquette")

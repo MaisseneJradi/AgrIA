@@ -35,7 +35,7 @@ def hourly(rain, wind, proba=None, start="2026-11-23T10:00"):
 class TestTables(unittest.TestCase):
     def test_who_classes(self):
         rows = {r["substance"]: r for r in read(ranking.HAZARD)}
-        self.assertEqual({r["status"] for r in rows.values()}, {"proposed"})
+        self.assertLessEqual({r["status"] for r in rows.values()}, {"proposed", "validated", "rejected"})  # rows the reviewer validates or rejects stay valid
         self.assertTrue(all(r["classe_oms"] in ("Ia", "Ib", "II", "III", "U") for r in rows.values()))
         expected = {"Oxamyl": "Ia", "Abamectin (aka avermectin)": "Ib", "Dichlorvos": "Ib", "Imidacloprid": "II",
                     "Deltamethrin": "II", "Cymoxanil": "II", "Azoxystrobin": "U", "Glyphosate": "III"}
@@ -44,7 +44,7 @@ class TestTables(unittest.TestCase):
 
     def test_bee_hazard(self):
         rows = {r["substance"] for r in read(hazard.BEES)}
-        self.assertEqual({r["status"] for r in read(hazard.BEES)}, {"proposed"})
+        self.assertLessEqual({r["status"] for r in read(hazard.BEES)}, {"proposed", "validated", "rejected"})  # rows the reviewer validates or rejects stay valid
         for s in ("Imidacloprid", "Thiamethoxam", "Deltamethrin", "Spinosad", "Abamectin (aka avermectin)"):
             self.assertIn(s, rows)
         for s in ("Glyphosate", "Azoxystrobin", "Copper hydroxide"):  # not in the list: nothing is said
