@@ -27,7 +27,7 @@ from src.agent import paths  # noqa: F401
 from src.agent.agents.coordinateur import MAX_REWRITES, crda, finaliser, planifier, rediger, secours
 from src.agent.agents.diagnostic import diagnostiquer
 from src.agent.agents.identification import identifier
-from src.agent.agents.linguistique import comprendre, traduire
+from src.agent.agents.linguistique import CONTEXT_FIELDS, comprendre, traduire
 from src.agent.agents.specialistes import agronome, phytosanitaire
 from src.agent.agents.verificateur import verifier
 from src.agent.state import Dossier
@@ -77,10 +77,13 @@ def build():
     return g.compile()
 
 
-def diagnose(photo=None, message="", gouvernorat=None, culture=None, langue=None, mois=None):
+def diagnose(photo=None, message="", gouvernorat=None, culture=None, langue=None, mois=None, contexte=None):
+    """contexte: optional fields of the plot (days_to_harvest, market, organic, greenhouse, stage,
+    last_treatment_group, area), as the form sends them."""
     t0 = time.time()
+    fields = {k: v for k, v in (contexte or {}).items() if k in CONTEXT_FIELDS and v not in (None, "")}
     state = build().invoke({"photo": photo, "message": message, "gouvernorat": gouvernorat, "culture": culture,
-                            "langue": langue, "mois": mois, "trace": []})
+                            "langue": langue, "mois": mois, "trace": [], **fields})
     return dict(state["reponse"], trace=state["trace"], duree_s=round(time.time() - t0, 2))
 
 

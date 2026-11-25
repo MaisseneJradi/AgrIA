@@ -165,3 +165,63 @@ crop,citrus,citrus,other,lemon_bd/Dataset/citrus_leafminer,auto
 crop,citrus,citrus,other,lemon_bd/Dataset/citrus_leaf_curl,auto
 crop,citrus,citrus,other,lemon_bd/Dataset/citrus_huanglongbing,auto
 crop,citrus,citrus,other,lemon_bd/Dataset/swallowtail_herbivory,auto
+diseases,apple__black_rot,apple,diseased,plantwild/leaf/apple black rot,auto_field
+diseases,apple__rust,apple,diseased,plantwild/leaf/apple rust,auto_field
+diseases,apple__scab,apple,diseased,plantwild/leaf/apple scab,auto_field
+diseases,pepper__bacterial_spot,pepper,diseased,plantwild/leaf/bell pepper bacterial spot,auto_field
+diseases,cherry__powdery_mildew,cherry,diseased,plantwild/leaf/cherry powdery mildew,auto_field
+diseases,citrus__canker,citrus,diseased,plantwild/leaf/citrus canker,auto_field
+diseases,orange__citrus_greening,orange,diseased,plantwild/leaf/citrus greening disease,auto_field
+diseases,corn__gray_leaf_spot,corn,diseased,plantwild/leaf/corn gray leaf spot,auto_field
+diseases,corn__northern_leaf_blight,corn,diseased,plantwild/leaf/corn northern leaf blight,auto_field
+diseases,corn__common_rust,corn,diseased,plantwild/leaf/corn rust,auto_field
+diseases,grape__black_rot,grape,diseased,plantwild/leaf/grape black rot,auto_field
+diseases,potato__early_blight,potato,diseased,plantwild/leaf/potato early blight,auto_field
+diseases,potato__late_blight,potato,diseased,plantwild/leaf/potato late blight,auto_field
+diseases,squash__powdery_mildew,squash,diseased,plantwild/leaf/squash powdery mildew,auto_field
+diseases,squash__powdery_mildew,squash,diseased,plantwild/leaf/zucchini powdery mildew,auto_field
+diseases,strawberry__leaf_scorch,strawberry,diseased,plantwild/leaf/strawberry leaf scorch,auto_field
+diseases,tomato__bacterial_spot,tomato,diseased,plantwild/leaf/tomato bacterial leaf spot,auto_field
+diseases,tomato__early_blight,tomato,diseased,plantwild/leaf/tomato early blight,auto_field
+diseases,tomato__late_blight,tomato,diseased,plantwild/leaf/tomato late blight,auto_field
+diseases,tomato__leaf_mold,tomato,diseased,plantwild/leaf/tomato leaf mold,auto_field
+diseases,tomato__mosaic_virus,tomato,diseased,plantwild/leaf/tomato mosaic virus,auto_field
+diseases,tomato__septoria_leaf_spot,tomato,diseased,plantwild/leaf/tomato septoria leaf spot,auto_field
+diseases,tomato__yellow_leaf_curl_virus,tomato,diseased,plantwild/leaf/tomato yellow leaf curl virus,auto_field
+diseases,wheat__leaf_rust,wheat,diseased,plantwild/leaf/wheat leaf rust,auto_field
+crop,grape,grape,other,gvlid/leaf/Black rot,auto_field
+crop,grape,grape,other,gvlid/leaf/esca,auto_field
+crop,grape,grape,other,gvlid/leaf/healthy,auto_field
+crop,grape,grape,other,gvlid/leaf/leaf blight,auto_field
+diseases,potato__healthy,potato,healthy,potato_field/leaf/Healthy,auto_field
+diseases,potato__late_blight,potato,diseased,potato_field/leaf/Phytopthora,auto_field
+crop,apple,apple,other,plantwild/leaf/apple mosaic virus,auto_field
+crop,pepper,pepper,other,plantwild/leaf/bell pepper frogeye leaf spot,auto_field
+crop,pepper,pepper,other,plantwild/leaf/bell pepper powdery mildew,auto_field
+crop,cherry,cherry,other,plantwild/leaf/cherry leaf spot,auto_field
+crop,grape,grape,other,plantwild/leaf/grape downy mildew,auto_field
+crop,grape,grape,other,plantwild/leaf/grape leaf spot,auto_field
+crop,grape,grape,other,plantwild/leaf/grapevine leafroll disease,auto_field
+crop,peach,peach,other,plantwild/leaf/peach anthracnose,auto_field
+crop,peach,peach,other,plantwild/leaf/peach leaf curl,auto_field
+crop,peach,peach,other,plantwild/leaf/peach rust,auto_field
+crop,peach,peach,other,plantwild/leaf/peach scab,auto_field
+crop,strawberry,strawberry,other,plantwild/leaf/strawberry anthracnose,auto_field
+crop,wheat,wheat,other,plantwild/leaf/wheat bacterial leaf streak (black chaff),auto_field
+crop,wheat,wheat,other,plantwild/leaf/wheat powdery mildew,auto_field
+crop,wheat,wheat,other,plantwild/leaf/wheat septoria blotch,auto_field
+crop,wheat,wheat,other,plantwild/leaf/wheat stem rust,auto_field
+crop,wheat,wheat,other,plantwild/leaf/wheat stripe rust,auto_field
+crop,squash,squash,other,plantwild/leaf/zucchini bacterial wilt,auto_field
+crop,squash,squash,other,plantwild/leaf/zucchini downy mildew,auto_field
+crop,squash,squash,other,plantwild/leaf/zucchini yellow mosaic virus,auto_field
+crop,potato,potato,other,potato_field/leaf/Bacteria,auto_field
+crop,potato,potato,other,potato_field/leaf/Fungi,auto_field
+crop,potato,potato,other,potato_field/leaf/Nematode,auto_field
+crop,potato,potato,other,potato_field/leaf/Pest,auto_field
+crop,potato,potato,other,potato_field/leaf/Virus,auto_field
+crop,EXCLUDE,corn,not_leaf,plantwild/original/corn smut,auto_field
+crop,EXCLUDE,wheat,not_leaf,plantwild/original/wheat head scab,auto_field
+crop,EXCLUDE,wheat,not_leaf,plantwild/original/wheat loose smut,auto_field
+crop,EXCLUDE,peach,not_leaf,plantwild/original/peach brown rot,auto_field
+crop,EXCLUDE,pepper,not_leaf,plantwild/original/bell pepper blossom end rot,auto_field

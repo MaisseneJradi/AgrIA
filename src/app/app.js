@@ -24,10 +24,19 @@ const I18N = {
     cropUnsure: (n, c) => `Culture incertaine (${n} ? ${c} %) : choisissez-la.`,
     cropOther: "Cette plante ne semble pas faire partie des cultures d'AgrIA.",
     cropNotLeaf: "Pas de feuille reconnue : la culture sera déduite au diagnostic, ou choisissez-la.",
+    notPlant: "Cette photo ne ressemble pas à une plante : envoyez une photo d'une feuille ou d'un fruit, de près.",
     cropField: "Culture", problemField: "Maladie détectée", healthy: "Plante saine", none: "—",
     fbQuestion: "Ce diagnostic est-il correct ?", yes: "Oui", no: "Non",
     fbTruth: "Quelle est la bonne réponse ? (plante et maladie)", fbPh: "Ex. : olivier, œil de paon",
     fbSend: "Envoyer", fbThanks: "Merci, c'est enregistré.",
+    fbKeep: "J'accepte qu'AgrIA garde cette photo pour mieux reconnaître les maladies en Tunisie",
+    ctxTitle: "Précisions sur la parcelle (facultatif)",
+    ctxHelp: "Elles aident à choisir un produit adapté : délai avant récolte, marché, agriculture biologique…",
+    ctxAsk: "Les agents ont besoin des précisions en couleur : remplissez-les puis relancez l'analyse.",
+    ctxDays: "Récolte prévue dans (jours)", ctxMarket: "Marché", ctxLocal: "Marché local",
+    ctxExport: "Export (Union européenne)", ctxOrganic: "Agriculture biologique", ctxStage: "Stade de l'attaque",
+    ctxEarly: "Début (premières taches)", ctxSpread: "Déjà étendue", ctxGreenhouse: "Sous serre",
+    ctxLast: "Dernier produit utilisé", ctxLastPh: "Ex. : nom du produit", ctxArea: "Surface à traiter (ha)",
   },
   ar: {
     tagline: "طبيب النباتات", photo: "التقط صورة أو اخترها",
@@ -49,14 +58,25 @@ const I18N = {
     cropUnsure: (n, c) => `زراعة غير مؤكدة (${n}؟ ${c} %): اخترها.`,
     cropOther: "لا يبدو أن هذه النبتة من زراعات AgrIA.",
     cropNotLeaf: "لم يتم التعرف على ورقة: اختر الزراعة أو ستُستنتج عند التشخيص.",
+    notPlant: "لا تبدو هذه الصورة صورة نبات: أرسل صورة ورقة أو ثمرة عن قرب.",
     cropField: "الزراعة", problemField: "المرض المكتشف", healthy: "نبتة سليمة", none: "—",
     fbQuestion: "هل هذا التشخيص صحيح؟", yes: "نعم", no: "لا",
     fbTruth: "ما هو الجواب الصحيح؟ (النبتة والمرض)", fbPh: "مثال: زيتون، عين الطاووس",
     fbSend: "إرسال", fbThanks: "شكرًا، تم التسجيل.",
+    fbKeep: "أوافق على أن يحتفظ AgrIA بهذه الصورة لتحسين التعرف على الأمراض في تونس",
+    ctxTitle: "تفاصيل عن القطعة (اختياري)",
+    ctxHelp: "تساعد على اختيار منتج مناسب: المدة قبل الجني، السوق، الفلاحة البيولوجية…",
+    ctxAsk: "يحتاج الوكلاء إلى التفاصيل الملوّنة: املأها ثم أعد التحليل.",
+    ctxDays: "الجني بعد (أيام)", ctxMarket: "السوق", ctxLocal: "السوق المحلية",
+    ctxExport: "تصدير (الاتحاد الأوروبي)", ctxOrganic: "فلاحة بيولوجية", ctxStage: "مرحلة الإصابة",
+    ctxEarly: "بداية (أولى البقع)", ctxSpread: "منتشر", ctxGreenhouse: "بيت محمي",
+    ctxLast: "آخر منتج مستعمل", ctxLastPh: "مثال: اسم المنتج", ctxArea: "المساحة المراد مداواتها (هكتار)",
   },
 };
 
 const $ = (id) => document.getElementById(id);
+// context of the plot sent to /diagnose; the agents ask for the missing ones only when the answer would change
+const CTX_FIELDS = ["days_to_harvest", "market", "organic", "greenhouse", "stage", "last_treatment_group", "area"];
 let lang = "fr";
 let governorates = [];
 let cultures = [];
@@ -145,6 +165,7 @@ function showCropHint(r) {
   showCropChoices(r && !r.loading ? r : null);
   if (!r) { hint.hidden = true; return; }
   if (r.loading) { hint.textContent = t.identifying; }
+  else if (r.photo_plante === false) { hint.textContent = t.notPlant; hint.classList.add("warn"); }
   else if (!r.feuille || !r.culture) { hint.textContent = t.cropNotLeaf; hint.classList.add("warn"); }
   else if (r.autre_plante && r.sure) { hint.textContent = t.cropOther; hint.classList.add("warn"); }
   else if (r.sure) {
@@ -234,6 +255,13 @@ function render(r) {
   }
   $("products-box").hidden = !(r.produits || []).length;
 
+  // context questions: the fields the agents need are opened and coloured; the farmer fills them and sends again
+  const asked = r.questions_contexte || [];
+  document.querySelectorAll("[data-ctx]").forEach((el) => el.classList.toggle("ask", asked.includes(el.dataset.ctx)));
+  $("ctx-hint").textContent = asked.length ? t.ctxAsk : t.ctxHelp;
+  $("ctx-hint").classList.toggle("warn", asked.length > 0);
+  if (asked.length) $("context-box").open = true;
+
   const trace = $("trace");
   trace.replaceChildren();
   for (const s of r.trace || []) {
@@ -257,6 +285,8 @@ function render(r) {
   $("feedback").hidden = !journalId;
   $("fb-truth").hidden = true;
   $("fb-send").hidden = true;
+  $("fb-keep-label").hidden = true;
+  $("fb-keep").checked = false;
   $("fb-done").hidden = true;
   $("fb-text").value = "";
   document.querySelectorAll("[data-correct]").forEach((b) => b.setAttribute("aria-pressed", "false"));
@@ -270,6 +300,7 @@ async function sendFeedback() {
   data.append("journal_id", journalId);
   data.append("correct", fbCorrect);
   data.append("vraie_reponse", $("fb-text").value.trim());
+  data.append("garder_photo", $("fb-keep").checked ? "oui" : "non");
   try {
     const r = await fetch("feedback", { method: "POST", body: data });
     if (r.ok) { $("fb-done").hidden = false; $("fb-send").hidden = true; }
@@ -305,6 +336,7 @@ $("form").addEventListener("submit", async (e) => {
   data.append("mois", String(new Date().getMonth() + 1));
   if ($("gouvernorat").value) data.append("gouvernorat", $("gouvernorat").value);
   if ($("culture").value) data.append("culture", $("culture").value);
+  for (const f of CTX_FIELDS) if ($(f).value.trim()) data.append(f, $(f).value.trim());
 
   $("submit").disabled = true;
   $("loading").hidden = false;
@@ -327,6 +359,9 @@ $("again").addEventListener("click", () => {
   $("preview").hidden = true;
   $("photo-hint").hidden = false;
   $("result").hidden = true;
+  document.querySelectorAll("[data-ctx]").forEach((el) => el.classList.remove("ask"));
+  $("ctx-hint").textContent = I18N[lang].ctxHelp;
+  $("ctx-hint").classList.remove("warn");
   lastIdentify = null;
   showCropHint(null);
   fillCultures();
@@ -338,6 +373,7 @@ document.querySelectorAll("[data-correct]").forEach((b) => b.addEventListener("c
   document.querySelectorAll("[data-correct]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
   $("fb-truth").hidden = fbCorrect === "oui";
   $("fb-send").hidden = false;
+  $("fb-keep-label").hidden = false;
   $("fb-done").hidden = true;
   if (fbCorrect === "oui") sendFeedback();
 }));

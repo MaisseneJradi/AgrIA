@@ -62,7 +62,8 @@ class TestRag(unittest.TestCase):
         r = search_knowledge("comment traiter", classe="olive__knot_disease")
         self.assertTrue(r)
         self.assertTrue(all("olive__knot_disease" in x["classes"] for x in r))
-        self.assertEqual(r[0]["section"], "lutte")
+        # since phyto step 11 the control text of this sheet is all cultural (pruning, disinfecting tools): prevention
+        self.assertIn(r[0]["section"], ("lutte", "prevention"))
 
 
 if __name__ == "__main__":

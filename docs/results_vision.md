@@ -264,3 +264,293 @@ Carence ou maladie, avec le VLM à poids 0,5 : terrain 96,0 → 98,0 %, nouvelle
 - Le seuil de secours a été choisi en regardant aussi les 15 photos du journal : c'est un petit échantillon. Il faudra le revoir sur de vraies photos d'agriculteurs tunisiens.
 - 65 photos sur environ 1 400 ont reçu une réponse illisible du VLM : dans ce cas, le vote seul s'applique.
 - Le VLM n'est jamais seul à décider : il ne peut pas contredire la culture donnée par l'agriculteur, et la culture reste toujours confirmée par l'agriculteur.
+
+## 14. Photos de terrain ajoutées et nouveaux modèles (20/11/2026)
+
+**Pourquoi.** Sur le terrain, les modèles restaient autour de 60 % (H1) : les photos de terrain ne pesaient que 4,8 % de l'entraînement et venaient toutes de PlantDoc. Trois jeux publics de **vraies photos de terrain**, uniquement des cultures du projet, ont été ajoutés (`data/README.md`, section « Field photo sources ») :
+
+| Jeu | Culture(s) | Photos gardées | Utilisation | Licence |
+|---|---|---|---|---|
+| PlantWild v2 (Wei et al., 2024) | 14 cultures du projet, 49 classes sur 115 | 5 918 sur 6 774 | maladies, feuille et culture | CC BY-NC-ND 4.0 |
+| Potato Leaf Disease, Uncontrolled Environment (Mendeley 10.17632/ptz377bwb8.1) | pomme de terre | 3 053 sur 3 076 | maladies (mildiou, saine) et culture | CC BY 4.0 |
+| GVLiD (Mendeley 10.17632/wkymf8bhcg.5) | vigne | 3 461 → 2 268 après doublons | **culture seulement** : mêmes photos étiquetées esca et brûlure, 38 % d'images de vidéo presque identiques | CC BY 4.0 |
+
+Refusés : Roboflow (photos de laboratoire), le jeu Mendeley « Tomato Leaf and Fruit » (feuilles posées sur du papier blanc), le piment (hors projet). Les maladies hors de nos classes (mildiou de la vigne, rouille jaune du blé…) servent seulement au modèle de culture ; elles deviendront des classes plus tard.
+
+**Préparation** (`src/preparation/prepare_field_sources.py`, rapport `docs/field_sources_routing.csv`) : seules les classes des 14 cultures sont extraites ; le **routeur** lit chaque photo et ne garde que les feuilles (épis, fruits, tiges écartés) ; orientation EXIF appliquée. Ajout par `add_source.py`, nouveau découpage `auto_field` : 85 % entraînement, 15 % test terrain par classe. Doublons contrôlés (`check_duplicates.py`, `clean_duplicates.py`), retraits journalisés dans `docs/removed_images.csv`.
+
+**Effet sur les jeux de test terrain** : maladies et feuille 199 → **703 photos** (PlantDoc 197, PlantWild 425, pomme de terre 81) ; culture **1 861 photos** (+ GVLiD 458). La validation terrain (15 % des photos de terrain de l'entraînement, tirée à la lecture) passe de 287 à 685 photos (1 537 pour la culture).
+
+**Entraînement** : mêmes réglages que l'essai 2 de la section 9 (validation terrain, photos de terrain ×5, augmentations « terrain » sans changement de couleur), choix de l'époque sur la moyenne des macro-F1 labo et terrain.
+
+| Nouveau modèle | Meilleure époque | Durée |
+|---|---|---|
+| `diseases_v2` (jeu brut, patience 6) | 20 sur 20 | 1 h 41 |
+| `leaf_v4` (jeu brut, patience 8) | 18 sur 20 | 1 h 55 |
+| `crop_v4` (jeu équilibré, 15 époques, patience 6) | 12 sur 15 | 2 h 10 |
+
+### 14.1 Anciens et nouveaux modèles sur les mêmes jeux de test
+
+| Modèle | Test labo, ancien → nouveau | **Test terrain, ancien → nouveau** | Macro-F1 terrain |
+|---|---|---|---|
+| Maladies (`diseases_raw` → `diseases_v2`) | 99,0 → 99,5 % | **52,9 → 80,1 %** (703) | 0,481 → 0,761 |
+| Feuille (`leaf_v3` → `leaf_v4`) | 97,2 → 97,0 % | **50,9 → 78,5 %** (703) | 0,470 → 0,741 |
+| Culture (`crop_v3a` → `crop_v4`) | 99,9 → 99,9 % | **58,9 → 94,3 %** (1 861) | 0,476 → 0,894 |
+
+Par source (bonnes réponses sur le test terrain, ancien → nouveau) :
+
+| Source | Maladies | Feuille | Culture |
+|---|---|---|---|
+| PlantDoc (197) | 61,9 → 71,6 % | 60,4 → 67,5 % | 85,8 → 85,3 % |
+| PlantWild (425 ; 750 pour la culture) | 53,2 → 80,5 % | 51,8 → 80,0 % | 46,5 → 89,9 % |
+| Pomme de terre au champ (81 ; 456) | 29,6 → 98,8 % | 23,5 → 97,5 % | 46,5 → 99,8 % |
+| GVLiD (458) | — | — | 80,1 → 100 % |
+
+Test de McNemar (mêmes photos, ancien contre nouveau) :
+
+| Modèle | PlantDoc seul | Tout le test terrain |
+|---|---|---|
+| Maladies | 33 gagnées, 14 perdues, **p = 0,008** | 224 / 33, p < 0,001 |
+| Feuille | 30 / 16, p = 0,054 | 225 / 31, p < 0,001 |
+| Culture | 12 / 13, p = 1 | 692 / 34, p < 0,001 |
+
+**Lecture honnête.**
+- Les gains sur PlantWild, la pomme de terre et GVLiD sont **optimistes** : le test de chaque source vient de la même source que son entraînement (mêmes champs, mêmes appareils ; pour GVLiD, des images de vidéo voisines même après le retrait des doublons).
+- **PlantDoc** est la mesure la plus indépendante : sa part d'entraînement n'a pas changé. Le modèle des maladies y gagne **9,7 points (significatif)**, le modèle feuille 7,1 points (à la limite), le modèle de culture reste stable : son gain vient des nouvelles sources.
+- Aucune perte en laboratoire.
+- La vraie mesure reste à faire sur des **photos tunisiennes**, d'aucune de ces sources.
+
+Seuils calibrés sur la validation (`calibrate.py`, cible 98 %) : maladies 0,50, feuille 0,67, culture 0,50. Les seuils de l'agent (0,9 maladie, 0,95 carence) sont inchangés.
+
+Les anciens modèles restent dans `models/diseases_raw`, `models/leaf_v3` et `models/crop_v3a` ; leurs prédictions sur le nouveau test terrain sont gardées hors Git dans `data/backup/2026-11-20/old_eval/`.
+
+### 14.2 Combinaison des modèles et VLM avec les nouveaux modèles
+
+Les poids sont appris de nouveau sur la validation, qui contient maintenant 685 photos de terrain au lieu de 287 (`eval_ensemble.py --tune --vlm --refresh`). Avant : les anciens modèles avec leurs poids, mesurés sur les **mêmes** jeux agrandis (`docs/eval_ensemble_avant_terrain.md`). Après : `docs/eval_ensemble_vlm.md`.
+
+| Poids | culture | carence ou maladie | maladie |
+|---|---|---|---|
+| avant | culture 1, maladies 1, VLM 0 | feuille 1, VLM 0,5 | maladies 1 |
+| **après** | culture 1, maladies 0,25, **VLM 0,25** | feuille 1, VLM 0,25 | maladies 1, **feuille 1** |
+
+Le VLM entre maintenant dans le vote de la culture (poids 0,25), en plus de son rôle de contrôle et de secours.
+
+| Décision de l'agent (vote + contrôle VLM) | Avant | **Après** |
+|---|---|---|
+| Culture, terrain (703) : juste / fausse et sûre | 78,0 / 2,0 % | **88,9 / 0,4 %** |
+| Culture, labo (358) | 98,6 / 0 % | 97,2 / 0 % |
+| Culture, nouvelles sources (216) | 96,8 / 0 % | 97,2 / 0 % |
+| Culture, photos d'Internet du journal (15) | 66,7 / 0 % | **100 / 0 %** |
+| Carence ou maladie, terrain | 98,4 % | **99,4 %** |
+| Maladie exacte avec la vraie culture, terrain | 73,3 % | **86,3 %** |
+| Carence exacte, labo (54) | 96,3 % | **100 %** |
+| **Chaîne complète, terrain** (culture votée → type → classe) | 55,2 % | **78,2 %** |
+| Chaîne complète, labo | 95,0 % | **97,2 %** |
+
+**Seuil de secours du VLM (0,95) vérifié** sur les opinions en cache :
+
+| Seuil | val labo | val terrain | test terrain | journal (15) |
+|---|---|---|---|---|
+| 0,90 | 87,8 % | 86,7 % | 82,4 % | 93,3 % |
+| **0,95 (gardé)** | 98,6 % | 96,4 % | 88,9 % | **100 %** |
+| 0,97 | 99,4 % | 99,1 % | 90,0 % | 73,3 % |
+| 0,99 ou sans secours | 99,7 % | 99,1 % | 89,8 % | 66,7 % |
+
+Les erreurs sûres d'elles restent à 0 à 0,4 % pour tous les seuils. Sur la validation seule, un seuil plus haut serait meilleur (1 à 3 points), mais ces jeux viennent maintenant des mêmes sources que l'entraînement. Les photos d'Internet du journal sont les seules proches de vraies photos d'agriculteurs, et le secours y fait passer la bonne culture de 67 % à 100 %. Une erreur du secours ne change que la culture pré-remplie : l'agriculteur la corrige parmi 3 boutons, et aucun traitement n'est conseillé sans culture confirmée. **0,95 est donc gardé.** À revoir sur des photos tunisiennes (`src/agent/ensemble.py`, `VLM_FALLBACK`).
+
+**Installés le 21/11/2026** : `models/diseases` = `diseases_v2`, `models/leaf` = `leaf_v4`, `models/crop` = `crop_v4` ; les dossiers remplacés sont dans `models/_replaced_2026-11-21/`, les poids précédents dans `data/backup/2026-11-20/backup/weights_before_field_v2.json`.
+
+## 15. Plan d'amélioration sur les photos de terrain (étapes 1 à 9, 21–22/11/2026)
+
+**Règles suivies** : graine 42 ; aucun entraînement sur une photo de validation ou de test, avec un contrôle des fuites (MD5 + dHash, `src/evaluation/leakage.py`) avant chaque entraînement ; augmentations sans changement de teinte ni de saturation ; aucun modèle installé n'est écrasé (nouveaux noms, anciens dossiers dans `models/_replaced_<date>/`) ; une expérience = une ligne de `docs/experiments.csv`.
+
+**Règle 5, pour remplacer un modèle installé** : exactitude terrain meilleure, McNemar p < 0,05 sur les mêmes photos terrain, et une perte d'au plus 1 point en labo.
+
+Mesures : test terrain = 703 photos (PlantDoc 197, PlantWild 425, pomme de terre 81) ; validation terrain = 685 photos ; ECE sur 15 classes de confiance.
+
+### 15.1 Étape 1 · Analyse des erreurs (`reports/error_analysis/`, `reports/gradcam/`)
+
+`diseases_v2` sur le test terrain :
+- 80,1 % de bonnes réponses, macro-F1 0,761, **ECE 0,142** : le modèle est trop sûr de lui.
+- Classes faibles : tomate saine, tache bactérienne et mosaïque de la tomate, cercosporiose du maïs, cerisier sain, pourriture noire du pommier, alternariose de la pomme de terre.
+- Confusions principales : cercosporiose ↔ helminthosporiose du maïs, tache bactérienne → septoriose de la tomate, mildiou de la tomate → mildiou de la pomme de terre.
+
+La Grad-CAM, mesurée avec les masques de lésions PlantSeg, montre que l'attention du modèle se porte souvent en dehors de la feuille sur les photos de terrain.
+
+### 15.2 Étape 2 · Protocole d'évaluation honnête (`src/evaluation/loso.py`, `calibration.py`, `stats.py`, `compare.py`)
+
+Leave-one-source-out, 5 époques. On compare la source vue à l'entraînement à la même source jamais vue :
+
+| Source | Vue à l'entraînement | Jamais vue |
+|---|---|---|
+| PlantDoc | 71,6 % | 48,7 % |
+| PlantWild | 79,1 % | 51,8 % |
+| Pomme de terre au champ | 98,8 % | 37,0 % |
+
+- Le chiffre du test terrain surestime donc beaucoup ce que le modèle ferait sur des photos tunisiennes.
+- PlantDoc reste la mesure la plus indépendante.
+- Chaque comparaison utilise désormais McNemar exact sur les mêmes photos (`compare.py`, rapports dans `reports/compare/`).
+
+### 15.3 Étape 3 · Augmentations « terrain » (`--aug field2`)
+
+Augmentations : recadrage 0,4–1, ombre, flou, bruit, JPEG, aucun changement de teinte.
+
+| Modèle | Terrain | Labo | McNemar contre le modèle installé | Décision |
+|---|---|---|---|---|
+| `diseases_v3` | 77,5 % | 98,4 % | p = 0,057 (+31 / −49) | non installé |
+| `leaf_v5` | 77,4 % | 96,8 % | p = 0,40 | non installé |
+
+Effet positif : les réponses **sûres et fausses** (confiance ≥ 0,9) baissent de 77 à 13 pour le modèle maladies, et de 74 à 45 pour le modèle feuille. L'exactitude, elle, ne progresse pas.
+
+### 15.4 Étape 4 · Résolution et astuces d'entraînement (`train.py --size --accum --label-smoothing --ema --warmup`, `evaluate.py --tta`)
+
+Les trois modèles maladies ont été entraînés avec label smoothing 0,1, EMA 0,999 des poids et 1 époque d'échauffement.
+
+| Modèle maladies | Terrain | Labo | PlantDoc | Macro-F1 terrain | ECE terrain | McNemar contre `diseases_v2` | CPU, 1 photo |
+|---|---|---|---|---|---|---|---|
+| `diseases_v2` (installé) | 80,1 % | 99,5 % | 71,6 % | 0,761 | 0,142 | — | 22 ms |
+| `diseases_t224` (témoin 224) | 79,9 % | — | — | — | — | p = 1 | 22 ms |
+| **`diseases_s300`** | **82,8 %** | 99,4 % | **75,6 %** | **0,786** | **0,050** | **p = 0,023 (+41 / −22)** | 27 ms |
+| `diseases_s384` | 82,7 % | 99,3 % | — | — | 0,022 | p = 0,033 | 37 ms |
+
+**Lecture.**
+- Le gain vient de la taille d'image, pas des autres astuces : à taille 224, le témoin ne fait pas mieux que le modèle installé.
+- 300 et 384 donnent le même résultat (p = 1), mais 300 est plus rapide.
+- La TTA (miroir + 3 recadrages) apporte de 0,4 à 1 point (p de 0,18 à 0,55, non significatif) et coûte environ 5 fois plus de temps CPU (131 ms au lieu de 27). **Elle n'est pas activée** (`AGRIA_TTA` non défini).
+
+**Installé le 22/11/2026** : `models/diseases` = `diseases_s300`, car la règle 5 est respectée. L'ancien modèle est dans `models/_replaced_2026-11-22/diseases/`.
+
+La combinaison des modèles a été ré-apprise (`eval_ensemble.py --tune --vlm --refresh`, `docs/eval_ensemble.md`) :
+- chaîne complète terrain : 78,2 → **80,4 %** ;
+- maladie exacte avec la vraie culture : 86,3 → 87,8 % ;
+- culture : 88,9 → 89,3 % ;
+- les poids précédents sont dans `models/_replaced_2026-11-22/ensemble_weights.json`.
+
+**Modèle feuille, même recette en taille 300 (`leaf_s300`, meilleure époque 9 sur 17, patience 8)** :
+
+| Modèle feuille | Terrain | Labo | PlantDoc | Macro-F1 terrain | ECE terrain | McNemar contre `leaf_v4` |
+|---|---|---|---|---|---|---|
+| `leaf_v4` (installé) | 78,5 % | 96,97 % | 67,5 % | 0,741 | 0,144 | — |
+| **`leaf_s300`** | **81,4 %** | 97,03 % | 71,6 % | **0,779** | **0,062** | **p = 0,0225 (+45 / −25)** ; PlantDoc +20 / −12, p = 0,22 |
+
+- Avec TTA, le test terrain passe de 81,4 à 82,5 % pour le nouveau modèle, et de 78,5 à 80,2 % pour l'ancien.
+- Sur les photos labo de carence, l'exactitude ne change pas : 89,5 → 89,5 % en validation, 90,0 → 90,5 % en test (p = 0,49).
+- Le type de problème (carence ou maladie) est plus souvent juste : 96,4 → 97,3 %.
+
+**Installé le 22/11/2026**, car la règle 5 est respectée : `models/leaf` = `leaf_s300`, et l'ancien modèle est dans `models/_replaced_2026-11-22/leaf/`.
+
+La combinaison a été ré-apprise une deuxième fois (`docs/eval_ensemble.md` ; les poids et le rapport précédents sont dans `models/_replaced_2026-11-22/*_apres_diseases_s300.*`) :
+- chaîne complète terrain : 80,4 → **80,8 %** ;
+- carence ou maladie, terrain : 99,4 → 99,9 % ;
+- maladie exacte avec la vraie culture : 87,8 → 87,9 % ;
+- culture, nouvelles sources : 97,2 → 97,7 %.
+
+Le modèle de carences retrouve un poids de 0,5 dans le vote des carences. Vérifié sur toutes les photos labo de carence : 90,8 → **92,2 %** en test (McNemar +37 / −13, p = 0,0009), et 89,6 → 90,9 % en validation (p = 0,0006).
+
+
+### 15.5 Étape 5 · Recadrage sur la feuille (`src/preparation/leaf_boxes.py`, `--leaf-crop`)
+
+Le détecteur ouvert OWL-ViT base patch32 (Apache 2.0) cherche « a photo of a leaf » sur les 5 276 photos de terrain. La photo n'est recadrée que si la détection est assez sûre (score ≥ 0,1) et que la boîte couvre entre 15 et 85 % de la photo, avec une marge de 10 %. Résultat : **888 photos recadrées (16,8 %)**, surface gardée médiane 72 %. Sur les autres, le détecteur hésite (score médian 0,05) ou trouve une boîte qui couvre presque toute la photo.
+
+Recadrage **seulement à la prédiction**, sur le modèle installé :
+- test terrain 82,8 → 81,8 % (+0 / −7, **p = 0,016**) ;
+- validation terrain inchangée.
+
+**Rejeté.**
+
+Modèle **entraîné** sur les photos terrain recadrées (`diseases_crop300`, recette `diseases_s300` + `--leaf-crop`, meilleure époque 8 sur 14) :
+
+| | `diseases` (s300, installé) | `diseases_crop300` |
+|---|---|---|
+| Labo | 99,43 % | 99,33 % |
+| Terrain | 82,79 % | 83,07 % |
+| PlantDoc | 75,6 % | 75,1 % |
+| Macro-F1 terrain | 0,786 | 0,802 |
+| ECE terrain | 0,050 | 0,052 |
+| McNemar terrain | — | +26 / −24, **p = 0,89** |
+
+**Non installé.** Le gain n'est pas significatif, et le recadrage ajouterait environ 0,45 s d'OWL-ViT par photo sur CPU. Une seule photo de terrain sur six a une boîte assez sûre : le détecteur général « a photo of a leaf » ne trouve pas bien la feuille malade au milieu d'une plante. Un détecteur entraîné sur des feuilles, avec des boîtes annotées, serait nécessaire pour aller plus loin.
+
+### 15.6 Étape 6 · Modèles de fondation gelés (`src/evaluation/foundation.py`)
+
+DINOv2 ViT-S/14 et BioCLIP sont gelés ; leurs caractéristiques sont mises en cache dans `data/processed/features/`, et seule une tête linéaire ou MLP est entraînée (photos de terrain ×5).
+
+| Modèle | Terrain | Labo | McNemar contre `diseases_s300` | CPU, 1 photo |
+|---|---|---|---|---|
+| DINOv2 + linéaire | 75,0 % | — | — | — |
+| **DINOv2 + MLP** | 80,5 % | 98,6 % | p = 0,16 | 51 ms |
+| BioCLIP + linéaire | 76,2 % | — | — | — |
+| BioCLIP + MLP | 79,8 % | 97,8 % | p = 0,062 | 126 ms |
+| Moyenne CNN + DINOv2 (poids 0,7 sur DINOv2) | **84,4 %** | 99,1 % | p = 0,20 (+36 / −25) | ~80 ms |
+| Moyenne CNN + BioCLIP (poids 0,4) | 83,2 % | — | p = 0,68 | ~150 ms |
+
+La moyenne CNN + DINOv2 obtient aussi : PlantDoc 76,7 %, macro-F1 0,805, ECE 0,123.
+
+Leave-one-source-out (la source jamais vue, toutes ses photos) :
+
+| Source jamais vue | DINOv2 + MLP | BioCLIP + MLP | CNN |
+|---|---|---|---|
+| PlantDoc | **52,2 %** | 49,4 % | 50,2 % |
+| PlantWild | **56,3 %** | **56,3 %** | 52,0 % |
+| Pomme de terre au champ | **49,0 %** | 47,8 % | 36,0 % |
+
+**Lecture.**
+- Les caractéristiques gelées **généralisent mieux à une source jamais vue** : jusqu'à +13 points pour la pomme de terre.
+- Leur confiance moyenne est proche de leur exactitude : elles sont bien calibrées.
+- Sur le test terrain, aucune ne respecte la règle 5, même la moyenne CNN + DINOv2 (+2,0 points, p = 0,20).
+- Rien n'est installé. Le temps CPU reste bien sous les 15 s par réponse de l'agent.
+
+### 15.7 Étape 7 · Température et seuils de l'agent (`src/evaluation/temperature.py`, `reports/temperature/`)
+
+T est ajustée sur la validation terrain (val pour les tâches sans photos de terrain) ; l'effet est mesuré sur le test.
+
+| Modèle | T | ECE avant → après | Décision |
+|---|---|---|---|
+| Maladies (s300) | 0,96 | 0,048 → 0,042 | déjà bien calibré par le label smoothing : T non appliquée |
+| Culture | 2,18 | 0,040 → 0,012 | non appliquée : changerait les votes de la combinaison, déjà réglés sur ces confiances |
+| Carence | 2,47 | 0,162 → 0,034 | T non appliquée : le modèle n'entre dans le vote des carences qu'avec un poids de 0,5, à côté du modèle feuille |
+| Routeur | 1,25 | 0,0014 → 0,0013 | seuil 0,9 gardé (99,8 % juste) |
+| Feuille (s300) | 0,93 | 0,061 → 0,044 | déjà proche de 1 : T non appliquée |
+
+Le label smoothing a rendu les modèles en taille 300 **moins sûrs d'eux**. Les seuils de l'agent ont donc été revus sur la confiance de la combinaison que l'agent utilise vraiment (`src/evaluation/agent_thresholds.py`). Un nouveau seuil est le plus bas qui, sur la validation, ne donne pas plus de réponses fausses avec assurance que l'ancien système.
+
+Le seuil de l'agent Diagnostic pour les maladies est mesuré sur la combinaison réellement utilisée (avec la vraie culture) :
+
+| Jeu | Ancien système à 0,9 (répondues / justes / fausses) | Nouveau à 0,9 | **Nouveau à 0,8** |
+|---|---|---|---|
+| Validation terrain | 82,3 / 92,2 / 6,4 % | 76,4 / 94,3 / 4,4 % | **83,5 / 93,5 / 5,4 %** |
+| Test terrain | 84,2 / 92,7 / 6,1 % | 77,2 / 94,1 / 4,6 % | **84,1 / 93,6 / 5,4 %** |
+
+Revérifié après l'installation de `leaf_s300` et des nouveaux poids, au seuil de 0,8 : validation terrain 83,7 / 92,5 / 6,3 %, test terrain 83,5 / 93,7 / 5,3 %. Le seuil de 0,8 est gardé.
+
+**Carences**, sur toutes les photos labo de carence (validation 1 949, test 1 724), sans VLM :
+
+| Système | Seuil | Validation (répondues / justes / fausses) | Test |
+|---|---|---|---|
+| ancien (`leaf_v4`, modèle de carences à poids 0) | 0,95 | 81,8 / 97,9 / 1,7 % | 81,2 / 98,5 / 1,2 % |
+| nouveau | 0,95 | 44,3 / 99,5 / 0,2 % | 46,9 / 99,8 / 0,1 % |
+| **nouveau** | **0,7** | **73,1 / 97,8 / 1,6 %** | **74,2 / 98,5 / 1,1 %** |
+
+Le seuil des carences passe de **0,95 à 0,7**. Avec 0,95, l'agent ne répondrait plus qu'à une carence sur deux. À 0,7, il répond avec la même exactitude qu'avant, mais à 7 points de photos en moins. Les photos sans réponse reçoivent des questions de confirmation, jamais d'engrais.
+
+Le seuil des maladies passe de **0,9 à 0,8** (`src/agent/agents/diagnostic.py`, `AGENT_THRESHOLDS`). Il est choisi sur la validation, et le test confirme : autant de photos répondues qu'avant, mais plus de réponses justes et moins de réponses fausses données avec assurance.
+
+Le modèle de carence seul ne fait plus que 76,0 % sur le test actuel (2 251 photos, dont les nouvelles sources tomato_mg et CitrusUAT qu'il n'a jamais vues). Il n'intervient qu'avec un poids de 0,5, à côté du modèle feuille, et devrait être ré-entraîné sur les nouvelles sources.
+
+### 15.8 Étape 8 · Pseudo-étiquettes à relire (`src/preparation/pseudo_label.py`)
+
+Pour chaque photo non étiquetée, le script propose une étiquette seulement si trois conditions sont réunies :
+- le modèle maladies et le modèle feuille sont d'accord (avec TTA) ;
+- la confiance est ≥ 0,95 (ou la confiance après température, avec `--temperature`) ;
+- la photo n'est pas une image de validation ou de test (MD5 + dHash).
+
+Le résultat est seulement un CSV à relire (`data/pseudo/review_<date>.csv`). Après relecture, `promote` copie les lignes `valide = oui` vers `data/raw/pseudo_<date>/`, toujours dans la partie entraînement, puis on lance `add_source.py`. **Pas encore lancé** : il n'y a pas encore de photos non étiquetées.
+
+### 15.9 Étape 9 · Photos tunisiennes avec consentement (`src/preparation/field_tn.py`)
+
+- **Application** : après « juste » ou « faux », une case « J'accepte qu'AgrIA garde cette photo pour mieux reconnaître les maladies en Tunisie », non cochée par défaut, en français et en arabe. L'API enregistre `avis.garder_photo` dans le journal.
+- **`field_tn.py export`** : écrit `data/field_tn/review_<date>.csv`, avec uniquement les photos dont l'agriculteur a donné son accord. L'étiquette est pré-remplie seulement si l'agriculteur a dit que la réponse était juste.
+- **`freeze`** : copie les lignes validées dans `data/field_tn/images/` et les ajoute à `manifest.csv`. Les lignes ne sont jamais réécrites, et les doublons (id ou MD5) sont refusés.
+- **`verify`** : contrôle les MD5.
+- `data/field_tn` est un jeu de **test gelé** (split `field_tn` dans `dataset.py` et dans le contrôle des fuites) : il ne sert jamais à l'entraînement.
+- Premier export : **0 photo**, car les 52 avis enregistrés jusqu'ici datent d'avant la case de consentement.

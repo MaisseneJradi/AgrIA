@@ -12,7 +12,7 @@ from src.tools import get_treatments, get_fertilizers, get_water_need, search_kn
 
 | Table | Source |
 |---|---|
-| `traitements` | `clean/classe_traitements.csv`, complétée par le délai avant récolte (texte) et les restrictions de `pesticides/tn_usages.csv` et de la liste des produits |
+| `traitements` | lignes `validated` de `docs/disease_target_mapping.csv` appliquées à `pesticides/tn_usages.csv` (identique à l'ancienne `clean/classe_traitements.csv`, plan phyto étape 2), complétée par le délai avant récolte (texte) et les restrictions de `pesticides/tn_usages.csv` et de la liste des produits |
 | `usage_lmr` | LMR de l'UE de chaque substance, par usage |
 | `pesticides_produits`, `pesticides_usages`, `pesticides_agrishop`, `substances` | liste tunisienne du 22/05/2024, agrishop, substances de l'UE |
 | `carence_engrais`, `engrais_catalogue`, `engrais_usages`, `semences` | agriclic, agrishop |
@@ -27,9 +27,9 @@ from src.tools import get_treatments, get_fertilizers, get_water_need, search_kn
 | `get_treatments(classe, culture=None)` | [treatments.py](../src/tools/treatments.py) | Usages homologués pour une classe du modèle | Une liste vide veut dire « aucun produit homologué ». Avec une culture, seuls les usages homologués sur cette culture, ou sur un groupe qui la contient, sont gardés. Ordre : `direct`, `vecteur`, `groupe`, `proche`. |
 | `get_fertilizers(carence, culture=None, gouvernorat=None)` | [fertilizers.py](../src/tools/fertilizers.py) | Engrais correcteurs, fiabilité du diagnostic, sol | Carence jamais vue sur cette culture → `fiabilite = "hypothese"`. Règle de sol du gouvernorat (pH, sable, carbone). Fe sur sol calcaire → chélates EDDHA d'abord. Produits à traces (< 1 %) en dernier. |
 | `get_water_need(gouvernorat, culture, mois, forecast=False)` | [water.py](../src/tools/water.py) | Besoin en eau FAO-56 : ET0 × Kc − pluie | Hors saison : pas de besoin calculé. Prévision Open-Meteo sur 7 jours en option, avec le Kc du mois en cours. Sans réseau, la réponse mensuelle reste donnée. |
-| `search_knowledge(question, k=3, classe=None)` | [rag.py](../src/tools/rag.py) | Passages des 76 fiches, avec leur source et leur licence | Question enrichie par le lexique (darija → français). Priorité à la section demandée (lutte, symptômes, biologie). Liste vide si rien ne répond. |
+| `search_knowledge(question, k=3, classe=None, method=None)` | [rag.py](../src/tools/rag.py) | Passages des sections des 76 fiches (description, symptômes, biologie, lutte, prévention, répartition), avec fiche, section, source et licence | Question enrichie par le lexique (darija → français). Recherche hybride BM25 + vecteurs bge-m3 locaux (plan phyto, étape 11 ; `method="tfidf"` garde l'ancienne). Priorité à la section demandée. Liste vide si rien ne répond (cosinus sous le seuil). |
 | `normalize_terms(texte)` | [lexicon.py](../src/tools/lexicon.py) | Cultures, maladies, ravageurs, symptômes et organes reconnus, langue, classes possibles | Français, arabe, darija, arabizi. Pluriels et préfixes arabes acceptés. `a_valider` signale une graphie darija pas encore validée. |
-| `check_answer(reponse)` | [safety.py](../src/tools/safety.py) | Contrôle final : `valide`, `raisons` (bloquantes), `avertissements` (à dire au fermier) | Les 7 règles bloquantes de la section 4 |
+| `check_answer(reponse)` | [safety.py](../src/tools/safety.py) | Contrôle final : `valide`, `raisons` (bloquantes), `avertissements` (à dire au fermier) | Les 28 règles bloquantes de la section 4 |
 
 Les noms de culture et de gouvernorat sont acceptés sous toutes leurs formes : « tomate », « tomates », « طماطم », « tmatem », « TOMATE SOUS SERRE » ; « Gabès », « gabes », « قابس », « le kef ».
 
@@ -53,6 +53,27 @@ Les noms de culture et de gouvernorat sont acceptés sous toutes leurs formes : 
 5. Un produit alors que le diagnostic n'est pas fiable (`reliable = False`) : il faut d'abord poser les questions de confirmation.
 6. Une carence jamais vue sur cette culture, non présentée comme une hypothèse.
 7. Un engrais absent du catalogue de cette carence.
+8. Un produit dont la dose homologuée n'est pas écrite telle quelle sur la même ligne que le produit dans le texte.
+9. Une substance ou un mot de lutte chimique (fongicide, cuivre, azoxystrobine, « traitez »…) écrit hors des lignes des produits homologués et des engrais de la réponse : un conseil ou un extrait de fiche ne porte jamais un traitement (plan phyto, étape 2).
+10. Contexte connu : un produit dont le DAR est plus long que les jours qui restent avant la récolte.
+11. Marché export : un produit dont une substance n'est pas approuvée (ou de statut inconnu) dans l'UE.
+12. Agriculture biologique : un produit dont une substance n'est pas autorisée en bio (règles 10 à 12 : plan phyto, étape 3).
+13. Dernier traitement connu : un produit du même groupe FRAC ou IRAC alors qu'un produit d'un autre groupe connu convient au cas (les groupes à faible risque M, BM, P, U et UN ne comptent pas ; plan phyto, étape 4).
+14. Dose pratique (pulvérisateur de 16 L, surface) différente de la dose officielle convertie par `dose_calc.py`, écrite pour une dose qui ne se convertit pas, sans le volume du pulvérisateur ou la surface, ou hors de la ligne d'un produit (plan phyto, étape 5).
+15. Produit de classe OMS connue (table validée) dont la classe n'est pas écrite, ou une autre classe écrite.
+16. Produit très toxique pour les abeilles (table validée) sans l'avertissement abeilles.
+17. Pesticide conseillé sans la ligne d'équipement de protection.
+18. Pluie (24 h) ou vent (plus de 15 km/h, 12 h) prévus non signalés, ou signalés avec un autre chiffre (règles 15 à 18 : plan phyto, étape 6).
+19. Réponse sur des produits homologués (ou leur absence) sans la date de la liste officielle chargée (« liste DGSVCIA du 22/05/2024 ») ou avec une autre date.
+20. LMR écrite différente de sa table (UE pour l'export, liste DGSVCIA ou Codex pour le marché local), ou LMR écrite sans marché connu (règles 19 et 20 : plan phyto, étape 7).
+21. Produit d'une boutique qui revendique un effet de protection sans produit homologué de ce nom (`docs/shop_unapproved_claims.csv`, sauf ligne `rejected`), nommé dans le texte ou conseillé, comme traitement ou comme engrais (plan phyto, étape 8).
+22. Adresse d'agrishop.tn ou d'agriclic.tn qui n'est pas l'adresse (`product_url`) d'un produit de la table `shop_products`.
+23. Offre de boutique (ligne « En boutique pour <produit> : … », ou engrais conseillé pour une carence) sans correspondance `validated` de `docs/shop_product_mapping.csv` vers ce produit homologué (pesticide) ou vers le besoin de la carence (engrais).
+24. Offre de pesticide dont les substances ou les concentrations diffèrent de celles du produit homologué auquel elle est rattachée (la correspondance validée est recalculée).
+25. Dose écrite sur une ligne de boutique (une dose de pesticide vient de la liste officielle seulement), ou ligne de boutique qui ne nomme pas un produit homologué de la réponse avant les deux-points.
+26. « Dose indiquée par le fabricant » d'un engrais qui n'est pas exactement celle de l'étiquette acceptée par sa fourchette `validated` (`docs/fertiliser_dose_ranges.csv`) (règles 22 à 26 : plan phyto, étape 10).
+27. Citation « Source : fiche « X », section Y : lien » dont la fiche, la section ou le lien n'est pas une ligne de la table `fiche_sections` (plan phyto, étape 11).
+28. Adresse, offre ou engrais d'un produit de boutique retiré du site (`stock_status = retire` : absent du dernier export ou de la dernière collecte, ou page qui répond 404 / 410 ; `src/preparation/refresh_shops.py`, plan phyto, étape 12).
 
 **Avertissements (à dire dans la réponse) :**
 - DAR non précisé ;
@@ -82,7 +103,7 @@ python -m unittest discover -s tests -t . -v
 
 ## 6. Choix et limites
 
-- **Recherche sans Chroma.** Avec 76 fiches (404 passages), un TF-IDF local, sur les mots et sur des morceaux de 3 à 5 lettres, suffit. Il est hors ligne, sans modèle à télécharger, et l'index se construit en 0,3 s. Une base vectorielle pourra le remplacer derrière la même fonction si le corpus grandit. `chromadb`, jamais utilisé, est retiré de `requirements.txt`.
+- **Recherche sans Chroma.** Avec 76 fiches (412 passages), les vecteurs tiennent dans un fichier `.npz` local (`build_rag_index.py`) : aucune base vectorielle. Étape 11 du plan phyto : BM25 + `BAAI/bge-m3` (hybride, rappel@3 80 % contre 68 % pour TF-IDF sur `tests/rag_gold/queries.csv`, 84 ms par question sur CPU, gardée en cache pour la question fixe de l'agent). `intfloat/multilingual-e5-small` (`AGRIA_RAG_MODEL=e5-small`) est plus léger (20 ms) mais moins bon (76 %) et sépare mal les questions hors sujet.
 - **Recherche sans classe.** Une autre fiche du même sujet peut passer devant : pour « lutter contre le mildiou de la vigne », la fiche de l'eudémis sort en premier, car la fiche du mildiou de la vigne n'a pas de section « lutte ». L'agent doit donc appeler `search_knowledge` avec la classe donnée par le modèle.
 - **24 fiches sur 76 sont en anglais** (Wikipédia anglais, faute d'article français). Le champ `langue` le signale : l'agent devra traduire.
 - **88 graphies darija sont encore marquées `a_valider`.** L'agent peut s'en servir pour comprendre le message, jamais pour rédiger sa réponse, tant qu'un locuteur tunisien ne les a pas relues.

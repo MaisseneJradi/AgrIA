@@ -12,6 +12,12 @@ from functools import lru_cache
 
 from src.agent import paths  # noqa: F401
 from common import query  # src/tools
+from dose_calc import TANK_L, area_text, qty_text
+from hazard import LABELS as HAZARD_LABELS
+from hazard import SEVERE
+from mrl import mrl_number
+from rag import SECTION_LABELS
+from treatments import LIST_DATE
 
 MONTHS = {
     "fr": ["", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre",
@@ -41,11 +47,16 @@ P = {
                      "a été peu observée sur votre culture.",
         "confirmer": "Pour confirmer :",
         "diagnostic": "Diagnostic : {nom} (confiance {c} %).",
-        "produits": "Produits homologués en Tunisie pour ce cas :",
+        "produits": "Produits homologués en Tunisie pour ce cas (liste DGSVCIA du {date}) :",
         "produit": "{nom} ({substances}) : dose {dose} ; délai avant récolte : {dar}",
-        "dar_jours": "{n} jours", "dar_inconnu": "non précisé dans la liste officielle, voir l'étiquette",
-        "aucun_produit": "Aucun produit n'est homologué en Tunisie contre ce problème.",
-        "conseils": "Conseils tirés des fiches :",
+        "dar_jours": "{n} jours", "dar_jour": "{n} jour", "dar_inconnu": "DAR non indiqué : vérifiez l'étiquette",
+        "dar_complete": "{v} (complété d'après {source})",
+        "aucun_produit": "Aucun produit n'est homologué en Tunisie contre ce problème (liste DGSVCIA du {date}).",
+        "orientation": "Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA{gov}.",
+        "prevention": "Mesures de prévention :",
+        "conseils": "Extraits des fiches :",
+        "sources": "Pour en savoir plus :",
+        "source": "Source : fiche « {nom} », section {section} : {lien}",
         "engrais": "Engrais correcteurs disponibles :",
         "eau": "Irrigation en {mois} à {gov} : besoin moyen d'environ {mm} mm ({m3} m³/ha), soit {mmj} mm par jour "
                "après la pluie.",
@@ -53,6 +64,78 @@ P = {
         "fin": "Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le "
                "CRDA.",
         "sain_nom": "plante saine", "carence": "carence en {x} ({sym})",
+        # step 3 of the phyto plan: why each product, products set aside for the situation, context questions
+        "pourquoi": "Pourquoi : ", "sep": " ; ",
+        "r_direct": "homologué contre ce problème sur votre culture",
+        "r_vecteur": "vise l'insecte qui transmet la maladie",
+        "r_groupe": "homologué pour un groupe de cultures qui contient la vôtre",
+        "r_proche": "cible proche, seulement après confirmation du diagnostic",
+        "r_bio_debut": "substances autorisées en agriculture biologique, à privilégier en début d'attaque",
+        "r_bio": "substances autorisées en agriculture biologique",
+        "r_toxicite": "classe de toxicité OMS {c} ({label})",
+        # step 6: applicator and bee safety, weather (no verb of treatment: rule 9 reads these lines)
+        "securite": "Sécurité :",
+        "epi": "Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes pendant la "
+               "préparation et l'application ; ne mangez, ne buvez et ne fumez pas ; lavez-vous et lavez vos vêtements "
+               "après.",
+        "tres_dangereux": "{nom} : classe OMS {c} ({label}) : jamais sans l'équipement complet indiqué sur "
+                          "l'étiquette ; gardez les enfants et les animaux à l'écart.",
+        "abeilles": "{nom} : très toxique pour les abeilles : n'appliquez pas pendant la floraison ni quand les abeilles "
+                    "butinent ; appliquez tôt le matin ou le soir, loin des ruches.",
+        "meteo_pluie": "Météo : pluie prévue dans les 24 heures ({mm} mm, probabilité jusqu'à {p} %) : attendez une "
+                       "période sèche pour appliquer le produit, sinon il sera lessivé.",
+        "meteo_vent": "Météo : vent jusqu'à {v} km/h dans les 12 prochaines heures : n'appliquez pas quand le vent "
+                      "dépasse 15 km/h (le produit dérive vers les voisins, les ruches et l'eau).",
+        "r_dar": "délai avant récolte de {dar} {j}",
+        "r_dar_dth": "délai avant récolte de {dar} {j}, compatible avec votre récolte dans {dth} jours",
+        "r_ue": "substances approuvées dans l'Union européenne",
+        "r_rotation": "groupe {g}, différent de votre dernier traitement ({last})",
+        "r_groupe": "groupe {g}",
+        "r_groupe_faible_risque": "groupe {g} ; {shared} déjà utilisé, mais à faible risque de résistance",
+        # step 5: practical dose (dose_calc.py); "L" of the sprayer in capital, quantities in g, kg, ml, l
+        # step 10: shop offers (after the ranking), fertilizer need
+        "boutique": "En boutique pour {nom} : {offre}", "boutique_sans_lien": "{boutique} (adresse de la page non "
+                                                                              "disponible)",
+        "stock_en_stock": " — en stock", "stock_rupture": " — en rupture de stock",
+        "boutique_absente": "Pour {nom} : non trouvé sur agrishop.tn : demandez un produit à base de {compo}",
+        "besoin": "Besoin : un apport de {x} ({sym})",
+        "besoin_calcaire": " ; sur sol calcaire, un chélate EDDHA, EDDHSA ou HBED",
+        "engrais_absent": "Non trouvé sur agrishop.tn ni agriclic.tn : demandez un produit à base de {x} ({sym}){chel}.",
+        "chel_calcaire": ", en chélate EDDHA, EDDHSA ou HBED",
+        "dose_fabricant": "Dose indiquée par le fabricant : {d}",
+        "dose_etiquette": "Dose : suivez l'étiquette / demandez au CRDA",
+        "mot_chelate": "chélate",
+        "lmr": "LMR de {nom} ({source}, {marche}) : ", "marche_local": "marché local",
+        "marche_export": "export vers l'Union européenne",
+        "lmr_absente": "{s} : LMR non trouvée, vérifiez auprès de l'acheteur ou du CRDA",
+        "lmr_non_requise": "{s} : pas de LMR requise dans l'UE (annexe IV)",
+        "dp": "Dose pratique : ", "dp_tank": "{q} pour un pulvérisateur de {l} L", "dp_area": "{q} pour vos {a} ha",
+        "dp_tank_absent": "pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir "
+                          "l'étiquette",
+        "dp_area_absent": "pour vos {a} ha, la quantité dépend du volume de mélange par hectare : voir l'étiquette",
+        "c_meme_groupe": "même groupe que votre dernier traitement ({last}) : {n} produit(s)",
+        "rotation": "Alternez les groupes de mode d'action (code FRAC ou IRAC indiqué sur l'étiquette) d'un traitement "
+                    "à l'autre : répéter le même groupe favorise la résistance de la maladie ou du ravageur.",
+        "rotation_impossible": "Aucun autre groupe que celui de votre dernier traitement ({last}) n'est homologué pour ce "
+                               "cas : demandez conseil au CRDA avant de le répéter.",
+        "ecartes": "Produits homologués écartés pour votre situation :",
+        "aucun_adapte": "Aucun des {n} produits homologués contre ce problème (liste DGSVCIA du {date}) ne convient à "
+                        "votre situation :",
+        "c_dar_long": "délai avant récolte plus long que les {dth} jours avant votre récolte : {n} produit(s)",
+        "c_non_ue": "substance non approuvée dans l'Union européenne (export) : {n} produit(s)",
+        "c_ue_inconnu": "statut inconnu dans l'Union européenne (export) : {n} produit(s)",
+        "c_non_bio": "non autorisé en agriculture biologique : {n} produit(s)",
+        "verifier_dar": "Délai avant récolte non précisé dans la liste officielle pour certains produits : vérifiez sur "
+                        "l'étiquette qu'il est inférieur aux {dth} jours qui restent avant votre récolte.",
+        "bio_etiquette": "En agriculture biologique, vérifiez aussi que l'étiquette porte la mention « utilisable en "
+                         "agriculture biologique ».",
+        "affiner": "Pour affiner ma réponse, dites-moi :",
+        "q_days_to_harvest": "Dans combien de jours pensez-vous récolter ?",
+        "q_market": "Votre récolte part-elle à l'export (Union européenne) ou sur le marché local ?",
+        "q_organic": "Votre parcelle est-elle en agriculture biologique ?",
+        "q_stage": "Le problème commence-t-il (premières taches ou premiers dégâts, quelques plantes) ou est-il déjà "
+                   "étendu ?",
+        "q_last_treatment_group": "Quel produit avez-vous utilisé à votre dernier traitement ?",
     },
     "ar": {
         "photo_absente": "أحتاج إلى صورة لتشخيص حالة النبتة.",
@@ -69,20 +152,232 @@ P = {
                      "على زراعتك.",
         "confirmer": "للتأكد:",
         "diagnostic": "التشخيص: {nom} (نسبة الثقة {c} %).",
-        "produits": "المبيدات المصادق عليها في تونس لهذه الحالة:",
+        "produits": "المبيدات المصادق عليها في تونس لهذه الحالة (قائمة DGSVCIA بتاريخ {date}):",
         "produit": "{nom} ({substances}): الجرعة {dose}؛ المدة قبل الجني: {dar}",
-        "dar_jours": "{n} أيام", "dar_inconnu": "غير محددة في القائمة الرسمية، راجع الملصق",
-        "aucun_produit": "لا يوجد أي مبيد مصادق عليه في تونس ضد هذه المشكلة.",
+        "dar_jours": "{n} أيام", "dar_inconnu": "غير مذكورة في القائمة: تحقق من الملصق",
+        "dar_complete": "{v} (أُكملت حسب {source})",
+        "aucun_produit": "لا يوجد أي مبيد مصادق عليه في تونس ضد هذه المشكلة (قائمة DGSVCIA بتاريخ {date}).",
+        "orientation": "لفحص النبتة في المكان واتخاذ الإجراءات المناسبة لقطعتك، اتصل بالمندوبية الجهوية للتنمية "
+                       "الفلاحية (CRDA){gov}.",
+        "prevention": "إجراءات وقائية:",
         "conseils": "نصائح من البطاقات التقنية:",
-        "sources": "مزيد من المعلومات (بالفرنسية):",
+        "sources": "مزيد من المعلومات (بالفرنسية أو بالإنجليزية):",
+        "source": "المصدر: بطاقة «{nom}»، قسم {section}: {lien}",
         "engrais": "أسمدة تصحيحية متوفرة:",
         "eau": "الري في {mois} بـ{gov}: حاجة متوسطة تقارب {mm} مم ({m3} م³/هكتار)، أي {mmj} مم في اليوم بعد "
                "احتساب الأمطار.",
         "a_savoir": "معلومات مهمة:",
         "fin": "احترم الجرعة والمدة قبل الجني المذكورتين على الملصق. في حالة الشك، اتصل بالـCRDA.",
         "sain_nom": "نبتة سليمة", "carence": "نقص {x} ({sym})",
+        "pourquoi": "لماذا: ", "sep": "؛ ",
+        "r_direct": "مصادق عليه ضد هذه المشكلة على زراعتك",
+        "r_vecteur": "يستهدف الحشرة الناقلة للمرض",
+        "r_groupe": "مصادق عليه لمجموعة زراعات تشمل زراعتك",
+        "r_proche": "هدف قريب، لا يُستعمل إلا بعد تأكيد التشخيص",
+        "r_bio_debut": "مواد فعالة مسموح بها في الفلاحة البيولوجية، تُفضَّل في بداية الإصابة",
+        "r_bio": "مواد فعالة مسموح بها في الفلاحة البيولوجية",
+        "r_toxicite": "صنف السمية {c} حسب منظمة الصحة العالمية ({label})",
+        "securite": "السلامة:",
+        "epi": "الوقاية: قفازات وأحذية طويلة ونظارات وكمامة وملابس تغطي الذراعين والساقين أثناء التحضير والاستعمال؛ لا "
+               "تأكل ولا تشرب ولا تدخّن؛ اغتسل واغسل ملابسك بعد ذلك.",
+        "tres_dangereux": "{nom}: صنف {c} حسب منظمة الصحة العالمية ({label}): لا يُستعمل أبدًا دون المعدات الكاملة "
+                          "المذكورة على الملصق؛ أبعد الأطفال والحيوانات.",
+        "abeilles": "{nom}: شديد السمية للنحل: لا تستعمله أثناء الإزهار ولا عندما يجمع النحل الرحيق؛ استعمله في الصباح "
+                    "الباكر أو في المساء، بعيدًا عن الخلايا.",
+        "meteo_pluie": "الطقس: أمطار متوقعة خلال 24 ساعة ({mm} مم، احتمال يصل إلى {p} %): انتظر فترة جافة لاستعمال "
+                       "المنتج، وإلا سيجرفه المطر.",
+        "meteo_vent": "الطقس: رياح تصل إلى {v} كم/س خلال الـ12 ساعة القادمة: لا تستعمل المنتج عندما تتجاوز الرياح 15 "
+                      "كم/س (ينجرف نحو الجيران والخلايا والماء).",
+        "r_dar": "مدة قبل الجني {dar} {j}",
+        "r_dar_dth": "مدة قبل الجني {dar} {j}، تتوافق مع الجني بعد {dth} يومًا",
+        "r_ue": "مواد فعالة مصادق عليها في الاتحاد الأوروبي",
+        "r_rotation": "مجموعة {g} مختلفة عن آخر مداواة ({last})",
+        "r_groupe": "مجموعة {g}",
+        "r_groupe_faible_risque": "مجموعة {g}؛ {shared} مستعملة سابقًا لكن خطر المقاومة فيها ضعيف",
+        "boutique": "في المتجر لـ{nom}: {offre}", "boutique_sans_lien": "{boutique} (رابط الصفحة غير متوفر)",
+        "stock_en_stock": " — متوفر", "stock_rupture": " — غير متوفر حاليًا",
+        "boutique_absente": "بالنسبة لـ{nom}: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على {compo}",
+        "besoin": "الحاجة: تزويد بـ{x} ({sym})",
+        "besoin_calcaire": "؛ في التربة الكلسية، مخلّب EDDHA أو EDDHSA أو HBED",
+        "engrais_absent": "غير موجود في agrishop.tn ولا في agriclic.tn: اطلب منتجًا يحتوي على {x} ({sym}){chel}.",
+        "chel_calcaire": "، في شكل مخلّب EDDHA أو EDDHSA أو HBED",
+        "dose_fabricant": "الجرعة حسب المصنّع: {d}",
+        "dose_etiquette": "الجرعة: اتبع الملصق / اسأل الـCRDA",
+        "mot_chelate": "مخلّب",
+        "lmr": "الحد الأقصى للمتبقيات في {nom} ({source}، {marche}): ", "marche_local": "السوق المحلية",
+        "marche_export": "التصدير نحو الاتحاد الأوروبي",
+        "lmr_absente": "{s}: غير موجود، تحقق لدى المشتري أو الـCRDA",
+        "lmr_non_requise": "{s}: لا يُشترط حد أقصى في الاتحاد الأوروبي (الملحق IV)",
+        "dp": "الكمية العملية: ", "dp_tank": "{q} لمرشّة ظهرية سعتها {l} L", "dp_area": "{q} لمساحة {a} هكتار",
+        "dp_tank_absent": "بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق",
+        "dp_area_absent": "بالنسبة لمساحة {a} هكتار، الكمية حسب حجم المحلول في الهكتار: راجع الملصق",
+        "c_meme_groupe": "نفس مجموعة آخر مداواة ({last}): {n} منتج",
+        "rotation": "غيّر مجموعة طريقة التأثير (رمز FRAC أو IRAC المكتوب على الملصق) من مداواة إلى أخرى: تكرار نفس "
+                    "المجموعة يساعد المرض أو الحشرة على اكتساب المقاومة.",
+        "rotation_impossible": "لا توجد مجموعة مصادق عليها لهذه الحالة غير مجموعة آخر مداواة ({last}): اطلب نصيحة "
+                               "الـCRDA قبل تكرارها.",
+        "ecartes": "مبيدات مصادق عليها استُبعدت بسبب وضعيتك:",
+        "aucun_adapte": "لا يناسب وضعيتك أيٌّ من المبيدات المصادق عليها ضد هذه المشكلة ({n}، قائمة DGSVCIA بتاريخ "
+                        "{date}):",
+        "c_dar_long": "مدة قبل الجني أطول من {dth} يومًا المتبقية قبل الجني: {n} منتج",
+        "c_non_ue": "مادة فعالة غير مصادق عليها في الاتحاد الأوروبي (تصدير): {n} منتج",
+        "c_ue_inconnu": "وضعية غير معروفة في الاتحاد الأوروبي (تصدير): {n} منتج",
+        "c_non_bio": "غير مسموح به في الفلاحة البيولوجية: {n} منتج",
+        "verifier_dar": "المدة قبل الجني غير محددة في القائمة الرسمية لبعض المنتجات: تأكد من الملصق أنها أقل من {dth} "
+                        "يومًا المتبقية قبل الجني.",
+        "bio_etiquette": "في الفلاحة البيولوجية، تأكد أيضًا أن الملصق يحمل عبارة «صالح للفلاحة البيولوجية».",
+        "affiner": "لأدقّق إجابتي، أخبرني:",
+        "q_days_to_harvest": "بعد كم يوم تنوي الجني؟",
+        "q_market": "هل محصولك موجّه للتصدير (الاتحاد الأوروبي) أم للسوق المحلية؟",
+        "q_organic": "هل قطعتك في الفلاحة البيولوجية؟",
+        "q_stage": "هل المشكلة في بدايتها (أولى البقع أو الأضرار، بعض النباتات) أم أنها منتشرة؟",
+        "q_last_treatment_group": "ما هو المنتج الذي استعملته في آخر مداواة؟",
     }
 }
+CAUSES = ("dar_long", "non_ue", "ue_inconnu", "non_bio", "meme_groupe")
+
+
+def days_word(n, t):
+    """French: 'jour' for 0 and 1, else 'jours'. Arabic: يوم (0, 1), يومان (2), أيام (3 to 10), يومًا (11 and more)."""
+    if t is P["ar"]:
+        return "يوم" if n <= 1 else "يومان" if n == 2 else "أيام" if n <= 10 else "يومًا"
+    return t["dar_jours"].format(n="").strip() if n > 1 else t["dar_jour"].format(n="").strip()
+
+
+def reason_text(r, t):
+    """One reason code of ranking.py -> its sentence in the language of `t`."""
+    code = r[0]
+    if code == "relation":
+        return t["r_" + r[1]]
+    if code == "toxicite":
+        return t["r_toxicite"].format(c=r[1], label=HAZARD_LABELS[r[1]][0 if t is P["fr"] else 1])
+    if code == "dar":
+        j = days_word(r[1], t)
+        return t["r_dar_dth"].format(dar=r[1], j=j, dth=r[2]) if r[2] is not None else t["r_dar"].format(dar=r[1], j=j)
+    if code == "rotation":
+        return t["r_rotation"].format(g=r[1], last=r[2])
+    if code == "groupe":
+        return t["r_groupe"].format(g=r[1])
+    if code == "groupe_faible_risque":
+        return t["r_groupe_faible_risque"].format(g=r[1], shared=r[2])
+    return t["r_" + code]
+
+
+def dar_text(p, t):
+    """DAR of a product line: '3 jours'; a validated completion says so ('non requis (DAR absent de la liste, complété
+    d'après ...)'); unknown: 'DAR non indiqué : vérifiez l'étiquette'."""
+    if p["dar_jours"] is None:
+        return t["dar_inconnu"]
+    v = p.get("dar_texte") or f"{p['dar_jours']} {days_word(p['dar_jours'], t)}"
+    if p.get("dar_source") == "complement":
+        return t["dar_complete"].format(v=v, source=p.get("dar_source_detail") or "")
+    return v
+
+
+def _offer_text(o, t):
+    stock = {"en_stock": t["stock_en_stock"], "rupture": t["stock_rupture"]}.get(o.get("stock"), "")
+    where = o["url"] or t["boutique_sans_lien"].format(boutique=o["boutique"])
+    resume = (o.get("resume") or "").replace("chélate", t["mot_chelate"])  # the summary of shop.py is French
+    return f"{o['nom']} ({resume}){stock} — {where}" if resume else f"{o['nom']}{stock} — {where}"
+
+
+def source_lines(d, t, lang):
+    """'Source : fiche « Mildiou de la vigne », section lutte : https://...' for every sheet section the answer used
+    (phyto step 11); the Vérificateur checks each one against the table fiche_sections (rule 27)."""
+    return [t["source"].format(nom=s["fiche"], lien=s["lien"],
+                               section=SECTION_LABELS[lang].get(s.get("section"), s.get("section") or ""))
+            for s in d.get("sources", [])]
+
+
+def shop_lines(p, t):
+    """Under a registered product: its validated shop offers (composition written by code, stock, page), or what to
+    ask for in a shop. The product name is on the line (rule 9 reads only the lines without a product)."""
+    if "boutique" not in p:
+        return []
+    if p["boutique"]:
+        return [t["boutique"].format(nom=p["nom"], offre=_offer_text(o, t)) for o in p["boutique"]]
+    return [t["boutique_absente"].format(nom=p["nom"], compo=p.get("a_demander") or p.get("substances") or "")]
+
+
+def fertiliser_section(d, t, lang):
+    """The need of the deficiency (nutrient, chelate for a calcareous soil), the validated offers with the label dose
+    when it passes its validated range, else what to ask for."""
+    b = d["besoin"]
+    x = NUTRIENTS.get(b["nutriment"], (b["nutriment"], b["nutriment"]))[0 if lang == "fr" else 1]
+    need = t["besoin"].format(x=x, sym=b["nutriment"]) + (t["besoin_calcaire"] if b.get("chelate_calcaire") else "")
+    if not d.get("engrais"):
+        return need + "\n" + t["engrais_absent"].format(x=x, sym=b["nutriment"], chel=t["chel_calcaire"]
+                                                        if b.get("chelate_calcaire") else "")
+    lines = []
+    for e in d["engrais"]:
+        dose = e.get("dose") or {}
+        lines.append(_offer_text(e, t) + "\n  " + (t["dose_fabricant"].format(d=dose["texte"]) if dose.get("montrer")
+                                                   else t["dose_etiquette"]))
+    return need + "\n" + t["engrais"] + "\n" + "\n".join(f"- {x}" for x in lines)
+
+
+def mrl_line(p, t, ctx):
+    """'LMR de X (Codex, marché local) : Azoxystrobin 3 mg/kg (Tomatoes (subgroup)) ; ...' - the product name is on the
+    line (the substances are chemistry: rule 9 reads only the lines without a product)."""
+    items = []
+    for m in p["lmr_marche"]:
+        if m["valeur"] is None and m.get("non_requise"):
+            items.append(t["lmr_non_requise"].format(s=m["substance"]))
+        elif m["valeur"] is None:
+            items.append(t["lmr_absente"].format(s=m["substance"]))
+        else:
+            items.append(f"{m['substance']} {mrl_number(m['valeur'])} mg/kg"
+                         + (f" ({m['denree']})" if m.get("denree") else ""))
+    market = t["marche_" + ctx.get("market", "local")]
+    return t["lmr"].format(nom=p["nom"], source=p["lmr_marche"][0]["source"], marche=market) + t["sep"].join(items)
+
+
+def number(x):
+    """3.2 -> '3,2'; 22.0 -> '22'."""
+    return f"{x:.1f}".rstrip("0").rstrip(".").replace(".", ",")
+
+
+def safety_lines(d, t, lang):
+    """Protective equipment (always with a pesticide), very hazardous products (WHO Ia, Ib), products highly toxic to
+    bees, weather of the next hours: all from validated data or the forecast, written by code."""
+    lab = 0 if lang == "fr" else 1
+    out = [t["epi"]]
+    for p in d["produits"]:
+        if p.get("classe_oms") in SEVERE:
+            out.append(t["tres_dangereux"].format(nom=p["nom"], c=p["classe_oms"],
+                                                  label=HAZARD_LABELS[p["classe_oms"]][lab]))
+        if p.get("abeilles"):
+            out.append(t["abeilles"].format(nom=p["nom"]))
+    m = d.get("meteo") or {}
+    if m.get("pluie"):
+        out.append(t["meteo_pluie"].format(mm=number(m["pluie_mm"]), p=m.get("pluie_proba") or 0))
+    if m.get("vent"):
+        out.append(t["meteo_vent"].format(v=number(m["vent_max_kmh"])))
+    return out
+
+
+def practical_line(dp, t, lang):
+    """dose_calc.practical_dose(...) -> 'Dose pratique : 48 g pour un pulvérisateur de 16 L ; 1,5 kg pour vos 0,5 ha'.
+    The quantities are formatted by dose_calc (the Vérificateur checks them against the official dose)."""
+    parts = []
+    tank, area = dp.get("pulverisateur"), dp.get("surface")
+    if tank:
+        parts.append(t["dp_tank"].format(q=qty_text(tank["min"], tank["max"], tank["base"], lang),
+                                         l=dp.get("reservoir_l", TANK_L)))
+    elif dp.get("pulverisateur_absent"):
+        parts.append(t["dp_tank_absent"])
+    if area:
+        parts.append(t["dp_area"].format(q=qty_text(area["min"], area["max"], area["base"], lang),
+                                         a=area_text(area["ha"])))
+    elif dp.get("surface_absente"):
+        parts.append(t["dp_area_absent"].format(a=area_text(dp.get("ha_demandes")) if dp.get("ha_demandes") else ""))
+    return t["dp"] + t["sep"].join(parts)
+
+
+def set_aside_lines(ecartes, ctx, t, last=""):
+    """Products set aside -> one line per cause with how many products (no name: they do not fit this case)."""
+    counts = {c: sum(c in e["raisons"] for e in ecartes) for c in CAUSES}
+    return [t["c_" + c].format(n=n, dth=ctx.get("days_to_harvest"), last=last) for c, n in counts.items() if n]
 LANGS = tuple(P)
 
 # fixed free sentences of the agents and tools (questions, warnings) -> Arabic
@@ -227,19 +522,51 @@ def compose(d, lang="fr"):
                 parts.append(t["confirmer"] + "\n" + bullets(free(q) for q in d["questions"]))
         else:
             parts.append(t["diagnostic"].format(nom=nom, c=diag["confiance"]))
+        ctx = d.get("contexte") or {}
         if d.get("produits"):
-            parts.append(t["produits"] + "\n" + bullets(
+            parts.append(t["produits"].format(date=LIST_DATE) + "\n" + bullets(
                 t["produit"].format(nom=p["nom"], substances=p["substances"], dose=p["dose"],
-                                    dar=t["dar_jours"].format(n=p["dar_jours"]) if p["dar_jours"] is not None
-                                    else t["dar_inconnu"])
+                                    dar=dar_text(p, t))
+                # the reasons go on their own line: the product line keeps exactly its registered dose (rule 8)
+                + (("\n  " + practical_line(p["dose_pratique"], t, lang)) if p.get("dose_pratique") else "")
+                + (("\n  " + mrl_line(p, t, ctx)) if p.get("lmr_marche") else "")
+                + "".join("\n  " + x for x in shop_lines(p, t))
+                + ("\n  " + t["pourquoi"] + t["sep"].join(reason_text(r, t) for r in p["raisons"])
+                   if p.get("raisons") else "")
                 for p in d["produits"]))
+            last = " + ".join(d.get("dernier_groupe") or [])
+            if d.get("ecartes"):
+                parts.append(t["ecartes"] + "\n" + bullets(set_aside_lines(d["ecartes"], ctx, t, last)))
+            if d.get("rotation_impossible"):
+                parts.append(t["rotation_impossible"].format(last=last))
+            if d.get("rotation_conseil"):
+                parts.append(t["rotation"])
+            parts.append(t["securite"] + "\n" + bullets(safety_lines(d, t, lang)))
+            if d.get("verifier_dar") is not None:
+                parts.append(t["verifier_dar"].format(dth=d["verifier_dar"]))
+            if ctx.get("organic") == "y":
+                parts.append(t["bio_etiquette"])
+        elif d.get("aucun_adapte"):
+            parts.append(t["aucun_adapte"].format(n=d.get("n_candidats", 0), date=LIST_DATE) + "\n"
+                         + bullets(set_aside_lines(d.get("ecartes", []), ctx, t,
+                                                   " + ".join(d.get("dernier_groupe") or []))))
         elif d.get("aucun_produit"):
-            parts.append(t["aucun_produit"])
-        if d.get("conseils") and lang == "fr":
-            parts.append(t["conseils"] + "\n" + bullets(d["conseils"]))
-        elif d.get("conseils") and d.get("sources"):
-            parts.append(t["sources"] + "\n" + bullets(f"{s['fiche']} : {s['lien']}" for s in d["sources"]))
-        if d.get("engrais"):
+            parts.append(t["aucun_produit"].format(date=LIST_DATE))
+        if d.get("questions_contexte"):
+            parts.append(t["affiner"] + "\n" + bullets(t["q_" + q] for q in d["questions_contexte"]))
+        if d.get("prevention"):  # validated rows of docs/conseils_prevention.csv, in the language of the answer
+            parts.append(t["prevention"] + "\n" + bullets(p[lang] for p in d["prevention"]))
+        if d.get("conseils") and lang == "fr":  # the quoted sentences, then the sheet and section they come from
+            parts.append(t["conseils"] + "\n" + bullets(d["conseils"]) + "\n" + "\n".join(source_lines(d, t, lang)))
+        elif d.get("sources"):  # Arabic answer, or no French sentence to quote: the sheets and sections found
+            parts.append(t["sources"] + "\n" + bullets(source_lines(d, t, lang)))
+        if d.get("orientation_crda"):  # nothing registered: a technician, never a product
+            gov = t["crda_gov"].format(gov=gov_label(d["gouvernorat"], lang)) if d.get("gouvernorat") \
+                else t["crda_sans_gov"]
+            parts.append(t["orientation"].format(gov=gov))
+        if d.get("besoin"):  # step 10: the need first, then the validated shop offers, else what to ask for
+            parts.append(fertiliser_section(d, t, lang))
+        elif d.get("engrais"):
             parts.append(t["engrais"] + "\n" + bullets(
                 f"{e['nom']} ({e['nutriment']} {e['teneur_pct']} %)" if e.get("teneur_pct") else e["nom"]
                 for e in d["engrais"]))
@@ -249,6 +576,6 @@ def compose(d, lang="fr"):
                                          mmj=w["mmj"]))
         if d.get("avertissements"):
             parts.append(t["a_savoir"] + "\n" + bullets(free(a) for a in d["avertissements"]))
-        if not diag.get("sain"):
+        if not diag.get("sain") and not d.get("orientation_crda"):
             parts.append(t["fin"])
     return "\n\n".join(parts)

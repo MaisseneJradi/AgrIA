@@ -14,6 +14,7 @@ colour change (yellowing and spots are the symptoms); every image is normalised 
 """
 import json
 import os
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -31,7 +32,8 @@ PROJECT_CROPS = ("apple", "cherry", "citrus", "corn", "datepalm", "grape", "oliv
 CROP_ALIASES = {"orange": "citrus"}
 SIZE = 224
 MEAN, STD = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
-FIELD_SOURCES = ("plantdoc",)  # real field photos (the other sources are lab or close-up photos)
+# real field photos (the other sources are lab or close-up photos); plantwild, gvlid, potato_field added 20/11/2026
+FIELD_SOURCES = ("plantdoc", "plantwild", "gvlid", "potato_field")
 FIELD_VAL_SHARE = 0.15
 
 
@@ -103,12 +105,20 @@ def field_val_paths(task):
     return set(pd.concat(picked)["path"].map(local_path)) if picked else set()
 
 
-def load_split(task, split, balanced=True, field_holdout=False):
-    """Rows (path, class, crop, source) of one split. split: train, val, val_field, test or test_field.
+def load_split(task, split, balanced=True, field_holdout=False, exclude_sources=()):
+    """Rows (path, class, crop, source) of one split. split: train, val, val_field, test, test_field or field_tn
+    (the frozen Tunisian test set, data/field_tn/manifest.csv, written only by src/preparation/field_tn.py).
     balanced=False gives the raw train split of the manifest (no balancing, no augmented copies: hypothesis H3).
-    field_holdout=True removes the val_field photos from train (always do it when val_field is used)."""
+    field_holdout=True removes the val_field photos from train (always do it when val_field is used).
+    exclude_sources: sources left out of the split (leave-one-source-out runs, src/evaluation/loso.py); the val_field
+    draw is unchanged, only the rows of the excluded sources are dropped."""
     if task not in TASKS:
         raise ValueError(f"unknown task {task!r}, expected one of {TASKS}")
+    if split == "field_tn":
+        return field_tn(task)
+    if exclude_sources:
+        df = load_split(task, split, balanced, field_holdout)
+        return df[~df["source"].isin(set(exclude_sources))].reset_index(drop=True)
     if split == "val_field":
         df = manifest(task)
         df = df[df["split"] == "train"].copy()
@@ -127,6 +137,21 @@ def load_split(task, split, balanced=True, field_holdout=False):
     return df
 
 
+FIELD_TN = ROOT / "data" / "field_tn"
+
+
+def field_tn(task):
+    """Frozen Tunisian field photos of a task (test only: never trained on). Empty when none were frozen yet."""
+    f = FIELD_TN / "manifest.csv"
+    cols = ["path", "class", "crop", "source", "split"]
+    if not f.exists():
+        return pd.DataFrame(columns=cols)
+    df = pd.read_csv(f)
+    df = df[df["task"] == task].copy()
+    df["path"] = [str(FIELD_TN / p) for p in df["file"]]
+    return df.assign(source="field_tn", split="field_tn")[cols].reset_index(drop=True)
+
+
 def class_names(task):
     """Sorted class names of a task, read from the whole manifest (the order of the model outputs)."""
     return sorted(manifest(task)["class"].unique())
@@ -143,18 +168,22 @@ def class_weights(task, classes):
     return torch.tensor([float(w[c]) for c in classes], dtype=torch.float32)
 
 
-def make_transform(train, aug="standard"):
+def make_transform(train, aug="standard", size=SIZE):
     """aug="field": stronger changes of framing and sharpness that field photos show (closer or farther leaf,
     tilted phone, slight blur), still never a colour change.
-    aug="crop" (crop model only): the field changes plus brightness, contrast and saturation, and a part of the photo
-    erased, so that the model cannot recognise a source by its light or background. The hue is never changed, and
-    this is not used for the diagnosis models: there a colour is a symptom."""
+    aug="crop" (crop model only): the field changes plus brightness and contrast, and a part of the photo erased, so
+    that the model cannot recognise a source by its light or background. Hue and saturation are never changed (rule 4
+    of the improvement plan, 21/11/2026: crop_v4 was trained with saturation +-30 %, removed since).
+    aug="field2" (improvement plan, step 3): field_transform() below."""
+    if train and aug == "field2":
+        return field_transform(size)
+    SIZE = size  # noqa: N806  (input side in pixels: 224 by default, 300 or 384 in the plan's step 4)
     steps = [transforms.Resize((SIZE, SIZE))]
     if train and aug == "crop":
         steps += [transforms.RandomHorizontalFlip(), transforms.RandomVerticalFlip(0.2), transforms.RandomRotation(25),
                   transforms.RandomPerspective(0.25, p=0.3),
                   transforms.RandomResizedCrop(SIZE, scale=(0.35, 1.0), ratio=(0.75, 1.33)),
-                  transforms.ColorJitter(brightness=0.35, contrast=0.35, saturation=0.3, hue=0),
+                  transforms.ColorJitter(brightness=0.35, contrast=0.35, saturation=0, hue=0),
                   transforms.RandomApply([transforms.GaussianBlur(5, sigma=(0.1, 1.5))], p=0.3),
                   transforms.ToTensor(), transforms.Normalize(MEAN, STD),
                   transforms.RandomErasing(p=0.3, scale=(0.02, 0.15))]
@@ -171,12 +200,82 @@ def make_transform(train, aug="standard"):
     return transforms.Compose(steps)
 
 
+class RandomShadow(torch.nn.Module):
+    """A shadow across the photo (a leaf, a hand, the farmer): one random ellipse darkened by the SAME factor on the
+    three channels, so hue and saturation are kept, only the brightness drops. Input: uint8 image tensor (C, H, W)."""
+
+    def __init__(self, p=0.3, darkest=0.5, lightest=0.85):
+        super().__init__()
+        self.p, self.darkest, self.lightest = p, darkest, lightest
+
+    def forward(self, img):
+        if torch.rand(1).item() >= self.p:
+            return img
+        _, h, w = img.shape
+        cy, cx = torch.rand(2).tolist()
+        ry, rx = (0.2 + 0.5 * torch.rand(2)).tolist()
+        yy = torch.linspace(0, 1, h).view(h, 1)
+        xx = torch.linspace(0, 1, w).view(1, w)
+        inside = ((yy - cy) / ry) ** 2 + ((xx - cx) / rx) ** 2 <= 1
+        f = self.darkest + (self.lightest - self.darkest) * torch.rand(1).item()
+        out = img.float() * torch.where(inside, torch.tensor(f), torch.tensor(1.0))
+        return out.clamp(0, 255).to(img.dtype)
+
+
+class RandomMotionBlur(torch.nn.Module):
+    """A moving phone: the image averaged along a short line (length 5 to 11 px, one of 4 directions), the same on
+    every channel. Input: uint8 image tensor (C, H, W)."""
+
+    def __init__(self, p=0.15):
+        super().__init__()
+        self.p = p
+
+    def forward(self, img):
+        if torch.rand(1).item() >= self.p:
+            return img
+        k = int(torch.randint(2, 6, (1,)).item()) * 2 + 1
+        kernel = torch.zeros(k, k)
+        d = int(torch.randint(0, 4, (1,)).item())
+        if d == 0:
+            kernel[k // 2, :] = 1
+        elif d == 1:
+            kernel[:, k // 2] = 1
+        elif d == 2:
+            kernel = torch.eye(k)
+        else:
+            kernel = torch.eye(k).flip(1)
+        kernel = (kernel / kernel.sum()).view(1, 1, k, k).repeat(img.shape[0], 1, 1, 1)
+        out = torch.nn.functional.conv2d(img.float().unsqueeze(0), kernel, padding=k // 2, groups=img.shape[0])[0]
+        return out.round().clamp(0, 255).to(img.dtype)
+
+
+def field_transform(size=SIZE):
+    """aug="field2" (improvement plan, step 3): what phone photos in a field do to a leaf, NEVER a hue or saturation
+    change (the colour is the symptom): framing (crop scale 0.4-1.0, flips, rotation), a shadow, brightness and
+    contrast +-20 %, Gaussian or motion blur, JPEG compression (quality 40-95), a part of the photo erased.
+    CutMix / MixUp are applied on the batch by train.py (--mix)."""
+    from torchvision.transforms import v2
+    return v2.Compose([
+        v2.ToImage(), v2.Resize((size, size), antialias=True),
+        v2.RandomResizedCrop(size, scale=(0.4, 1.0), ratio=(0.75, 1.33), antialias=True),
+        v2.RandomHorizontalFlip(), v2.RandomVerticalFlip(0.2), v2.RandomRotation(20),
+        RandomShadow(p=0.3),
+        v2.ColorJitter(brightness=0.2, contrast=0.2, saturation=0, hue=0),
+        v2.RandomApply([v2.GaussianBlur(5, sigma=(0.1, 1.5))], p=0.25),
+        RandomMotionBlur(p=0.15),
+        v2.RandomApply([v2.JPEG(quality=(40, 95))], p=0.5),
+        v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD),
+        v2.RandomErasing(p=0.25, scale=(0.02, 0.15)),
+    ])
+
+
 class ManifestDataset(Dataset):
     """(image tensor, class index) pairs of one task and split."""
 
     def __init__(self, task, split, classes=None, limit=None, seed=42, balanced=True, field_holdout=False,
-                 field_weight=1, aug="standard"):
-        self.df = load_split(task, split, balanced, field_holdout)
+                 field_weight=1, aug="standard", exclude_sources=(), size=SIZE, leaf_crop=False):
+        self.df = load_split(task, split, balanced, field_holdout, exclude_sources)
+        self.boxes = leaf_boxes() if leaf_crop else {}  # step 5: field photos cropped on the leaf at read time
         if limit and len(self.df) > limit:  # quick runs: a stratified-looking random sample
             self.df = self.df.sample(limit, random_state=seed).reset_index(drop=True)
         if split == "train" and field_weight > 1:  # field photos seen field_weight times per epoch
@@ -184,7 +283,7 @@ class ManifestDataset(Dataset):
             self.df = pd.concat([self.df] + [field] * (field_weight - 1), ignore_index=True)
         self.classes = classes or class_names(task)
         self.index = {c: i for i, c in enumerate(self.classes)}
-        self.transform = make_transform(train=(split == "train"), aug=aug)
+        self.transform = make_transform(train=(split == "train"), aug=aug, size=size)
 
     def __len__(self):
         return len(self.df)
@@ -192,8 +291,24 @@ class ManifestDataset(Dataset):
     def __getitem__(self, i):
         row = self.df.iloc[i]
         with Image.open(row["path"]) as im:
-            x = self.transform(im.convert("RGB"))
+            im = im.convert("RGB")
+            b = getattr(self, "boxes", {}).get(row["path"])
+            if b is not None:
+                im = im.crop(b)
+            x = self.transform(im)
         return x, self.index[row["class"]]
+
+
+def leaf_boxes():
+    """{path: crop box} of the field photos whose leaf box passes the rule of src/preparation/leaf_boxes.py."""
+    sys.path.insert(0, str(ROOT / "src" / "preparation"))
+    from leaf_boxes import crop_box, load_boxes
+    out = {}
+    for p, (box, w, h, score) in load_boxes().items():
+        c = crop_box(box, w, h, score)
+        if c is not None:
+            out[p] = c
+    return out
 
 
 def save_labels(classes, folder):

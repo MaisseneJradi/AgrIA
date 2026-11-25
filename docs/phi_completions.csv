@@ -1,0 +1,9 @@
+product_id,produit,culture,phi_days,phi_texte,source,status,note
+homo-ins-036,HALT WP,tomato,0,non requis,liste DGSVCIA du 22/05/2024 (texte de l'usage),proposed,DAR: non requis (COMM 28/12/2023)
+homo-ins-153,OXAL SC,cabbage,3,3 jours,liste DGSVCIA du 22/05/2024 (texte de l'usage),proposed,DAR:3 jours30 cc/hl(300 cc/ha) (com 27/12/22)
+homo-fon-037,Taegro,grape,1,4 heures,liste DGSVCIA du 22/05/2024 (texte de l'usage),proposed,DAR:4 heures
+homo-fon-037,Taegro,tomato,1,4 heures,liste DGSVCIA du 22/05/2024 (texte de l'usage),proposed,DAR:4 heures(COMM 08/06/22)
+homo-fon-198,DECIBEL MAX WG,olive,0,non requis,liste DGSVCIA du 22/05/2024 (texte de l'usage),proposed,DAR: Non requis -nbre d'application:2 (COMM 28/12/2023)
+homo-her-018,DESPERADO,wheat,0,non requis,liste DGSVCIA du 22/05/2024 (texte de l'usage),proposed,DAR: non applicable(COMM09/02/21)
+homo-her-022,UMBRA 590 SC,barley,0,non requis,liste DGSVCIA du 22/05/2024 (texte de l'usage),proposed,"DAR:N/A -l'application de l'herbicide peut se faire soit au stade, soit au stade, selon la décision de l'agriculteur(com 27/12/22)"
+homo-her-022,UMBRA 590 SC,wheat,0,non requis,liste DGSVCIA du 22/05/2024 (texte de l'usage),proposed,"DAR:N/A -l'application de l'herbicide peut se faire soit au stade, soit au stade, selon la décision de l'agriculteur(com 27/12/22)"

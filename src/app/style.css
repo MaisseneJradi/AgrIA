@@ -63,7 +63,7 @@ main { max-width: 720px; margin: 0 auto; padding: 16px; display: grid; gap: 16px
 
 .field { display: grid; gap: 6px; margin-top: 14px; }
 .field span { font-weight: 600; font-size: .92rem; }
-textarea, select, input[type="text"] {
+textarea, select, input[type="text"], input[type="number"] {
   width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
   background: var(--bg); color: var(--text); font: inherit;
 }
@@ -106,6 +106,8 @@ td:nth-child(2), td:nth-child(3) { white-space: nowrap; direction: ltr; unicode-
 .hint { color: var(--muted); font-size: .85rem; }
 .hint.ok { color: var(--ok); }
 .hint.warn { color: var(--warn); }
+.context .field.ask span { color: var(--warn); }
+.context .field.ask select, .context .field.ask input { border-color: var(--warn); background: var(--warn-soft); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chips button {
   min-height: 36px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line);
@@ -123,5 +125,7 @@ td:nth-child(2), td:nth-child(3) { white-space: nowrap; direction: ltr; unicode-
 .fb-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .fb-buttons button { margin-top: 10px; }
 .fb-buttons button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); }
+.fb-keep { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-size: .92rem; }
+.fb-keep input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; }
 
 .foot { color: var(--muted); font-size: .82rem; text-align: center; margin: 0 0 24px; }

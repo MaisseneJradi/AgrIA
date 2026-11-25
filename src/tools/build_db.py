@@ -2,27 +2,35 @@
 
 Usage: python src/tools/build_db.py
 Tables
-  traitements        image class -> registered product usage (clean/classe_traitements.csv) with the DAR text and
-                     the restrictions of pesticides/tn_usages.csv and of the product list
+  traitements        image class -> registered product usage, from the validated rows of docs/disease_target_mapping.csv
+                     applied to pesticides/tn_usages.csv (src/tools/target_mapping.py; until step 2 of the phyto plan:
+                     clean/classe_traitements.csv, which they give back exactly), with the DAR text and the restrictions
+                     of pesticides/tn_usages.csv and of the product list
   usage_lmr          EU maximum residue limits of each usage substance (clean/pesticides_usage_lmr.csv)
   pesticides_produits, pesticides_usages, pesticides_agrishop, substances
   carence_engrais, engrais_catalogue, engrais_usages, semences
   besoins_eau, climat_mensuel, gouvernorats, sols, kc
-  lexique, fiches, varietes, culture_mapping, regles_carences (one JSON row per deficiency)
+  lexique, fiches, fiche_sections (phyto step 11), varietes, culture_mapping, regles_carences (one JSON row per
+                     deficiency)
   meta               build date and source file of every table
 The CSV files are never changed.
 """
 import json
 import sqlite3
+import sys
 import time
 
 import pandas as pd
 
 from common import DB_PATH, PROC, ROOT
+from target_mapping import MAPPING
+from target_mapping import load as load_mapping
+from target_mapping import usage_classes
 
 CLEAN, CTX, KNOW = PROC / "clean", PROC / "context", PROC / "knowledge"
 FILES = {
     "usage_lmr": CLEAN / "pesticides_usage_lmr.csv",
+    "eu_mrl": CLEAN / "eu_mrl.csv",  # with mrl_text: "No MRL required" (Annex IV) is not a missing value
     "pesticides_produits": CLEAN / "pesticides_produits.csv",
     "pesticides_usages": CLEAN / "pesticides_usages.csv",
     "pesticides_agrishop": CLEAN / "pesticides_agrishop.csv",
@@ -45,8 +53,25 @@ INDEXES = [("traitements", "unified_class"), ("usage_lmr", "product_id, usage_id
            ("pesticides_produits", "product_id")]
 
 
+def class_treatments():
+    """Image class -> registered use, from the VALIDATED rows of docs/disease_target_mapping.csv (target_mapping.py).
+    Text cleaned as clean_structured.py cleans classe_traitements.csv (which these rows give back exactly)."""
+    sys.path.insert(0, str(ROOT / "src" / "preparation"))
+    from clean_structured import COMM, tidy  # noqa: E402
+    ct = usage_classes(pd.read_csv(PROC / "pesticides" / "tn_usages.csv"), load_mapping())
+    ct = ct.drop(columns=["restriction"])  # the restriction of the use is joined below as restriction_usage
+    for c in ct.select_dtypes("object"):
+        ct[c] = ct[c].map(tidy)
+    # "40 cc/hl (COMM 06/12/2012)": the date of the commission decision is not part of the dose (phyto step 3; the
+    # clean table pesticides_usages drops it the same way). It is kept in its own column.
+    ct["comm_dose"] = ct["dose"].map(lambda s: next((m.group(1) for m in COMM.finditer(s)), None)
+                                     if isinstance(s, str) else None)
+    ct["dose"] = ct["dose"].map(lambda s: tidy(COMM.sub("", s)) if isinstance(s, str) else s)
+    return ct.astype({"usage_idx": int, "autorisation_provisoire": bool, "bio_ue": bool})
+
+
 def treatments():
-    ct = pd.read_csv(CLEAN / "classe_traitements.csv")
+    ct = class_treatments()
     use = pd.read_csv(PROC / "pesticides" / "tn_usages.csv",
                       usecols=["product_id", "usage_idx", "dar_texte", "restriction", "lmr", "remarques"])
     use = use.rename(columns={"restriction": "restriction_usage", "lmr": "remarques_lmr"})
@@ -66,11 +91,23 @@ def build():
     tmp.unlink(missing_ok=True)
     con = sqlite3.connect(tmp)
     meta = []
-    tables = {"traitements": (treatments(), "clean/classe_traitements.csv + pesticides/tn_usages.csv + produits")}
+    tables = {"traitements": (treatments(), f"{MAPPING.relative_to(ROOT)} (lignes validated) x pesticides/tn_usages.csv "
+                                            "+ produits")}
     for name, path in FILES.items():
         tables[name] = (pd.read_csv(path), str(path.relative_to(ROOT)))
+    codex = PROC / "pesticides" / "codex_mrl.csv"  # phyto step 7 (build_codex_mrl.py): optional, needs the internet once
+    if codex.exists():
+        tables["codex_mrl"] = (pd.read_csv(codex), str(codex.relative_to(ROOT)))
+    shop = PROC / "shop" / "shop_products.csv"  # phyto step 8 (build_shop_products.py): every product of both shops
+    if shop.exists():
+        tables["shop_products"] = (pd.read_csv(shop), str(shop.relative_to(ROOT)))
     fiches = pd.read_json(KNOW / "fiches.jsonl", lines=True)
     tables["fiches"] = (fiches.astype(str).replace({"nan": None, "None": None}), "knowledge/fiches.jsonl")
+    sections = KNOW / "sections.jsonl"  # phyto step 11 (src/preparation/build_sections.py): sections of the sheets
+    if sections.exists():
+        sec = pd.read_json(sections, lines=True)
+        sec["classes"] = sec["classes"].apply(json.dumps)
+        tables["fiche_sections"] = (sec.astype(str).replace({"nan": None, "None": None}), "knowledge/sections.jsonl")
     rules = json.load(open(KNOW / "regles_carences.json", encoding="utf-8"))
     tables["regles_carences"] = (pd.DataFrame([{"unified_class": k, "regle": json.dumps(v, ensure_ascii=False)}
                                                for k, v in rules.items()]), "knowledge/regles_carences.json")

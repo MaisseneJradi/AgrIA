@@ -21,12 +21,12 @@ AgrIA est un **système de sept agents** qui coopèrent autour d'un dossier part
 | Agent | Rôle | Outils | Fonctionne avec |
 |---|---|---|---|
 | **Coordinateur** | planifie le cas, assemble les résultats, écrit la réponse, la réécrit si elle est bloquée (2 fois au plus), sinon oriente vers le CRDA | `redaction.py` | règles |
-| **Linguistique** | comprend le message (français, arabe, darija, arabizi) : culture, symptômes, gouvernorat ; écrit la réponse en français ou en arabe | `normalize_terms`, `crop_code`, `redaction.py` | lexique + phrases écrites par le code |
-| **Identification de la culture** | reconnaît la plante sur la photo (14 cultures du projet ou « autre plante ») ; sans culture indiquée, la culture reconnue limite le diagnostic ; si la photo contredit nettement la culture indiquée, ou si elle est incertaine, une question est posée | `ensemble.crop_decision`, `vlm.observe` | vote du modèle de culture (v3a, 15 classes) et du modèle des maladies ; VLM NVIDIA en contrôle et en secours (`AGRIA_VLM=nvidia`) |
+| **Linguistique** | comprend le message (français, arabe, darija, arabizi) : culture, symptômes, gouvernorat, contexte de la parcelle (récolte, marché, bio, serre, stade) ; écrit la réponse en français ou en arabe, avec au plus 3 questions de contexte quand la réponse en dépend | `normalize_terms`, `crop_code`, `redaction.py` | lexique + phrases écrites par le code |
+| **Identification de la culture** | reconnaît la plante sur la photo (14 cultures du projet ou « autre plante ») ; sans culture indiquée, la culture reconnue limite le diagnostic ; si la photo contredit nettement la culture indiquée, ou si elle est incertaine, une question est posée | `ensemble.crop_decision`, `vlm.observe` | vote du modèle de culture (v4, 15 classes), du modèle des maladies et du VLM (poids 0,25) ; VLM NVIDIA aussi en contrôle et en secours (`AGRIA_VLM=nvidia`) |
 | **Diagnostic** | lit la photo (routeur puis modèle maladies, carences ou fruits) ; décide si le diagnostic est fiable, sinon pose des questions | `predict()`, `ensemble.kind_share` | routeur + combinaison : modèle feuille (carence ou maladie) + avis du VLM, puis modèle des maladies restreint à la culture ou carence du modèle feuille |
-| **Phytosanitaire** | choisit les traitements homologués (dose, DAR, LMR, restrictions) et des conseils des fiches | `get_treatments`, `search_knowledge` | base SQLite + recherche TF-IDF |
-| **Agronome** | engrais pour une carence (fiabilité selon la culture, sol du gouvernorat) et besoin en eau du mois | `get_fertilizers`, `get_water_need` | base SQLite + règles |
-| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **8 règles codées** |
+| **Phytosanitaire** | choisit les traitements homologués (dose, DAR, LMR, restrictions), écarte ceux qui ne conviennent pas à la situation (DAR plus long que la récolte, export UE, bio), classe les autres par un score écrit en code avec une ligne « pourquoi », et des conseils des fiches sans aucune lutte chimique | `get_treatments`, `ranking.rank`, `ranking.decisive_fields`, `dose_calc.practical_dose`, `hazard`, `weather.spray_conditions`, `search_knowledge`, `prevention` | base SQLite + règles + recherche TF-IDF |
+| **Agronome** | besoin d'une carence (élément ; chélate EDDHA, EDDHSA ou HBED si le sol du gouvernorat est calcaire), engrais de boutique seulement par correspondance validée vers ce besoin, et besoin en eau du mois | `get_fertilizers`, `get_water_need` | base SQLite + règles |
+| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **28 règles codées** |
 
 **Pas de LLM pour écrire.** Le seul modèle de langage est un VLM (NVIDIA, optionnel) qui **regarde** la photo et donne un avis (culture, carence ou maladie, symptômes) ; il n'écrit jamais la réponse, ne choisit aucun produit et ne peut pas contredire la culture donnée par l'agriculteur (docs/results_vision.md, section 13). AgrIA répond en **français ou en arabe** (pas de darija). Toutes les phrases sont écrites par le code (`src/agent/redaction.py`), donc aucun fait (produit, dose, délai) ne peut être inventé ni mal traduit. Un essai avec un petit LLM local (`derja`, Qwen3 4B, Ollama) l'a montré : il changeait des doses (« 300 g/hl » devenu « 300 g/l ») et traduisait mal les termes agricoles. Dans une réponse en arabe, les passages des fiches (français ou anglais) sont remplacés par leurs liens.
 
@@ -112,7 +112,15 @@ Le dossier `data/` n'est **pas sur GitHub**. Il reste sur la machine locale. **T
 | Validation et test | `data/processed/<tâche>_manifest.csv` | Colonne `split` : `val`, `test`, et `test_field` pour les maladies |
 | Routeur | `data/processed/routing_manifest.csv` | 15 985 photos, classes `leaf`, `fruit`, `other` |
 | Test par culture | `data/processed/balanced/deficiency_test_by_crop.csv` | Mesure du biais des carences |
-| Traitements | `data/processed/clean/classe_traitements.csv` | Classe du modèle vers produit homologué |
+| Traitements | `docs/disease_target_mapping.csv` (lignes `validated`) appliqué à `data/processed/pesticides/tn_usages.csv` | Classe du modèle vers cible du registre, puis produit homologué (plan phyto, étape 2) |
+| Groupes de résistance | `docs/moa_groups.csv` (lignes `validated`), tiré de la FRAC Code List 2026 et de la classification IRAC en ligne (`src/preparation/build_moa_groups.py`) | Substance active vers groupe FRAC ou IRAC : rotation des traitements |
+| Liste officielle | Liste DGSVCIA du 22/05/2024 (`treatments.LIST_DATE`, citée dans chaque réponse) ; une version plus récente est signalée par `src/preparation/check_dgsvcia_list.py` (rapport seulement, rien n'est chargé sans accord) | Produits, usages, doses, DAR |
+| DAR manquants | `docs/phi_completions.csv` (lignes `validated`) ; travail de relecture : `reports/phyto/phi_manquants.csv` (`src/preparation/phi_report.py`) | DAR complétés d'après une source citée, jamais estimés |
+| LMR | UE (`usage_lmr`, `eu_mrl`) pour l'export ; liste DGSVCIA puis Codex (`codex_mrl`, `src/preparation/build_codex_mrl.py`, denrées : `docs/codex_commodity_mapping.csv` lignes `validated`) pour le marché local (`src/tools/mrl.py`) | LMR du marché de la récolte |
+| Boutiques | Table `shop_products` : les 614 produits d'agrishop.tn (export PostgreSQL) et d'agriclic.tn (pages produits) (`src/preparation/build_shop_products.py`) ; rafraîchissement par `src/preparation/refresh_shops.py` (nouvel export agrishop donné en fichier, nouvelle collecte agriclic avec robots.txt respecté et 1 requête par seconde, statut HTTP des pages ; rapport nouveaux / modifiés / retirés dans `reports/shop/` ; un produit retiré garde sa ligne avec `stock_status = retire` et n'est plus jamais montré ; un produit dont le texte change repasse en `proposed`) ; classement `docs/shop_product_classes.csv` et allégations sans homologation `docs/shop_unapproved_claims.csv` (`classify_shop_products.py`, lignes `proposed`) ; compositions `docs/shop_composition.csv` et correspondances `docs/shop_product_mapping.csv` (`extract_composition.py`, `match_shop_products.py` : pesticide = mêmes substances et concentrations qu'un produit de la liste ; engrais = besoin `docs/fertiliser_needs.csv` ; semence = catalogue des variétés), doses d'engrais contrôlées par `docs/fertiliser_dose_ranges.csv` (`src/tools/fertiliser_dose.py`) | Liens vers la boutique (étapes 9-10) ; un produit avec allégation n'est jamais conseillé (règle 21) |
+| Toxicité et abeilles | `docs/substance_hazard.csv` (classes OMS 2019) et `docs/bee_hazard.csv` (liste PAN des pesticides hautement dangereux 2024, colonne abeilles), lignes `validated` (`src/preparation/build_substance_hazard.py`, `build_bee_hazard.py`) | Classe de toxicité, équipement de protection, avertissement abeilles |
+| Météo | API Open-Meteo, heure par heure (`src/tools/weather.py`, cache 1 h, 3 s au plus, rien si l'API ne répond pas) | Pluie dans les 24 h, vent au-dessus de 15 km/h |
+| Prévention sans produit | `docs/conseils_prevention.csv` (lignes `validated`) | Conseils de prévention en français et en arabe pour les classes sans produit homologué |
 | Réglementation | `data/processed/clean/pesticides_usages.csv`, `pesticides_usage_lmr.csv`, `eu_mrl.csv` | Usages, doses, LMR |
 | Engrais | `data/processed/clean/carence_engrais.csv`, `engrais_catalogue.csv`, `engrais_usages.csv` | Carence vers engrais, composition, doses |
 | Règles de carences | `data/processed/knowledge/regles_carences.json` | Questions de confirmation, règle de sol |
@@ -159,12 +167,16 @@ get_fertilizers(deficiency: str, crop: str | None = None, governorate: str | Non
 # produits, teneur, dose, niveau de fiabilité (« hypothese » hors culture vue), questions de confirmation, sol
 get_water_need(governorate: str, crop: str, month: int, forecast: bool = False) -> dict
 # ET0, Kc, besoin, pluie, déficit (mm et m³/ha), prévision 7 jours en option
-search_knowledge(query: str, k: int = 3, classe: str | None = None) -> list[dict]
+search_knowledge(query: str, k: int = 3, classe: str | None = None, method: str | None = None) -> list[dict]
 # extrait, fiche, section, langue, lien de la source, licence
 normalize_terms(text: str) -> dict
 # cultures, maladies, ravageurs, symptômes, organes reconnus en français, arabe, darija, arabizi ; classes possibles
 check_answer(answer: dict) -> dict
 # answer : task, classe, culture, fiable, hypothese, produits [{nom, dose, dar_jours}], engrais [{nom}], texte
+shop.pesticide_offers(usage) / shop.fertiliser_offers(deficiency, calcareous) -> list[dict]
+# offres des boutiques par correspondance validée seulement, ajoutées après le tri : nom, résumé écrit par le code, stock, url
+shop.registry_composition(product_id) -> str
+# « Difenoconazole 250 g/L » : ce qu'il faut demander en boutique quand aucune offre n'est validée
 # -> {valide, raisons (bloquantes), avertissements (à dire), produits_verifies}
 ```
 
@@ -233,7 +245,7 @@ POST /diagnose
 2. `treatments.py` : traitements par classe et culture, en préférant les liens `direct`, puis `vecteur`, `groupe` et `proche`.
 3. `fertilizers.py` : engrais par carence, avec `regles_carences.json` et le pH du gouvernorat.
 4. `water.py` : besoins en eau à partir de `besoins_eau_mensuels.csv`, prévisions avec `forecast_url()` de `fetch_context_tn.py`.
-5. `rag.py` : recherche dans les fiches, chaque extrait gardant le lien de sa source. Choix fait : TF-IDF local (76 fiches, hors ligne, aucun modèle à télécharger) au lieu de Chroma, remplaçable derrière la même fonction.
+5. `rag.py` : recherche dans les fiches, chaque extrait gardant sa fiche, sa section et le lien de sa source. Depuis l'étape 11 du plan phyto : fiches découpées en sections par règles (`src/preparation/build_sections.py` : description, symptômes, biologie, lutte, prévention, répartition ; table `fiche_sections`), recherche hybride BM25 + vecteurs locaux du modèle `BAAI/bge-m3` (`src/tools/embed.py`, vecteurs dans `data/processed/knowledge/vectors_bge-m3.npz`, `src/preparation/build_rag_index.py`), sans base vectorielle. Rappel@3 sur 50 questions (français, arabe, darija ; `src/evaluation/eval_rag.py`) : 80 % contre 68 % pour l'ancien TF-IDF. Sans vecteurs ni modèle, la recherche passe à BM25 seul. Chaque réponse cite la fiche et la section utilisées (règle 27).
 6. `lexicon.py` : reconnaissance des termes. Les 88 entrées marquées `a_valider` sont relues avec un locuteur tunisien.
 7. `safety.py` : bloquer toute réponse citant un produit hors de la liste homologuée.
 
@@ -290,7 +302,7 @@ POST /diagnose
 | Dates de chaque étape | À remplir |
 | Validation des 88 termes en darija (avec un locuteur tunisien) | À faire à l'étape 3 |
 | Jeu de test de l'agent | À importer avant l'étape 4 |
-| Photos de terrain tunisiennes | En continu, si possible |
-| Seuil des maladies dans l'agent : 0,5 (calibré en laboratoire) ou 0,9 (recommandé, voir `results_vision.md`) | À décider avant l'étape 4 |
-| Améliorer H1 (terrain 61,8 % contre 90 % visé) : PlantDoc train est déjà utilisé ; essais de validation de terrain, suréchantillonnage et augmentations | En cours, voir `results_vision.md` section 9 |
+| Photos de terrain tunisiennes | En continu : case d'accord dans l'application, puis `src/preparation/field_tn.py` (jeu de test gelé `data/field_tn/`) |
+| Seuils de l'agent Diagnostic | ✅ maladies 0,8 et carences 0,7 depuis les modèles en taille 300 (22/11/2026), choisis sur la confiance de la combinaison réellement utilisée (`results_vision.md`, section 15.7) |
+| Améliorer H1 (terrain 61,8 % contre 90 % visé) | Maladies 82,8 % et feuille 81,4 % sur le test terrain (22/11/2026) ; une source jamais vue reste vers 37–52 % : voir `results_vision.md` sections 14 et 15 |
 | Fruits : modèle brut (choisi par la validation) ou équilibré (meilleur sur les classes rares) | Brut par défaut |

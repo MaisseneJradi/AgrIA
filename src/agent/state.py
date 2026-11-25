@@ -15,6 +15,14 @@ class Dossier(TypedDict, total=False):
     culture: Optional[str]        # crop given by the farmer, optional
     langue: Optional[str]         # language wanted for the answer: fr, ar, darija; else the one of the message
     mois: Optional[int]           # month for the irrigation advice (default: current month)
+    # context of the plot (all optional; the form of the app, else what the message says)
+    days_to_harvest: Optional[int]        # days before the planned harvest
+    market: Optional[str]                 # local | export (EU)
+    organic: Optional[str]                # y | n: organic farming
+    greenhouse: Optional[str]             # y | n
+    stage: Optional[str]                  # early (first spots, few plants) | spread
+    last_treatment_group: Optional[str]   # FRAC / IRAC group (or product) of the last treatment
+    area: Optional[float]                 # area to treat, in ha
 
     # Agent Linguistique, input side
     termes: dict                  # normalize_terms(message)
@@ -22,6 +30,7 @@ class Dossier(TypedDict, total=False):
     culture_code: Optional[str]   # crop code (tomato, olive...) from the request, the message, the photo or the diagnosis
     culture_source: Optional[str] # agriculteur (field), message, photo
     gouvernorat_officiel: Optional[str]
+    contexte: dict                # the context fields known (form first, then message), used to filter and rank
 
     # Agent Identification de la culture
     routage: dict                 # router prediction (leaf, fruit, other), reused by the Diagnostic agent

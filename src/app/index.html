@@ -54,6 +54,41 @@
         </label>
       </div>
 
+      <details id="context-box" class="context">
+        <summary data-i18n="ctxTitle">Précisions sur la parcelle (facultatif)</summary>
+        <p id="ctx-hint" class="hint" data-i18n="ctxHelp">Elles aident à choisir un produit adapté : délai avant récolte, marché, agriculture biologique…</p>
+        <div class="row">
+          <label class="field" data-ctx="days_to_harvest">
+            <span data-i18n="ctxDays">Récolte prévue dans (jours)</span>
+            <input id="days_to_harvest" type="number" min="0" max="365" inputmode="numeric">
+          </label>
+          <label class="field" data-ctx="market">
+            <span data-i18n="ctxMarket">Marché</span>
+            <select id="market"><option value="" data-i18n="choose">— choisir —</option><option value="local" data-i18n="ctxLocal">Marché local</option><option value="export" data-i18n="ctxExport">Export (Union européenne)</option></select>
+          </label>
+          <label class="field" data-ctx="organic">
+            <span data-i18n="ctxOrganic">Agriculture biologique</span>
+            <select id="organic"><option value="" data-i18n="choose">— choisir —</option><option value="oui" data-i18n="yes">Oui</option><option value="non" data-i18n="no">Non</option></select>
+          </label>
+          <label class="field" data-ctx="stage">
+            <span data-i18n="ctxStage">Stade de l'attaque</span>
+            <select id="stage"><option value="" data-i18n="choose">— choisir —</option><option value="early" data-i18n="ctxEarly">Début (premières taches)</option><option value="spread" data-i18n="ctxSpread">Déjà étendue</option></select>
+          </label>
+          <label class="field" data-ctx="greenhouse">
+            <span data-i18n="ctxGreenhouse">Sous serre</span>
+            <select id="greenhouse"><option value="" data-i18n="choose">— choisir —</option><option value="oui" data-i18n="yes">Oui</option><option value="non" data-i18n="no">Non</option></select>
+          </label>
+          <label class="field" data-ctx="last_treatment_group">
+            <span data-i18n="ctxLast">Dernier produit utilisé</span>
+            <input id="last_treatment_group" type="text" maxlength="80" data-i18n-ph="ctxLastPh" placeholder="Ex. : nom du produit">
+          </label>
+          <label class="field" data-ctx="area">
+            <span data-i18n="ctxArea">Surface à traiter (ha)</span>
+            <input id="area" type="number" min="0" step="0.01" inputmode="decimal">
+          </label>
+        </div>
+      </details>
+
       <button id="submit" class="primary" type="submit" data-i18n="analyse">Analyser</button>
       <p id="error" class="error" role="alert" hidden></p>
     </form>
@@ -101,6 +136,10 @@
         <label class="field" id="fb-truth" hidden>
           <span data-i18n="fbTruth">Quelle est la bonne réponse ? (plante et maladie)</span>
           <input id="fb-text" type="text" data-i18n-ph="fbPh" placeholder="Ex. : olivier, œil de paon">
+        </label>
+        <label class="fb-keep" id="fb-keep-label" hidden>
+          <input id="fb-keep" type="checkbox">
+          <span data-i18n="fbKeep">J'accepte qu'AgrIA garde cette photo pour mieux reconnaître les maladies en Tunisie</span>
         </label>
         <button type="button" id="fb-send" class="primary" data-i18n="fbSend" hidden>Envoyer</button>
         <p id="fb-done" class="muted" data-i18n="fbThanks" hidden>Merci, c'est enregistré.</p>

@@ -1,0 +1,10 @@
+nutriment,culture,type_application,min,max,unite,source,status,note
+Fe,*,foliaire,25,200,g/hl,à sourcer (INRAT / FAO) : fourchette indicative proposée par AgrIA,proposed,"foliar iron chelate ; g et ml, kg et l comptés ensemble (densité proche de 1)"
+Fe,*,sol / fertirrigation,2,30,kg/ha,à sourcer (INRAT / FAO) : fourchette indicative proposée par AgrIA,proposed,"iron chelate to the soil ; g et ml, kg et l comptés ensemble (densité proche de 1)"
+Fe,*,sol par arbre ou plant,5,100,g/plant,à sourcer (INRAT / FAO) : fourchette indicative proposée par AgrIA,proposed,"iron chelate at the foot of a tree ; g et ml, kg et l comptés ensemble (densité proche de 1)"
+Zn|Mn|B|Cu|Mo,*,foliaire,25,500,g/hl,à sourcer (INRAT / FAO) : fourchette indicative proposée par AgrIA,proposed,"trace elements, foliar (g or ml) ; g et ml, kg et l comptés ensemble (densité proche de 1)"
+Zn|Mn|B|Cu|Mo,*,sol / fertirrigation,0.5,10,kg/ha,à sourcer (INRAT / FAO) : fourchette indicative proposée par AgrIA,proposed,"trace elements to the soil (kg or l) ; g et ml, kg et l comptés ensemble (densité proche de 1)"
+Ca|Mg,*,foliaire,100,1000,g/hl,à sourcer (INRAT / FAO) : fourchette indicative proposée par AgrIA,proposed,"calcium, magnesium foliar (g or ml) ; g et ml, kg et l comptés ensemble (densité proche de 1)"
+Ca|Mg,*,sol / fertirrigation,2,100,kg/ha,à sourcer (INRAT / FAO) : fourchette indicative proposée par AgrIA,proposed,"calcium, magnesium to the soil (kg or l) ; g et ml, kg et l comptés ensemble (densité proche de 1)"
+N|P|K,*,foliaire,100,1000,g/hl,à sourcer (INRAT / FAO) : fourchette indicative proposée par AgrIA,proposed,"soluble NPK foliar (g or ml) ; g et ml, kg et l comptés ensemble (densité proche de 1)"
+N|P|K,*,sol / fertirrigation,2,200,kg/ha,à sourcer (INRAT / FAO) : fourchette indicative proposée par AgrIA,proposed,"NPK in fertigation or to the soil (kg or l) ; g et ml, kg et l comptés ensemble (densité proche de 1)"

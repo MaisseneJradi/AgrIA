@@ -1,8 +1,13 @@
 """The two specialist agents, run in parallel once the diagnosis is trusted.
 
 Agent Phytosanitaire: registered pesticides for the disease or pest, on the farmer's crop (get_treatments), and
-  prevention advice from the sheets (search_knowledge). Products are chosen HERE, in code: at most MAX_PRODUCTS,
-  relation direct or vecteur first, a known DAR first; "proche" only when nothing else exists, with a warning.
+  prevention advice from the sheets (search_knowledge), cleaned of any chemical control (prevention.py). Products are
+  chosen HERE, in code (ranking.py): the uses that do not fit the situation are set aside (DAR longer than the days
+  to harvest, export with a substance not approved in the EU, organic farm), the others are ranked (relation, early
+  stage -> organic-allowed first, toxicity, shorter DAR, rotation of groups) and the MAX_PRODUCTS first are kept, each
+  with its reasons; "proche" only when nothing else exists, with a warning. The context fields still unknown that
+  would change this choice become questions (at most 3). When nothing is registered, or nothing fits: validated
+  prevention advice and the CRDA referral, never a product.
 Agent Agronome: fertilizers for a deficiency (get_fertilizers: reliability on this crop, soil of the governorate,
   confirmation questions) and the irrigation need of the month (get_water_need).
 """
@@ -10,8 +15,20 @@ import datetime
 import time
 
 from src.agent import paths  # noqa: F401
-from fertilizers import get_fertilizers  # src/tools
+from dose_calc import practical_dose  # src/tools
+from fertilizers import get_fertilizers
+from common import query
+from fertiliser_dose import label_dose
+from hazard import bee_toxic, who_class
+from safety import _same_product, _without_pack
+from shop import fertiliser_offers, pesticide_offers, registry_composition
+from shop import _composition as _shop_compositions
+from lexicon import crop_code
+from mrl import applicable_mrl
+from weather import spray_conditions
+from prevention import cultural_quotes, prevention_advice
 from rag import search_knowledge
+from ranking import decisive_fields, rank
 from src.agent.agents.aides import step
 from treatments import get_treatments
 from water import get_water_need
@@ -26,15 +43,12 @@ def phytosanitaire(d):
         return {"traitements": {"concerne": False},
                 "trace": step("Phytosanitaire", "rien à traiter (carence ou plante saine)", t0)}
     cls, crop = diag["classe"], d.get("culture_code")
+    ctx = d.get("contexte") or {}
     usages = get_treatments(cls, crop)
     main = [u for u in usages if u["relation"] in ("direct", "vecteur", "groupe")] or usages
-    chosen, seen = [], set()
-    for u in main:  # already sorted: relation, then known DAR first
-        if u["produit"] not in seen:
-            seen.add(u["produit"])
-            chosen.append(u)
-        if len(chosen) >= MAX_PRODUCTS:
-            break
+    ranked = rank(main, ctx, MAX_PRODUCTS)  # filters of the situation, then the score written in ranking.py
+    chosen = ranked["retenus"]
+    questions = decisive_fields(main, ctx, MAX_PRODUCTS) if main else []
     warnings = []
     for u in chosen:
         if u["relation"] in ("vecteur", "proche"):
@@ -45,13 +59,56 @@ def phytosanitaire(d):
             warnings.append(f"{u['produit']} : {u['restriction']}")
     passages = search_knowledge("lutte prévention traitement", k=2, classe=cls)
     produits = [{"nom": u["produit"], "substances": u["substances"], "dose": u["dose"], "dar_jours": u["dar_jours"],
-                 "dar_message": u["dar_message"], "relation": u["relation"], "product_id": u["product_id"]}
+                 "dar_message": u["dar_message"], "relation": u["relation"], "product_id": u["product_id"],
+                 "dar_source": u.get("dar_source"), "dar_texte": u.get("dar_texte"),
+                 "dar_source_detail": u.get("dar_source_detail"),
+                 "bio_ue": u["bio_ue"], "ue_approuve": u["ue_approuve"], "raisons": u["raisons"],
+                 # the registered dose for a 16 L sprayer and the farmer's area (dose_calc.py): None when unreadable
+                 "dose_pratique": practical_dose(u["dose"], ctx.get("area")),
+                 # applicator and bee safety (validated rows of docs/substance_hazard.csv and docs/bee_hazard.csv)
+                 "classe_oms": who_class(u), "abeilles": bool(bee_toxic(u)),
+                 # MRL of the market (EU for export, Tunisian or Codex for local): mrl.py; [] when the market is unknown
+                 "lmr_marche": applicable_mrl(u, crop_code(crop) if crop else None, ctx.get("market")),
+                 # step 10, AFTER the ranking: shop offers of the same composition (validated mappings) whose trade
+                 # name is registered for this case; else what to ask for in a shop
+                 "boutique": pesticide_offers(u, lambda name: any(_same_product(_without_pack(name), x["produit"])
+                                                                  for x in usages)),
+                 "a_demander": registry_composition(u["product_id"])}
                 for u in chosen]
+    # weather of the next hours (Open-Meteo, cached; nothing when unreachable; not under a greenhouse)
+    meteo = spray_conditions(d.get("gouvernorat_officiel")) if produits and ctx.get("greenhouse") != "y" else None
+    # advice never carries a product: sentences of the sheets without chemistry, and, when nothing is registered,
+    # the validated prevention advice of docs/conseils_prevention.csv and the CRDA referral
+    conseils, quoted = cultural_quotes(passages)
+    # the sheets and sections the answer used (step 11): those of the quoted sentences, else every passage found
+    cited = quoted or passages
+    prevention = prevention_advice(cls) if not usages else []
+    # registered products exist, but none fits the farmer's situation (DAR, export, organic): say why, then the CRDA
+    none_fits = bool(main) and not chosen
+    note = f"{len(usages)} usages homologués, {len(produits)} retenus"
+    if ranked["ecartes"]:
+        note += f", {len(ranked['ecartes'])} écartés pour la situation ({ctx})"
+    if questions:
+        note += f" ; à demander : {', '.join(questions)}"
+    if not usages:
+        note += f" ; {len(prevention)} mesures de prévention validées, orientation CRDA"
     return {"traitements": {"concerne": True, "produits": produits, "nb_usages": len(usages),
-                            "aucun_produit": not usages, "avertissements": warnings,
-                            "conseils": [p["extrait"][:300] for p in passages]},
-            "sources": [{"fiche": p["nom"], "lien": p["source"], "licence": p["licence"]} for p in passages],
-            "trace": step("Phytosanitaire", f"{len(usages)} usages homologués, {len(produits)} retenus", t0)}
+                            "aucun_produit": not usages, "avertissements": warnings, "conseils": conseils,
+                            "prevention": prevention, "orientation_crda": not usages or none_fits,
+                            "ecartes": ranked["ecartes"], "aucun_adapte": none_fits,
+                            "n_candidats": ranked["n_candidats"], "questions_contexte": questions,
+                            "dernier_groupe": ranked["dernier_groupe"], "meteo": meteo,
+                            "rotation_impossible": ranked["rotation_impossible"],
+                            # one line on rotation when a product of the answer has a known FRAC / IRAC group
+                            "rotation_conseil": any(r[0] in ("groupe", "rotation") for p in produits
+                                                    for r in p["raisons"])},
+            "sources": [{"fiche": p["nom"], "fiche_id": p["fiche"], "section": p["section"], "lien": p["source"],
+                         "licence": p["licence"]} for p in cited],
+            "trace": step("Phytosanitaire", note, t0)}
+
+
+def shop_composition(shop_id):
+    return _shop_compositions().get(shop_id) or {}
 
 
 def agronome(d):
@@ -59,13 +116,27 @@ def agronome(d):
     diag, crop, gov = d["diagnostic"], d.get("culture_code"), d.get("gouvernorat_officiel")
     out, notes = {}, []
     if diag["task"] == "deficiency" and not diag["sain"]:
-        f = get_fertilizers(diag["classe"], crop, gov, max_products=3)
-        out["engrais"] = {"produits": [{"nom": p["nom"], "nutriment": p["nutriment"], "teneur_pct": p["teneur_pct"],
-                                        "doses": p["doses"][:2], "url": p["url"]} for p in f["produits"]],
+        cls = diag["classe"]
+        f = get_fertilizers(cls, crop, gov, max_products=3)
+        # step 10: the need decides (nutrient, chelate for the soil), then the shop products of VALIDATED mappings
+        # to that need, kept only when they are in the fertilizer catalogue of the deficiency (Vérificateur rule 7)
+        calcareous = bool(f["sol"]) and (f["sol"].get("pH") or 0) >= 7.8
+        catalogue = [r["nom"] for r in query("SELECT nom FROM carence_engrais WHERE unified_class = ?", (cls,))]
+        nut = f["nutriment"]
+        produits = []
+        for o in fertiliser_offers(cls, calcareous):
+            if not any(_same_product(_without_pack(o["nom"]), _without_pack(c)) for c in catalogue):
+                continue
+            compo = shop_composition(o["shop_id"])
+            produits.append({**o, "nutriment": nut, "dose": label_dose(compo.get("doses_etiquette"), nut,
+                                                                         crop or "*")})
+        out["engrais"] = {"produits": produits, "besoin": {"nutriment": nut, "chelate_calcaire": calcareous
+                                                           and cls == "Fe_deficiency"},
                           "fiabilite": f["fiabilite"], "hypothese": f["fiabilite"] == "hypothese",
                           "questions": f["questions_confirmation"], "message": f["message"],
                           "avertissement_modele": f.get("avertissement_modele"), "sol": f["sol"]}
-        notes.append(f"{len(f['produits'])} engrais, fiabilité {f['fiabilite']}")
+        notes.append(f"besoin : {nut}{' (chélate EDDHA, sol calcaire)' if out['engrais']['besoin']['chelate_calcaire'] else ''}"
+                     f" ; {len(produits)} offre(s) validée(s) ; fiabilité {f['fiabilite']}")
     month = d.get("mois") or datetime.date.today().month
     if gov and crop:
         try:

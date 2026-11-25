@@ -65,7 +65,7 @@ class TestAgents(unittest.TestCase):
         self.assertEqual(r["produits"], [])  # never a pesticide for a deficiency
         if r["diagnostic"]["fiable"]:
             self.assertTrue(r["engrais"])
-        else:  # below the 0.95 threshold of deficiencies: confirmation questions first, no fertilizer yet
+        else:  # below the agent threshold of deficiencies (AGENT_THRESHOLDS): confirmation questions first, no fertilizer yet
             self.assertEqual(r["engrais"], [])
             self.assertTrue(r["questions"])
 

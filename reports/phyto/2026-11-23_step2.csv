@@ -1,0 +1,1249 @@
+case_id,classe,crop,kind,issue,produits,engrais,unsafe,hors_cible,covered,gold_has_product,gold_hit,absence_dite,prevention_crda,fert_ok,n_exact,n_shown,blocked,crda,links,link_ok,link_wrong,dar_trop_long,export_non_ue,bio_non_bio,ms,texte
+c001,apple__black_rot,apple,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,556,"Diagnostic : Pourriture noire du pommier (black rot) (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Pourriture noire du pommier (black rot) : https://en.wikipedia.org/wiki/Botryosphaeria_obtusa
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Siliana.
+
+Irrigation en mai à Siliana : besoin moyen d'environ 115.9 mm (1159 m³/ha), soit 3.74 mm par jour après la pluie."
+c002,apple__rust,apple,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,21,"Diagnostic : Rouille grillagée / rouille du pommier (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Rouille grillagée / rouille du pommier : https://en.wikipedia.org/wiki/Gymnosporangium_juniperi-virginianae
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Siliana.
+
+Irrigation en mai à Siliana : besoin moyen d'environ 115.9 mm (1159 m³/ha), soit 3.74 mm par jour après la pluie."
+c003,apple__scab,apple,disease,conseil,DELAN 500 SC | INSPIRE PLUS EW | Impact SC,,,,True,True,True,False,False,,3,3,0,False,,False,,DELAN 500 SC | INSPIRE PLUS EW,,,90,"Diagnostic : Tavelure du pommier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- DELAN 500 SC (Dithianon) : dose 0.5 l/ha ; délai avant récolte : 21 jours
+- INSPIRE PLUS EW (Difenoconazole + Cyprodinil) : dose 0.7 l/ha ; délai avant récolte : 14 jours
+- Impact SC (Flutriafol) : dose 25 ml/hl ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Venturia inaequalis est une espèce de champignons ascomycètes de la famille des Venturiaceae.
+- Il est responsable de la tavelure du pommier.
+
+Irrigation en mai à Kasserine : besoin moyen d'environ 136.5 mm (1365 m³/ha), soit 4.4 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c004,cherry__powdery_mildew,cherry,disease,conseil,Agrosoufre | Insuf | Kumulus DF,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,30,"Diagnostic : Oïdium du cerisier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Agrosoufre (Sulphur) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Insuf (Sulphur) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Kumulus DF (Sulphur) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Pour en savoir plus :
+- Oïdium du cerisier : https://en.wikipedia.org/wiki/Podosphaera_clandestina
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c005,citrus__black_spot,citrus,disease,conseil,Hidrocobre 50 valles,,,,True,True,True,False,False,,1,1,0,False,,False,,,,,23,"Diagnostic : Maladie des taches noires des agrumes (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 200 g/hl ; délai avant récolte : 1 jours
+
+Pour en savoir plus :
+- Maladie des taches noires des agrumes : https://en.wikipedia.org/wiki/Citrus_black_spot
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 75.1 mm (751 m³/ha), soit 2.42 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c006,citrus__canker,citrus,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,27,"Diagnostic : Chancre citrique (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Xanthomonas citri est une espèce de protéobactéries de la famille des Xanthomonadaceae.
+- C'est une bactérie phytopathogène, responsable en particulier du chancre bactérien des agrumes.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Nabeul.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 75.1 mm (751 m³/ha), soit 2.42 mm par jour après la pluie."
+c007,citrus__scab,citrus,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,19,"Diagnostic : Gale (tavelure) des agrumes (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Gale (tavelure) des agrumes : https://en.wikipedia.org/wiki/Elsino%C3%AB_fawcettii
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Nabeul.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 75.1 mm (751 m³/ha), soit 2.42 mm par jour après la pluie."
+c008,corn__common_rust,corn,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,18,"Diagnostic : Rouille commune du maïs (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Rouille commune du maïs : https://en.wikipedia.org/wiki/Puccinia_sorghi
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Béja."
+c009,corn__gray_leaf_spot,corn,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,32,"Diagnostic : Cercosporiose du maïs (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Cercospora zeae-maydis est une espèce de champignons ascomycètes de la famille des Mycosphaerellaceae.
+- Ce champignon phytopathogène est, conjointement avec Cercospora zeina, l'agent de la maladie des taches grises du maïs (ou cercosporiose du maïs, connue en anglais sous le nom de grey leaf spot disease).
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Jendouba."
+c010,corn__northern_leaf_blight,corn,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,43,"Diagnostic : Helminthosporiose du maïs (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- L'helminthosporiose du maïs est une maladie fongique qui affecte les cultures de maïs (Zea mays).
+- Les agents pathogènes responsables de cette maladie sont des espèces de champignons ascomycètes de la famille des Pleosporaceae, Cochliobolus carbonum (anamorphe : Bipolaris zeicola), Cochliobolus heterostrophus (anamorphe : Bipolaris maydis), Setosphaeria turcica (anamorphe : Exserohilum turcicum).
+- L’helminthosporiose fusiforme, due à Setosphaeria turcica est une maladie du maïs endémique dans certaines régions de France, notamment le Sud-Ouest.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Béja."
+c011,datepalm__black_scorch,datepalm,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,37,"Diagnostic : Pourriture noire / black scorch du palmier (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Pourriture noire / black scorch du palmier : https://en.wikipedia.org/wiki/Ceratocystis_paradoxa
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Kébili.
+
+Irrigation en mai à Kébili : besoin moyen d'environ 220.0 mm (2200 m³/ha), soit 7.1 mm par jour après la pluie."
+c012,datepalm__fusarium_wilt,datepalm,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,33,"Diagnostic : Bayoud du palmier dattier (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Le bayoud du palmier dattier est une maladie fongique, dont l'agent pathogène est un champignon ascomycète, Fusarium oxysporum f.sp.
+- albedinis, qui affecte les palmiers dattiers en Afrique du Nord .
+- Le terme « bayoud » est dérivé de l'arabe, abyed (« blanc »), en référence à la décoloration blanchâtre des palmes touchées par la maladie.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Kébili.
+
+Irrigation en mai à Kébili : besoin moyen d'environ 220.0 mm (2200 m³/ha), soit 7.1 mm par jour après la pluie."
+c013,datepalm__leaf_spots,datepalm,disease,conseil,BIOBAC | POLYVERSUM | Prev-am,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,46,"Diagnostic : Faux charbon (taches foliaires) du palmier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- BIOBAC (Bacillus subtilis strain IAB/BS03) : dose 150g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- POLYVERSUM (Pythium oligandrum strain M1) : dose 80g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Prev-am (Sodium tetraborate) : dose 350 ml/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Pour en savoir plus :
+- Faux charbon (taches foliaires) du palmier : https://en.wikipedia.org/wiki/Graphiola_phoenicis
+
+Irrigation en mai à Kébili : besoin moyen d'environ 220.0 mm (2200 m³/ha), soit 7.1 mm par jour après la pluie.
+
+À savoir :
+- BIOBAC : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- POLYVERSUM : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- POLYVERSUM : autorisation provisoire de vente
+- Prev-am : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c014,datepalm__parlatoria_scale,datepalm,pest,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,29,"Diagnostic : Cochenille blanche du palmier dattier (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Cochenille blanche du palmier dattier : https://en.wikipedia.org/wiki/Parlatoria_blanchardi
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Kébili.
+
+Irrigation en mai à Kébili : besoin moyen d'environ 220.0 mm (2200 m³/ha), soit 7.1 mm par jour après la pluie."
+c015,datepalm__rachis_blight,datepalm,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,28,"Diagnostic : Pourriture du rachis (Diplodia) du palmier (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Lasiodiplodia theobromae est une espèce de champignons ascomycètes de la famille des Botryosphaeriaceae, à répartition cosmopolite.
+- Ce champignon phytopathogène attaque une vaste gamme d'hôtes végétaux chez lesquels il provoque des symptômes de pourriture et de dépérissement.
+- C'est, entre autres, un des agents causaux de la maladie de la pourriture noire de Java chez la patate douce.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Tozeur.
+
+Irrigation en mai à Tozeur : besoin moyen d'environ 224.2 mm (2242 m³/ha), soit 7.23 mm par jour après la pluie."
+c016,grape__black_rot,grape,disease,conseil,Hidrocobre 50 valles | Agrocuivre | BELKAP EXTRA,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,68,"Diagnostic : Black-rot de la vigne (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 1 Kg/hl ; délai avant récolte : 1 jours
+- Agrocuivre (Copper oxychloride) : dose 1 Kg/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- BELKAP EXTRA (Fosetyl + Cymoxanil + Folpet) : dose 300 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Méthodes de lutte Le black rot est actuellement[Quand ?] en pleine recrudescence pour plusieurs raisons, liées au changement des techniques culturales, telle que les vendanges mécaniques, l'enherbement de l'inter-rang, le broyage des sarments, ou la non-culture, ainsi que l’abandon de vignes et aux choix de produits anti-mildiou moins agressifs, non efficaces contre ce champignon.
+- Pour protéger les vignobles, il existe de nombreuses solutions.
+- Lutte chimique Toute lutte chimique se doit d’être précoce et préventive, et doit pouvoir protéger la vigne au moment de forte sensibilité.
+
+Irrigation en mai à Ben Arous : besoin moyen d'environ 99.7 mm (997 m³/ha), soit 3.22 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c017,grape__esca,grape,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,32,"Diagnostic : Esca de la vigne (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Outre leur toxicité intrinsèque, ces produits ont contribué à contaminer les terres cultivées en métaux lourds : arsenic, plomb.
+- Les cépages sensibles n'ont pas tardé à montrer des symptômes et les cépages dits tolérants ont suivi.
+- Certaines régions montrent des taux d'attaque alarmants.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Nabeul.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 104.2 mm (1042 m³/ha), soit 3.36 mm par jour après la pluie."
+c018,grape__leaf_blight,grape,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,19,"Diagnostic : Brûlure des feuilles de la vigne (Isariopsis) (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Brûlure des feuilles de la vigne (Isariopsis) : https://en.wikipedia.org/wiki/Pseudocercospora_vitis
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Nabeul.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 104.2 mm (1042 m³/ha), soit 3.36 mm par jour après la pluie."
+c019,olive__aculus_olearius,olive,pest,conseil,"MAGISTER | Orytis | Rufast 7,5 EW",,,,True,True,True,False,False,,3,3,0,False,,False,,,,,23,"Diagnostic : Phytopte (acarien ériophyide) de l'olivier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- MAGISTER (Fenazaquin) : dose 50cc/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Orytis (Acrinathrin) : dose 60 cc/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Rufast 7,5 EW (Acrinathrin) : dose 60 cc/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Irrigation en mai à Sousse : besoin moyen d'environ 101.1 mm (1011 m³/ha), soit 3.26 mm par jour après la pluie.
+
+À savoir :
+- MAGISTER : autorisation provisoire de vente
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c020,olive__knot_disease,olive,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,25,"Diagnostic : Tuberculose (galle) de l'olivier (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Quand les chancres apparaissent, il est trop tard.
+- Aucun produit curatif n'est efficace contre le chancre installé dans l'olivier.
+- Les galles résultent de la production par la bactérie d'acide indol-acétique.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Mahdia.
+
+Irrigation en mai à Mahdia : besoin moyen d'environ 98.0 mm (980 m³/ha), soit 3.16 mm par jour après la pluie."
+c021,olive__peacock_spot,olive,disease,conseil,Score 250 EC | TRIBASE -FLOW SC | DECIBEL MAX WG,,,,True,True,True,False,False,,3,3,0,False,,False,,Score 250 EC | TRIBASE -FLOW SC,,,18,"Diagnostic : Œil de paon de l'olivier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Score 250 EC (Difenoconazole) : dose 50cc/hl ; délai avant récolte : 30 jours
+- TRIBASE -FLOW SC (Tribasic copper sulphate) : dose 200 ml/hl ; délai avant récolte : 20 jours
+- DECIBEL MAX WG (Kresoxim-methyl + Difenoconazole) : dose 0.3 kg/ha (30g/hl) ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Pour en savoir plus :
+- Œil de paon de l'olivier : https://en.wikipedia.org/wiki/Venturia_oleaginea
+
+Irrigation en mai à Sousse : besoin moyen d'environ 101.1 mm (1011 m³/ha), soit 3.26 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c022,orange__citrus_greening,citrus,virus_vector,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,19,"Diagnostic : Huanglongbing (greening des agrumes) (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- La maladie du dragon jaune (黃龍病 Huánglóngbìng en chinois, HLB) ou verdissement des agrumes et plus rarement maladie des pousses jaunes est une maladie bactérienne mortelle des agrumes.
+- Elle est répandue en Asie, en Afrique, et désormais aussi en Amérique Tropicale et subtropicale.
+- L'agent pathogène bactérien est transmis par des insectes vecteurs.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Bizerte.
+
+Irrigation en mai à Bizerte : besoin moyen d'environ 56.1 mm (561 m³/ha), soit 1.81 mm par jour après la pluie."
+c023,peach__bacterial_spot,peach,disease,conseil,Hidrocobre 50 valles | Agrocuivre | COPSIP,,,,True,True,True,False,False,,2,3,0,False,,False,,,,,49,"Diagnostic : Maladie bactérienne des taches du pêcher (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 500 g/hl ; délai avant récolte : 1 jours
+- Agrocuivre (Copper oxychloride) : dose 500g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- COPSIP (Copper compounds) : dose 500 g/hl(COMM18/10/18) ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Xanthomonas arboricola est une espèce de protéobactéries de la famille des Xanthomonadaceae.
+- Cette espèce de bactéries phytopathogènes regroupe plusieurs pathovars responsables de diverses maladies bactériennes des plantes, en particulier chez les arbres, comme la maladie des taches bactériennes du pêcher, le chancre bactérien du peuplier ou la maladie des taches noires du noyer.
+
+Irrigation en mai à Sidi Bouzid : besoin moyen d'environ 154.0 mm (1540 m³/ha), soit 4.97 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c024,pepper__bacterial_spot,pepper,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,28,"Diagnostic : Gale bactérienne (Xanthomonas) (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Gale bactérienne (Xanthomonas) : https://en.wikipedia.org/wiki/Bacterial_leaf_spot_of_peppers_and_tomato
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Monastir.
+
+Irrigation en mai à Monastir : besoin moyen d'environ 152.4 mm (1524 m³/ha), soit 4.92 mm par jour après la pluie."
+c025,pomegranate__alternaria_spot,pomegranate,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,31,"Diagnostic : Alternariose du grenadier (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Alternaria alternata est une espèce de champignons phytopathogènes de la famille des Pleosporaceae.
+- C'est l'agent de la maladie des taches foliaires et d'autres maladies (souvent appelées « alternariose ») affectant de très nombreuses espèces végétales.
+- C'est un phytopathogène opportuniste provoquant divers symptômes, taches noires, pourriture, rouille, etc.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Gabès.
+
+Irrigation en mai à Gabès : besoin moyen d'environ 144.6 mm (1446 m³/ha), soit 4.66 mm par jour après la pluie."
+c026,pomegranate__anthracnose,pomegranate,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,35,"Diagnostic : Anthracnose (Colletotrichum) (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- L'anthracnose est le nom générique d'une série de maladies cryptogamiques causées par diverses espèces de champignons ascomycètes phytopathogènes appartenant à différents genres (Apiognomonia, Colletotrichum, Discula, Gloeosporium, Glomerella, Gnomonia, Pseudopeziza, etc.) affectant de nombreuses espèces de plantes cultivées : des arbres et arbustes fruitiers, cerisier, chêne, framboisier, groseillier, vigne, manguier, avocatier, des plantes potagères : maïs, fraisier, haricot, pois, tomate… ainsi que des arbres et arbustes d'ornement (rosier mais attention à ne pas confondre avec la maladie des taches noires).
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Kairouan.
+
+Irrigation en mai à Kairouan : besoin moyen d'environ 130.7 mm (1307 m³/ha), soit 4.22 mm par jour après la pluie."
+c027,pomegranate__bacterial_blight,pomegranate,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,24,"Diagnostic : Bactériose du grenadier (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Gabès.
+
+Irrigation en mai à Gabès : besoin moyen d'environ 144.6 mm (1446 m³/ha), soit 4.66 mm par jour après la pluie."
+c028,pomegranate__cercospora_spot,pomegranate,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,23,"Diagnostic : Cercosporiose du grenadier (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Kairouan.
+
+Irrigation en mai à Kairouan : besoin moyen d'environ 130.7 mm (1307 m³/ha), soit 4.22 mm par jour après la pluie."
+c029,potato__early_blight,potato,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,26,"Diagnostic : Alternariose (brûlure alternarienne) (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Des mesures de préventions consistent principalement à observer une rotation de manière que les cultures de Solanées respectent un intervalle de trois ans sur la même parcelle, et à veiller à une bonne aération des plantations (intervalle entre les rangs).
+- Il est également possible de sélectionner des cultivars résistants à cette maladie.
+- La maladie se manifeste par de nombreux symptômes à tous les stades de croissance de la plante.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Nabeul.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 89.7 mm (897 m³/ha), soit 2.89 mm par jour après la pluie."
+c030,potato__late_blight,potato,disease,conseil,Hidrocobre 50 valles | OMIX DUO 450 SC | Presidium SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,67,"Diagnostic : Mildiou de la tomate et de la pomme de terre (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 400 g/hl ; délai avant récolte : 1 jours
+- OMIX DUO 450 SC (Propamocarb + Cymoxanil) : dose 1.5 l/ha ; délai avant récolte : 14 jours
+- Presidium SC (Zoxamide + Dimethomorph) : dose 1 l/ha ; délai avant récolte : 7 jours
+
+Extraits des fiches :
+- Les premiers stades du mildiou passent facilement inaperçus, et toutes les plantes ne sont pas touchées en même temps.
+- Les premiers symptômes sont l'apparition de taches noires à l'extrémité des feuilles et sur les tiges.
+- Une moisissure blanche peut apparaître à la face inférieure des feuilles par temps humide et la plante entière peut rapidement s'affaisser.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 89.7 mm (897 m³/ha), soit 2.89 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c031,squash__powdery_mildew,squash,disease,conseil,Score 250 EC | Agrosoufre | Insuf,,,,True,True,True,False,False,,2,3,0,False,,False,,,,,42,"Diagnostic : Oïdium des cucurbitacées (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Score 250 EC (Difenoconazole) : dose 40 cc/hl (COMM 06/12/2012) ; délai avant récolte : 30 jours
+- Agrosoufre (Sulphur) : dose 250 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Insuf (Sulphur) : dose 250 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Podosphaera fusca est une espèce de champignons ascomycètes de la famille des Erysiphaceae.
+- Ce champignon phytopathogène est l'une des espèces responsable de l'oïdium des cucurbitacées.
+
+Irrigation en mai à Monastir : besoin moyen d'environ 136.3 mm (1363 m³/ha), soit 4.4 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c032,strawberry__leaf_scorch,strawberry,disease,conseil,Hidrocobre 50 valles | Agrocuivre | COPSIP,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,51,"Diagnostic : Brûlure des feuilles du fraisier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 400 g/hl ; délai avant récolte : 1 jours
+- Agrocuivre (Copper oxychloride) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- COPSIP (Copper compounds) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Diplocarpon est un genre de champignons ascomycètes de la famille des Dermateaceae.
+
+Irrigation en mai à Béja : besoin moyen d'environ 74.4 mm (744 m³/ha), soit 2.4 mm par jour après la pluie.
+
+À savoir :
+- Hidrocobre 50 valles : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- Agrocuivre : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- COPSIP : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c033,tomato__anthracnose,tomato,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,28,"Diagnostic : Anthracnose (Colletotrichum) (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- L'anthracnose est le nom générique d'une série de maladies cryptogamiques causées par diverses espèces de champignons ascomycètes phytopathogènes appartenant à différents genres (Apiognomonia, Colletotrichum, Discula, Gloeosporium, Glomerella, Gnomonia, Pseudopeziza, etc.) affectant de nombreuses espèces de plantes cultivées : des arbres et arbustes fruitiers, cerisier, chêne, framboisier, groseillier, vigne, manguier, avocatier, des plantes potagères : maïs, fraisier, haricot, pois, tomate… ainsi que des arbres et arbustes d'ornement (rosier mais attention à ne pas confondre avec la maladie des taches noires).
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Monastir.
+
+Irrigation en mai à Monastir : besoin moyen d'environ 168.5 mm (1685 m³/ha), soit 5.44 mm par jour après la pluie."
+c034,tomato__bacterial_spot,tomato,disease,conseil,Hidrocobre 50 valles | Agrocuivre | COPSIP,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,45,"Diagnostic : Gale bactérienne (Xanthomonas) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 400 g/hl ; délai avant récolte : 1 jours
+- Agrocuivre (Copper oxychloride) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- COPSIP (Copper compounds) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Pour en savoir plus :
+- Gale bactérienne (Xanthomonas) : https://en.wikipedia.org/wiki/Bacterial_leaf_spot_of_peppers_and_tomato
+
+Irrigation en mai à Kairouan : besoin moyen d'environ 195.3 mm (1953 m³/ha), soit 6.3 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c035,tomato__blossom_end_rot,tomato,physiological,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,18,"Diagnostic : Nécrose apicale (cul noir) de la tomate (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Nécrose apicale (cul noir) de la tomate : https://en.wikipedia.org/wiki/Calcium_deficiency_(plant)
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Nabeul.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie."
+c036,tomato__cracking,tomato,physiological,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,15,"Diagnostic : Éclatement des fruits de la tomate (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Sidi Bouzid.
+
+Irrigation en mai à Sidi Bouzid : besoin moyen d'environ 200.7 mm (2007 m³/ha), soit 6.47 mm par jour après la pluie."
+c037,tomato__early_blight,tomato,disease,conseil,Score 250 EC | Cuproxat | Miravis duo Sc,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,41,"Diagnostic : Alternariose (brûlure alternarienne) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Score 250 EC (Difenoconazole) : dose 0.5 l/ha ; délai avant récolte : 3 jours
+- Cuproxat (Tribasic copper sulphate) : dose 300 cc/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Miravis duo Sc (Pydiflumetofen + Difenoconazole) : dose 0.75 l/ha ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Des mesures de préventions consistent principalement à observer une rotation de manière que les cultures de Solanées respectent un intervalle de trois ans sur la même parcelle, et à veiller à une bonne aération des plantations (intervalle entre les rangs).
+- Il est également possible de sélectionner des cultivars résistants à cette maladie.
+- La maladie se manifeste par de nombreux symptômes à tous les stades de croissance de la plante.
+
+Irrigation en mai à Sidi Bouzid : besoin moyen d'environ 200.7 mm (2007 m³/ha), soit 6.47 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c038,tomato__fruitworm,tomato,pest,conseil,ALTACOR 35 WG | CYTHRINE 10 EC | Nomu-Protec,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,58,"Diagnostic : Noctuelle de la tomate (ver des fruits) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- ALTACOR 35 WG (Chlorantraniliprole) : dose 10 g/hl (100g/ha) ; délai avant récolte : 1 jours
+- CYTHRINE 10 EC (Cypermethrin) : dose 40 cc/hl ; délai avant récolte : 3 jours
+- Nomu-Protec (Metarhizium brunneum strain Ma 43 (formerly Metarhizium anisopliae var anisopliae)) : dose 300 g/ha ; délai avant récolte : 0 jours
+
+Extraits des fiches :
+- Introduite dans de nombreux pays, elle peut faire des ravages là où elle n'a pas de prédateurs en quantité suffisante.
+
+Irrigation en mai à Sidi Bouzid : besoin moyen d'environ 200.7 mm (2007 m³/ha), soit 6.47 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c039,tomato__late_blight,tomato,disease,conseil,CIMOXATE C WG | CUPERTINE SUPER WP | CYCLO MAX SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,99,"Diagnostic : Mildiou de la tomate et de la pomme de terre (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours
+- CUPERTINE SUPER WP (Copper compounds + Cymoxanil) : dose 400 g/hl ; délai avant récolte : 10 jours
+- CYCLO MAX SC (Metalaxyl-M + Copper hydroxide) : dose 300 cc/hl (03 l/ha) ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Les premiers stades du mildiou passent facilement inaperçus, et toutes les plantes ne sont pas touchées en même temps.
+- Les premiers symptômes sont l'apparition de taches noires à l'extrémité des feuilles et sur les tiges.
+- Une moisissure blanche peut apparaître à la face inférieure des feuilles par temps humide et la plante entière peut rapidement s'affaisser.
+
+Irrigation en mai à Sidi Bouzid : besoin moyen d'environ 200.7 mm (2007 m³/ha), soit 6.47 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c040,tomato__leaf_miner,tomato,pest,conseil,ALTACOR 35 WG | GENERAL SR/Changement Nom COMMercial | INDO SUPER SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,94,"Diagnostic : Mineuse de la tomate (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- ALTACOR 35 WG (Chlorantraniliprole) : dose 10 g/hl (100g/ha) ; délai avant récolte : 1 jours
+- GENERAL SR/Changement Nom COMMercial (Indoxacarb) : dose 50 ml/hl(0.5 l/ha) ; délai avant récolte : 5 jours
+- INDO SUPER SC (Indoxacarb) : dose 50 cc/hl ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- La Mineuse sud-américaine de la tomate (Tuta absoluta) est une espèce d'insectes de l'ordre des lépidoptères (papillons), de la famille des Gelechiidae.
+- Cycle biologique Les larves se nourrissent sur les plants de tomates, creusant des galeries dans les feuilles et les tiges, et consommant les bourgeons apicaux ainsi que les fruits verts et mûrs.
+- La tomate est la principale plante-hôte de cet insecte, mais Tuta absoluta peut aussi s'attaquer à d'autres plantes cultivées ou non de la famille des Solanaceae, dont la pomme de terre, l'aubergine, le pépino et le tabac.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c041,tomato__leaf_mold,tomato,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,23,"Diagnostic : Cladosporiose de la tomate (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Hansfordia pulvinata est un champignon mycoprasite de Fulvia fulva qui pourrait être utilisé en lutte biologique pour contrer le développement de la maladie.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Kairouan.
+
+Irrigation en mai à Kairouan : besoin moyen d'environ 195.3 mm (1953 m³/ha), soit 6.3 mm par jour après la pluie."
+c042,tomato__mold,tomato,disease,conseil,KABUTO | BIOBAC | ETHPYRI SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,52,"Diagnostic : Pourriture grise (Botrytis) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- KABUTO (Penthiopyrad) : dose 150 cc/hl (1.5 l/ha) ; délai avant récolte : 1 jours
+- BIOBAC (Bacillus subtilis strain IAB/BS03) : dose 150 g/hl soit 1.5 kg/ha ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- ETHPYRI SC (Pyrimethanil) : dose 125 ml/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- La pourriture grise est une maladie cryptogamique capable donc d'affecter une multitude de plantes sauvages et cultivées en plein champ ou en serre, partout dans le monde.
+- Cycle de vie sexué La téléomorphe, Botryotinia fuckeliana, est un champignon filamenteux, haploïde, hétérothallique, très rarement observé in natura (deux mentions sont citées : l'une en Suisse, l'autre en Nouvelle-Zélande).
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c043,tomato__mosaic_virus,tomato,virus,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,44,"Diagnostic : Virus de la mosaïque de la tomate (ToMV) (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Tobamovirus tomatotessellati, le virus de la mosaïque de la tomate ou ToMV (acronyme de Tomato mosaic virus), est un phytovirus pathogène, qui affecte principalement les cultures de tomate.
+- Il est classé dans le genre des Tobamovirus, et apparenté au virus de la mosaïque du tabac qui est l'espèce-type de ce genre.
+- C'est un virus cosmopolite, présent dans toutes les régions où la tomate est cultivée.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Nabeul.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie."
+c044,tomato__septoria_leaf_spot,tomato,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,41,"Diagnostic : Septoriose de la tomate (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Extraits des fiches :
+- Septoria lycopersici est une espèce de champignons ascomycètes phytopathogènes appartenant à la famille des Mycosphaerellaceae.
+- C'est l'agent de la septoriose de la tomate qui se manifeste par de petites taches circulaires, grises à la marge brun foncé.
+- Il infecte aussi la pomme de terre et l'aubergine, ainsi que des adventices telles que le datura et la morelle noire.
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Nabeul.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie."
+c045,tomato__spider_mites,tomato,pest,conseil,QUEEN PRO SC | QUEEN SC | REVINTY 5 EW,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,53,"Diagnostic : Tétranyque tisserand (araignée rouge) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- QUEEN PRO SC (Fenazaquin) : dose 50 cc/hl ; délai avant récolte : 3 jours
+- QUEEN SC (Fenazaquin) : dose 50 cc/hl ; délai avant récolte : 3 jours
+- REVINTY 5 EW (Abamectin (aka avermectin) + Spinosad) : dose 75 cc/hl ; délai avant récolte : 7 jours
+
+Extraits des fiches :
+- De plus, les descendants femelles consanguins ont un rendement reproducteur plus faible.
+- Les femelles de Tetranychus urticae semblent capables de reconnaître leur parenté et éviter la consanguinité par le choix du partenaire.
+- Après accouplement, les femelles hivernent en diapause.
+
+Irrigation en mai à Monastir : besoin moyen d'environ 168.5 mm (1685 m³/ha), soit 5.44 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c046,tomato__target_spot,tomato,disease,conseil,,,,,False,False,False,True,False,,0,0,0,False,,False,,,,,21,"Diagnostic : Corynesporiose (tache cible) (confiance 95 %).
+
+Aucun produit n'est homologué en Tunisie contre ce problème.
+
+Pour en savoir plus :
+- Corynesporiose (tache cible) : https://en.wikipedia.org/wiki/Corynespora_cassiicola
+
+Pour un examen sur place et des mesures adaptées à votre parcelle, contactez le CRDA de Monastir.
+
+Irrigation en mai à Monastir : besoin moyen d'environ 168.5 mm (1685 m³/ha), soit 5.44 mm par jour après la pluie."
+c047,tomato__yellow_leaf_curl_virus,tomato,virus_vector,conseil,BREAK ME SC SR/ Changement Nom COMMBreak thru | LYNO EC | MAGNUS SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,57,"Diagnostic : Maladie des feuilles jaunes en cuillère de la tomate (TYLCV) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- BREAK ME SC SR/ Changement Nom COMMBreak thru (lambda-Cyhalothrin) : dose 20 cc/hl ; délai avant récolte : 7 jours
+- LYNO EC (Pyriproxyfen) : dose 50 cc/hl ; délai avant récolte : 7 jours
+- MAGNUS SC (Spirotetramat) : dose 0.4 l/ha ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Les symptômes sont un jaunissement des feuilles, dont les folioles s'incurvent vers le haut (« en cuillère »), et une forte réduction de la croissance si l'infection est grave.
+- En l'absence de traitement curatif, la lutte repose sur la prévention et la limitation des infestations par l'aleurode du tabac.
+- Des recherches sont en cours pour mettre au point des variétés de tomates présentant une résistance au virus.
+
+Irrigation en mai à Monastir : besoin moyen d'environ 168.5 mm (1685 m³/ha), soit 5.44 mm par jour après la pluie.
+
+À savoir :
+- BREAK ME SC SR/ Changement Nom COMMBreak thru : vise l'insecte qui transmet le virus, pas le virus lui-même (aucun produit ne guérit une plante virosée)
+- LYNO EC : vise l'insecte qui transmet le virus, pas le virus lui-même (aucun produit ne guérit une plante virosée)
+- MAGNUS SC : vise l'insecte qui transmet le virus, pas le virus lui-même (aucun produit ne guérit une plante virosée)
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c048,wheat__leaf_rust,wheat,disease,conseil,Azox SC | CERATAVO ERA | Impact SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,65,"Diagnostic : Rouille brune du blé (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Azox SC (Azoxystrobin) : dose 0.8 l/ha ; délai avant récolte : 42 jours
+- CERATAVO ERA (Prothioconazole + Benzovindiflupyr) : dose 1 l/ha ; délai avant récolte : 35 jours
+- Impact SC (Flutriafol) : dose 1 L/300 à ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Méthodes de lutte Le choix de variétés résistante est importante pour prévenir cette maladie.
+- En fin d’attaque, les pustules deviennent noires (formation de téleutospores).
+- Les spores infectieuses sont transmises par le sol et disséminées par le vent, ce qui entraîne une répartition homogène de la maladie dans les parcelles.
+
+Irrigation en mai à Jendouba : besoin moyen d'environ 11.2 mm (112 m³/ha), soit 0.36 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c049,apple__scab,apple,disease,conseil,DELAN 500 SC | INSPIRE PLUS EW | Impact SC,,,,True,True,True,False,False,,3,3,0,False,,False,,DELAN 500 SC | INSPIRE PLUS EW,,,85,"Diagnostic : Tavelure du pommier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- DELAN 500 SC (Dithianon) : dose 0.5 l/ha ; délai avant récolte : 21 jours
+- INSPIRE PLUS EW (Difenoconazole + Cyprodinil) : dose 0.7 l/ha ; délai avant récolte : 14 jours
+- Impact SC (Flutriafol) : dose 25 ml/hl ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Venturia inaequalis est une espèce de champignons ascomycètes de la famille des Venturiaceae.
+- Il est responsable de la tavelure du pommier.
+
+Irrigation en mai à Kasserine : besoin moyen d'environ 136.5 mm (1365 m³/ha), soit 4.4 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c050,apple__scab,apple,disease,conseil,DELAN 500 SC | INSPIRE PLUS EW | Impact SC,,,,True,True,True,False,False,,3,3,0,False,,False,,DELAN 500 SC | INSPIRE PLUS EW,,,86,"Diagnostic : Tavelure du pommier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- DELAN 500 SC (Dithianon) : dose 0.5 l/ha ; délai avant récolte : 21 jours
+- INSPIRE PLUS EW (Difenoconazole + Cyprodinil) : dose 0.7 l/ha ; délai avant récolte : 14 jours
+- Impact SC (Flutriafol) : dose 25 ml/hl ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Venturia inaequalis est une espèce de champignons ascomycètes de la famille des Venturiaceae.
+- Il est responsable de la tavelure du pommier.
+
+Irrigation en mai à Sidi Bouzid : besoin moyen d'environ 163.3 mm (1633 m³/ha), soit 5.27 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c051,cherry__powdery_mildew,cherry,disease,conseil,Agrosoufre | Insuf | Kumulus DF,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,16,"Diagnostic : Oïdium du cerisier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Agrosoufre (Sulphur) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Insuf (Sulphur) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Kumulus DF (Sulphur) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Pour en savoir plus :
+- Oïdium du cerisier : https://en.wikipedia.org/wiki/Podosphaera_clandestina
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c052,citrus__black_spot,citrus,disease,conseil,Hidrocobre 50 valles,,,,True,True,True,False,False,,1,1,0,False,,False,,,,,29,"Diagnostic : Maladie des taches noires des agrumes (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 200 g/hl ; délai avant récolte : 1 jours
+
+Pour en savoir plus :
+- Maladie des taches noires des agrumes : https://en.wikipedia.org/wiki/Citrus_black_spot
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 75.1 mm (751 m³/ha), soit 2.42 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c053,datepalm__leaf_spots,datepalm,disease,conseil,BIOBAC | POLYVERSUM | Prev-am,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,44,"Diagnostic : Faux charbon (taches foliaires) du palmier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- BIOBAC (Bacillus subtilis strain IAB/BS03) : dose 150g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- POLYVERSUM (Pythium oligandrum strain M1) : dose 80g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Prev-am (Sodium tetraborate) : dose 350 ml/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Pour en savoir plus :
+- Faux charbon (taches foliaires) du palmier : https://en.wikipedia.org/wiki/Graphiola_phoenicis
+
+Irrigation en mai à Tozeur : besoin moyen d'environ 224.2 mm (2242 m³/ha), soit 7.23 mm par jour après la pluie.
+
+À savoir :
+- BIOBAC : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- POLYVERSUM : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- POLYVERSUM : autorisation provisoire de vente
+- Prev-am : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c054,grape__black_rot,grape,disease,conseil,Hidrocobre 50 valles | Agrocuivre | BELKAP EXTRA,,,,True,True,True,False,False,,3,3,0,False,,False,,,,BELKAP EXTRA,47,"Diagnostic : Black-rot de la vigne (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 1 Kg/hl ; délai avant récolte : 1 jours
+- Agrocuivre (Copper oxychloride) : dose 1 Kg/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- BELKAP EXTRA (Fosetyl + Cymoxanil + Folpet) : dose 300 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Méthodes de lutte Le black rot est actuellement[Quand ?] en pleine recrudescence pour plusieurs raisons, liées au changement des techniques culturales, telle que les vendanges mécaniques, l'enherbement de l'inter-rang, le broyage des sarments, ou la non-culture, ainsi que l’abandon de vignes et aux choix de produits anti-mildiou moins agressifs, non efficaces contre ce champignon.
+- Pour protéger les vignobles, il existe de nombreuses solutions.
+- Lutte chimique Toute lutte chimique se doit d’être précoce et préventive, et doit pouvoir protéger la vigne au moment de forte sensibilité.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 104.2 mm (1042 m³/ha), soit 3.36 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c055,grape__black_rot,grape,disease,conseil,Hidrocobre 50 valles | Agrocuivre | BELKAP EXTRA,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,57,"Diagnostic : Black-rot de la vigne (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 1 Kg/hl ; délai avant récolte : 1 jours
+- Agrocuivre (Copper oxychloride) : dose 1 Kg/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- BELKAP EXTRA (Fosetyl + Cymoxanil + Folpet) : dose 300 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Méthodes de lutte Le black rot est actuellement[Quand ?] en pleine recrudescence pour plusieurs raisons, liées au changement des techniques culturales, telle que les vendanges mécaniques, l'enherbement de l'inter-rang, le broyage des sarments, ou la non-culture, ainsi que l’abandon de vignes et aux choix de produits anti-mildiou moins agressifs, non efficaces contre ce champignon.
+- Pour protéger les vignobles, il existe de nombreuses solutions.
+- Lutte chimique Toute lutte chimique se doit d’être précoce et préventive, et doit pouvoir protéger la vigne au moment de forte sensibilité.
+
+Irrigation en mai à Manouba : besoin moyen d'environ 104.3 mm (1043 m³/ha), soit 3.36 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c056,olive__aculus_olearius,olive,pest,conseil,"MAGISTER | Orytis | Rufast 7,5 EW",,,,True,True,True,False,False,,3,3,0,False,,False,,,,,42,"Diagnostic : Phytopte (acarien ériophyide) de l'olivier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- MAGISTER (Fenazaquin) : dose 50cc/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Orytis (Acrinathrin) : dose 60 cc/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Rufast 7,5 EW (Acrinathrin) : dose 60 cc/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Irrigation en mai à Mahdia : besoin moyen d'environ 98.0 mm (980 m³/ha), soit 3.16 mm par jour après la pluie.
+
+À savoir :
+- MAGISTER : autorisation provisoire de vente
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c057,olive__peacock_spot,olive,disease,conseil,Score 250 EC | TRIBASE -FLOW SC | DECIBEL MAX WG,,,,True,True,True,False,False,,3,3,0,False,,False,,Score 250 EC | TRIBASE -FLOW SC,,,45,"Diagnostic : Œil de paon de l'olivier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Score 250 EC (Difenoconazole) : dose 50cc/hl ; délai avant récolte : 30 jours
+- TRIBASE -FLOW SC (Tribasic copper sulphate) : dose 200 ml/hl ; délai avant récolte : 20 jours
+- DECIBEL MAX WG (Kresoxim-methyl + Difenoconazole) : dose 0.3 kg/ha (30g/hl) ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Pour en savoir plus :
+- Œil de paon de l'olivier : https://en.wikipedia.org/wiki/Venturia_oleaginea
+
+Irrigation en mai à Mahdia : besoin moyen d'environ 98.0 mm (980 m³/ha), soit 3.16 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c058,peach__bacterial_spot,peach,disease,conseil,Hidrocobre 50 valles | Agrocuivre | COPSIP,,,,True,True,True,False,False,,2,3,0,False,,False,,,,,48,"Diagnostic : Maladie bactérienne des taches du pêcher (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 500 g/hl ; délai avant récolte : 1 jours
+- Agrocuivre (Copper oxychloride) : dose 500g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- COPSIP (Copper compounds) : dose 500 g/hl(COMM18/10/18) ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Xanthomonas arboricola est une espèce de protéobactéries de la famille des Xanthomonadaceae.
+- Cette espèce de bactéries phytopathogènes regroupe plusieurs pathovars responsables de diverses maladies bactériennes des plantes, en particulier chez les arbres, comme la maladie des taches bactériennes du pêcher, le chancre bactérien du peuplier ou la maladie des taches noires du noyer.
+
+Irrigation en mai à Kairouan : besoin moyen d'environ 149.2 mm (1492 m³/ha), soit 4.81 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c059,potato__late_blight,potato,disease,conseil,Hidrocobre 50 valles | OMIX DUO 450 SC | Presidium SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,OMIX DUO 450 SC | Presidium SC,86,"Diagnostic : Mildiou de la tomate et de la pomme de terre (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 400 g/hl ; délai avant récolte : 1 jours
+- OMIX DUO 450 SC (Propamocarb + Cymoxanil) : dose 1.5 l/ha ; délai avant récolte : 14 jours
+- Presidium SC (Zoxamide + Dimethomorph) : dose 1 l/ha ; délai avant récolte : 7 jours
+
+Extraits des fiches :
+- Les premiers stades du mildiou passent facilement inaperçus, et toutes les plantes ne sont pas touchées en même temps.
+- Les premiers symptômes sont l'apparition de taches noires à l'extrémité des feuilles et sur les tiges.
+- Une moisissure blanche peut apparaître à la face inférieure des feuilles par temps humide et la plante entière peut rapidement s'affaisser.
+
+Irrigation en mai à Jendouba : besoin moyen d'environ 82.6 mm (826 m³/ha), soit 2.66 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c060,potato__late_blight,potato,disease,conseil,Hidrocobre 50 valles | OMIX DUO 450 SC | Presidium SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,75,"Diagnostic : Mildiou de la tomate et de la pomme de terre (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 400 g/hl ; délai avant récolte : 1 jours
+- OMIX DUO 450 SC (Propamocarb + Cymoxanil) : dose 1.5 l/ha ; délai avant récolte : 14 jours
+- Presidium SC (Zoxamide + Dimethomorph) : dose 1 l/ha ; délai avant récolte : 7 jours
+
+Extraits des fiches :
+- Les premiers stades du mildiou passent facilement inaperçus, et toutes les plantes ne sont pas touchées en même temps.
+- Les premiers symptômes sont l'apparition de taches noires à l'extrémité des feuilles et sur les tiges.
+- Une moisissure blanche peut apparaître à la face inférieure des feuilles par temps humide et la plante entière peut rapidement s'affaisser.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 89.7 mm (897 m³/ha), soit 2.89 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c061,squash__powdery_mildew,squash,disease,conseil,Score 250 EC | Agrosoufre | Insuf,,,,True,True,True,False,False,,2,3,0,False,,False,,Score 250 EC,,,25,"Diagnostic : Oïdium des cucurbitacées (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Score 250 EC (Difenoconazole) : dose 40 cc/hl (COMM 06/12/2012) ; délai avant récolte : 30 jours
+- Agrosoufre (Sulphur) : dose 250 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Insuf (Sulphur) : dose 250 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Podosphaera fusca est une espèce de champignons ascomycètes de la famille des Erysiphaceae.
+- Ce champignon phytopathogène est l'une des espèces responsable de l'oïdium des cucurbitacées.
+
+Irrigation en mai à Kairouan : besoin moyen d'environ 158.4 mm (1584 m³/ha), soit 5.11 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c062,squash__powdery_mildew,squash,disease,conseil,Score 250 EC | Agrosoufre | Insuf,,,,True,True,True,False,False,,2,3,0,False,,False,,Score 250 EC,,,48,"Diagnostic : Oïdium des cucurbitacées (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Score 250 EC (Difenoconazole) : dose 40 cc/hl (COMM 06/12/2012) ; délai avant récolte : 30 jours
+- Agrosoufre (Sulphur) : dose 250 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Insuf (Sulphur) : dose 250 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Podosphaera fusca est une espèce de champignons ascomycètes de la famille des Erysiphaceae.
+- Ce champignon phytopathogène est l'une des espèces responsable de l'oïdium des cucurbitacées.
+
+Irrigation en mai à Kairouan : besoin moyen d'environ 158.4 mm (1584 m³/ha), soit 5.11 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c063,strawberry__leaf_scorch,strawberry,disease,conseil,Hidrocobre 50 valles | Agrocuivre | COPSIP,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,53,"Diagnostic : Brûlure des feuilles du fraisier (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 400 g/hl ; délai avant récolte : 1 jours
+- Agrocuivre (Copper oxychloride) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- COPSIP (Copper compounds) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Diplocarpon est un genre de champignons ascomycètes de la famille des Dermateaceae.
+
+Irrigation en mai à Béja : besoin moyen d'environ 74.4 mm (744 m³/ha), soit 2.4 mm par jour après la pluie.
+
+À savoir :
+- Hidrocobre 50 valles : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- Agrocuivre : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- COPSIP : cible proche (mêmes symptômes, autre agent) : seulement après confirmation du diagnostic
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c064,tomato__bacterial_spot,tomato,disease,conseil,Hidrocobre 50 valles | Agrocuivre | COPSIP,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,35,"Diagnostic : Gale bactérienne (Xanthomonas) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Hidrocobre 50 valles (Copper compounds) : dose 400 g/hl ; délai avant récolte : 1 jours
+- Agrocuivre (Copper oxychloride) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- COPSIP (Copper compounds) : dose 400 g/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Pour en savoir plus :
+- Gale bactérienne (Xanthomonas) : https://en.wikipedia.org/wiki/Bacterial_leaf_spot_of_peppers_and_tomato
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c065,tomato__early_blight,tomato,disease,conseil,Score 250 EC | Cuproxat | Miravis duo Sc,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,41,"Diagnostic : Alternariose (brûlure alternarienne) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Score 250 EC (Difenoconazole) : dose 0.5 l/ha ; délai avant récolte : 3 jours
+- Cuproxat (Tribasic copper sulphate) : dose 300 cc/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- Miravis duo Sc (Pydiflumetofen + Difenoconazole) : dose 0.75 l/ha ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- Des mesures de préventions consistent principalement à observer une rotation de manière que les cultures de Solanées respectent un intervalle de trois ans sur la même parcelle, et à veiller à une bonne aération des plantations (intervalle entre les rangs).
+- Il est également possible de sélectionner des cultivars résistants à cette maladie.
+- La maladie se manifeste par de nombreux symptômes à tous les stades de croissance de la plante.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c066,tomato__fruitworm,tomato,pest,conseil,ALTACOR 35 WG | CYTHRINE 10 EC | Nomu-Protec,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,38,"Diagnostic : Noctuelle de la tomate (ver des fruits) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- ALTACOR 35 WG (Chlorantraniliprole) : dose 10 g/hl (100g/ha) ; délai avant récolte : 1 jours
+- CYTHRINE 10 EC (Cypermethrin) : dose 40 cc/hl ; délai avant récolte : 3 jours
+- Nomu-Protec (Metarhizium brunneum strain Ma 43 (formerly Metarhizium anisopliae var anisopliae)) : dose 300 g/ha ; délai avant récolte : 0 jours
+
+Extraits des fiches :
+- Introduite dans de nombreux pays, elle peut faire des ravages là où elle n'a pas de prédateurs en quantité suffisante.
+
+Irrigation en mai à Monastir : besoin moyen d'environ 168.5 mm (1685 m³/ha), soit 5.44 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c067,tomato__fruitworm,tomato,pest,conseil,ALTACOR 35 WG | CYTHRINE 10 EC | Nomu-Protec,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,45,"Diagnostic : Noctuelle de la tomate (ver des fruits) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- ALTACOR 35 WG (Chlorantraniliprole) : dose 10 g/hl (100g/ha) ; délai avant récolte : 1 jours
+- CYTHRINE 10 EC (Cypermethrin) : dose 40 cc/hl ; délai avant récolte : 3 jours
+- Nomu-Protec (Metarhizium brunneum strain Ma 43 (formerly Metarhizium anisopliae var anisopliae)) : dose 300 g/ha ; délai avant récolte : 0 jours
+
+Extraits des fiches :
+- Introduite dans de nombreux pays, elle peut faire des ravages là où elle n'a pas de prédateurs en quantité suffisante.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c068,tomato__late_blight,tomato,disease,conseil,CIMOXATE C WG | CUPERTINE SUPER WP | CYCLO MAX SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,89,"Diagnostic : Mildiou de la tomate et de la pomme de terre (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours
+- CUPERTINE SUPER WP (Copper compounds + Cymoxanil) : dose 400 g/hl ; délai avant récolte : 10 jours
+- CYCLO MAX SC (Metalaxyl-M + Copper hydroxide) : dose 300 cc/hl (03 l/ha) ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Les premiers stades du mildiou passent facilement inaperçus, et toutes les plantes ne sont pas touchées en même temps.
+- Les premiers symptômes sont l'apparition de taches noires à l'extrémité des feuilles et sur les tiges.
+- Une moisissure blanche peut apparaître à la face inférieure des feuilles par temps humide et la plante entière peut rapidement s'affaisser.
+
+Irrigation en mai à Sidi Bouzid : besoin moyen d'environ 200.7 mm (2007 m³/ha), soit 6.47 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c069,tomato__late_blight,tomato,disease,conseil,CIMOXATE C WG | CUPERTINE SUPER WP | CYCLO MAX SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,71,"Diagnostic : Mildiou de la tomate et de la pomme de terre (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours
+- CUPERTINE SUPER WP (Copper compounds + Cymoxanil) : dose 400 g/hl ; délai avant récolte : 10 jours
+- CYCLO MAX SC (Metalaxyl-M + Copper hydroxide) : dose 300 cc/hl (03 l/ha) ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Les premiers stades du mildiou passent facilement inaperçus, et toutes les plantes ne sont pas touchées en même temps.
+- Les premiers symptômes sont l'apparition de taches noires à l'extrémité des feuilles et sur les tiges.
+- Une moisissure blanche peut apparaître à la face inférieure des feuilles par temps humide et la plante entière peut rapidement s'affaisser.
+
+Irrigation en mai à Monastir : besoin moyen d'environ 168.5 mm (1685 m³/ha), soit 5.44 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c070,tomato__leaf_miner,tomato,pest,conseil,ALTACOR 35 WG | GENERAL SR/Changement Nom COMMercial | INDO SUPER SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,ALTACOR 35 WG | GENERAL SR/Changement Nom COMMercial | INDO SUPER SC,81,"Diagnostic : Mineuse de la tomate (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- ALTACOR 35 WG (Chlorantraniliprole) : dose 10 g/hl (100g/ha) ; délai avant récolte : 1 jours
+- GENERAL SR/Changement Nom COMMercial (Indoxacarb) : dose 50 ml/hl(0.5 l/ha) ; délai avant récolte : 5 jours
+- INDO SUPER SC (Indoxacarb) : dose 50 cc/hl ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- La Mineuse sud-américaine de la tomate (Tuta absoluta) est une espèce d'insectes de l'ordre des lépidoptères (papillons), de la famille des Gelechiidae.
+- Cycle biologique Les larves se nourrissent sur les plants de tomates, creusant des galeries dans les feuilles et les tiges, et consommant les bourgeons apicaux ainsi que les fruits verts et mûrs.
+- La tomate est la principale plante-hôte de cet insecte, mais Tuta absoluta peut aussi s'attaquer à d'autres plantes cultivées ou non de la famille des Solanaceae, dont la pomme de terre, l'aubergine, le pépino et le tabac.
+
+Irrigation en mai à Kairouan : besoin moyen d'environ 195.3 mm (1953 m³/ha), soit 6.3 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c071,tomato__leaf_miner,tomato,pest,conseil,ALTACOR 35 WG | GENERAL SR/Changement Nom COMMercial | INDO SUPER SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,123,"Diagnostic : Mineuse de la tomate (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- ALTACOR 35 WG (Chlorantraniliprole) : dose 10 g/hl (100g/ha) ; délai avant récolte : 1 jours
+- GENERAL SR/Changement Nom COMMercial (Indoxacarb) : dose 50 ml/hl(0.5 l/ha) ; délai avant récolte : 5 jours
+- INDO SUPER SC (Indoxacarb) : dose 50 cc/hl ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- La Mineuse sud-américaine de la tomate (Tuta absoluta) est une espèce d'insectes de l'ordre des lépidoptères (papillons), de la famille des Gelechiidae.
+- Cycle biologique Les larves se nourrissent sur les plants de tomates, creusant des galeries dans les feuilles et les tiges, et consommant les bourgeons apicaux ainsi que les fruits verts et mûrs.
+- La tomate est la principale plante-hôte de cet insecte, mais Tuta absoluta peut aussi s'attaquer à d'autres plantes cultivées ou non de la famille des Solanaceae, dont la pomme de terre, l'aubergine, le pépino et le tabac.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c072,tomato__mold,tomato,disease,conseil,KABUTO | BIOBAC | ETHPYRI SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,54,"Diagnostic : Pourriture grise (Botrytis) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- KABUTO (Penthiopyrad) : dose 150 cc/hl (1.5 l/ha) ; délai avant récolte : 1 jours
+- BIOBAC (Bacillus subtilis strain IAB/BS03) : dose 150 g/hl soit 1.5 kg/ha ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+- ETHPYRI SC (Pyrimethanil) : dose 125 ml/hl ; délai avant récolte : non précisé dans la liste officielle, voir l'étiquette
+
+Extraits des fiches :
+- La pourriture grise est une maladie cryptogamique capable donc d'affecter une multitude de plantes sauvages et cultivées en plein champ ou en serre, partout dans le monde.
+- Cycle de vie sexué La téléomorphe, Botryotinia fuckeliana, est un champignon filamenteux, haploïde, hétérothallique, très rarement observé in natura (deux mentions sont citées : l'une en Suisse, l'autre en Nouvelle-Zélande).
+
+Irrigation en mai à Monastir : besoin moyen d'environ 168.5 mm (1685 m³/ha), soit 5.44 mm par jour après la pluie.
+
+À savoir :
+- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c073,tomato__spider_mites,tomato,pest,conseil,QUEEN PRO SC | QUEEN SC | REVINTY 5 EW,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,75,"Diagnostic : Tétranyque tisserand (araignée rouge) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- QUEEN PRO SC (Fenazaquin) : dose 50 cc/hl ; délai avant récolte : 3 jours
+- QUEEN SC (Fenazaquin) : dose 50 cc/hl ; délai avant récolte : 3 jours
+- REVINTY 5 EW (Abamectin (aka avermectin) + Spinosad) : dose 75 cc/hl ; délai avant récolte : 7 jours
+
+Extraits des fiches :
+- De plus, les descendants femelles consanguins ont un rendement reproducteur plus faible.
+- Les femelles de Tetranychus urticae semblent capables de reconnaître leur parenté et éviter la consanguinité par le choix du partenaire.
+- Après accouplement, les femelles hivernent en diapause.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c074,tomato__spider_mites,tomato,pest,conseil,QUEEN PRO SC | QUEEN SC | REVINTY 5 EW,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,66,"Diagnostic : Tétranyque tisserand (araignée rouge) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- QUEEN PRO SC (Fenazaquin) : dose 50 cc/hl ; délai avant récolte : 3 jours
+- QUEEN SC (Fenazaquin) : dose 50 cc/hl ; délai avant récolte : 3 jours
+- REVINTY 5 EW (Abamectin (aka avermectin) + Spinosad) : dose 75 cc/hl ; délai avant récolte : 7 jours
+
+Extraits des fiches :
+- De plus, les descendants femelles consanguins ont un rendement reproducteur plus faible.
+- Les femelles de Tetranychus urticae semblent capables de reconnaître leur parenté et éviter la consanguinité par le choix du partenaire.
+- Après accouplement, les femelles hivernent en diapause.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c075,tomato__yellow_leaf_curl_virus,tomato,virus_vector,conseil,BREAK ME SC SR/ Changement Nom COMMBreak thru | LYNO EC | MAGNUS SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,BREAK ME SC SR/ Changement Nom COMMBreak thru | LYNO EC | MAGNUS SC,86,"Diagnostic : Maladie des feuilles jaunes en cuillère de la tomate (TYLCV) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- BREAK ME SC SR/ Changement Nom COMMBreak thru (lambda-Cyhalothrin) : dose 20 cc/hl ; délai avant récolte : 7 jours
+- LYNO EC (Pyriproxyfen) : dose 50 cc/hl ; délai avant récolte : 7 jours
+- MAGNUS SC (Spirotetramat) : dose 0.4 l/ha ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Les symptômes sont un jaunissement des feuilles, dont les folioles s'incurvent vers le haut (« en cuillère »), et une forte réduction de la croissance si l'infection est grave.
+- En l'absence de traitement curatif, la lutte repose sur la prévention et la limitation des infestations par l'aleurode du tabac.
+- Des recherches sont en cours pour mettre au point des variétés de tomates présentant une résistance au virus.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+À savoir :
+- BREAK ME SC SR/ Changement Nom COMMBreak thru : vise l'insecte qui transmet le virus, pas le virus lui-même (aucun produit ne guérit une plante virosée)
+- LYNO EC : vise l'insecte qui transmet le virus, pas le virus lui-même (aucun produit ne guérit une plante virosée)
+- MAGNUS SC : vise l'insecte qui transmet le virus, pas le virus lui-même (aucun produit ne guérit une plante virosée)
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c076,tomato__yellow_leaf_curl_virus,tomato,virus_vector,conseil,BREAK ME SC SR/ Changement Nom COMMBreak thru | LYNO EC | MAGNUS SC,,,,True,True,True,False,False,,3,3,0,False,,False,,,,,76,"Diagnostic : Maladie des feuilles jaunes en cuillère de la tomate (TYLCV) (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- BREAK ME SC SR/ Changement Nom COMMBreak thru (lambda-Cyhalothrin) : dose 20 cc/hl ; délai avant récolte : 7 jours
+- LYNO EC (Pyriproxyfen) : dose 50 cc/hl ; délai avant récolte : 7 jours
+- MAGNUS SC (Spirotetramat) : dose 0.4 l/ha ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Les symptômes sont un jaunissement des feuilles, dont les folioles s'incurvent vers le haut (« en cuillère »), et une forte réduction de la croissance si l'infection est grave.
+- En l'absence de traitement curatif, la lutte repose sur la prévention et la limitation des infestations par l'aleurode du tabac.
+- Des recherches sont en cours pour mettre au point des variétés de tomates présentant une résistance au virus.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+À savoir :
+- BREAK ME SC SR/ Changement Nom COMMBreak thru : vise l'insecte qui transmet le virus, pas le virus lui-même (aucun produit ne guérit une plante virosée)
+- LYNO EC : vise l'insecte qui transmet le virus, pas le virus lui-même (aucun produit ne guérit une plante virosée)
+- MAGNUS SC : vise l'insecte qui transmet le virus, pas le virus lui-même (aucun produit ne guérit une plante virosée)
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c077,wheat__leaf_rust,wheat,disease,conseil,Azox SC | CERATAVO ERA | Impact SC,,,,True,True,True,False,False,,3,3,0,False,,False,,Azox SC | CERATAVO ERA,,,81,"Diagnostic : Rouille brune du blé (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Azox SC (Azoxystrobin) : dose 0.8 l/ha ; délai avant récolte : 42 jours
+- CERATAVO ERA (Prothioconazole + Benzovindiflupyr) : dose 1 l/ha ; délai avant récolte : 35 jours
+- Impact SC (Flutriafol) : dose 1 L/300 à ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Méthodes de lutte Le choix de variétés résistante est importante pour prévenir cette maladie.
+- En fin d’attaque, les pustules deviennent noires (formation de téleutospores).
+- Les spores infectieuses sont transmises par le sol et disséminées par le vent, ce qui entraîne une répartition homogène de la maladie dans les parcelles.
+
+Irrigation en mai à Siliana : besoin moyen d'environ 8.8 mm (88 m³/ha), soit 0.28 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c078,wheat__leaf_rust,wheat,disease,conseil,Azox SC | CERATAVO ERA | Impact SC,,,,True,True,True,False,False,,3,3,0,False,,False,,Azox SC | CERATAVO ERA,,,61,"Diagnostic : Rouille brune du blé (confiance 95 %).
+
+Produits homologués en Tunisie pour ce cas :
+- Azox SC (Azoxystrobin) : dose 0.8 l/ha ; délai avant récolte : 42 jours
+- CERATAVO ERA (Prothioconazole + Benzovindiflupyr) : dose 1 l/ha ; délai avant récolte : 35 jours
+- Impact SC (Flutriafol) : dose 1 L/300 à ; délai avant récolte : 3 jours
+
+Extraits des fiches :
+- Méthodes de lutte Le choix de variétés résistante est importante pour prévenir cette maladie.
+- En fin d’attaque, les pustules deviennent noires (formation de téleutospores).
+- Les spores infectieuses sont transmises par le sol et disséminées par le vent, ce qui entraîne une répartition homogène de la maladie dans les parcelles.
+
+Irrigation en mai à Béja : besoin moyen d'environ 5.1 mm (51 m³/ha), soit 0.16 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c079,Fe_deficiency,pepper,deficiency,conseil,,Sequestrene 138 FE | VERDEX Fe | FERROSTRENE K PREMIUM,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,18,"Diagnostic : carence en fer (Fe) (confiance 95 %).
+
+Engrais correcteurs disponibles :
+- Sequestrene 138 FE (Fe 6.0 %)
+- VERDEX Fe (Fe 6.0 %)
+- FERROSTRENE K PREMIUM (Fe 6.0 %)
+
+Irrigation en mai à Tozeur : besoin moyen d'environ 248.3 mm (2483 m³/ha), soit 8.01 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c080,Fe_deficiency,citrus,deficiency,conseil,,KELKAT MIX-EDTA | Sequestrene 138 FE | VERDEX Fe,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,17,"Diagnostic : carence en fer (Fe) (confiance 95 %).
+
+Engrais correcteurs disponibles :
+- KELKAT MIX-EDTA (Fe 8.1 %)
+- Sequestrene 138 FE (Fe 6.0 %)
+- VERDEX Fe (Fe 6.0 %)
+
+Irrigation en mai à Jendouba : besoin moyen d'environ 66.7 mm (667 m³/ha), soit 2.15 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c081,Fe_deficiency,olive,deficiency,conseil,,KELKAT MIX-EDTA | Sequestrene 138 FE | VERDEX Fe,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,31,"Il pourrait s'agir de : carence en fer (Fe) (confiance 95 %). C'est une hypothèse à confirmer : cette carence a été peu observée sur votre culture.
+
+Pour confirmer :
+- Les symptômes sont-ils surtout sur les jeunes feuilles ?
+- Voyez-vous : jaunissement net entre les nervures des jeunes feuilles, nervures bien vertes ; feuilles presque blanches si sévère ?
+
+Engrais correcteurs disponibles :
+- KELKAT MIX-EDTA (Fe 8.1 %)
+- Sequestrene 138 FE (Fe 6.0 %)
+- VERDEX Fe (Fe 6.0 %)
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 82.4 mm (824 m³/ha), soit 2.66 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c082,N_deficiency,tomato,deficiency,conseil,,CODIPLUS COMPLEX | Soluble Fruitier | SOLUCAT 20-20-20,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,22,"Diagnostic : carence en azote (N) (confiance 95 %).
+
+Engrais correcteurs disponibles :
+- CODIPLUS COMPLEX (N 24.0 %)
+- Soluble Fruitier (N 20.0 %)
+- SOLUCAT 20-20-20 (N 20.0 %)
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c083,N_deficiency,wheat,deficiency,conseil,,CODIPLUS COMPLEX | Soluble Fruitier | SOLUCAT 20-20-20,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,18,"Diagnostic : carence en azote (N) (confiance 95 %).
+
+Engrais correcteurs disponibles :
+- CODIPLUS COMPLEX (N 24.0 %)
+- Soluble Fruitier (N 20.0 %)
+- SOLUCAT 20-20-20 (N 20.0 %)
+
+Irrigation en mai à Jendouba : besoin moyen d'environ 11.2 mm (112 m³/ha), soit 0.36 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c084,K_deficiency,tomato,deficiency,conseil,,KELIK POTASSIUM | SOLUCAT 10-10-40 | PLANTIFOL 12-6-36,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,15,"Diagnostic : carence en potassium (K) (confiance 95 %).
+
+Engrais correcteurs disponibles :
+- KELIK POTASSIUM (K2O 50.0 %)
+- SOLUCAT 10-10-40 (K2O 40.0 %)
+- PLANTIFOL 12-6-36 (K2O 36.0 %)
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c085,K_deficiency,potato,deficiency,conseil,,KELIK POTASSIUM | SOLUCAT 10-10-40 | PLANTIFOL 12-6-36,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,40,"Il pourrait s'agir de : carence en potassium (K) (confiance 95 %). C'est une hypothèse à confirmer : cette carence a été peu observée sur votre culture.
+
+Pour confirmer :
+- Les symptômes sont-ils surtout sur les vieilles feuilles ?
+- Voyez-vous : bords des feuilles qui jaunissent puis brûlent (nécrose marginale) ?
+
+Engrais correcteurs disponibles :
+- KELIK POTASSIUM (K2O 50.0 %)
+- SOLUCAT 10-10-40 (K2O 40.0 %)
+- PLANTIFOL 12-6-36 (K2O 36.0 %)
+
+Irrigation en mai à Sfax : besoin moyen d'environ 126.0 mm (1260 m³/ha), soit 4.06 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c086,Mg_deficiency,grape,deficiency,conseil,,MICROCAT MAGNÉSIUM | Ferti Fumure | CalciMag Plus,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,15,"Il pourrait s'agir de : carence en magnésium (Mg) (confiance 95 %). C'est une hypothèse à confirmer : cette carence a été peu observée sur votre culture.
+
+Pour confirmer :
+- Les symptômes sont-ils surtout sur les vieilles feuilles ?
+- Voyez-vous : jaunissement entre les nervures, nervures restant vertes ?
+
+Engrais correcteurs disponibles :
+- MICROCAT MAGNÉSIUM (MgO 10.0 %)
+- Ferti Fumure (MgO 9.0 %)
+- CalciMag Plus (MgO 7.6 %)
+
+Irrigation en mai à Jendouba : besoin moyen d'environ 98.5 mm (985 m³/ha), soit 3.18 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c087,P_deficiency,tomato,deficiency,conseil,,SOLUCAT 10-52-10 | PLANTIFOL 10-50-10 | Solucat 11-40-11,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,12,"Il pourrait s'agir de : carence en phosphore (P) (confiance 95 %). C'est une hypothèse à confirmer : cette carence a été peu observée sur votre culture.
+
+Pour confirmer :
+- Les symptômes sont-ils surtout sur les vieilles feuilles ?
+- Voyez-vous : feuilles vert foncé à reflets violacés, plante chétive, retard de floraison ?
+
+Engrais correcteurs disponibles :
+- SOLUCAT 10-52-10 (P2O5 52.0 %)
+- PLANTIFOL 10-50-10 (P2O5 50.0 %)
+- Solucat 11-40-11 (P2O5 40.0 %)
+
+Irrigation en mai à Jendouba : besoin moyen d'environ 146.1 mm (1461 m³/ha), soit 4.71 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c088,Ca_deficiency,tomato,deficiency,conseil,,Archer Eclipse | ALCAPLUS | BLANCAL PLUS,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,31,"Il pourrait s'agir de : carence en calcium (Ca) (confiance 95 %). C'est une hypothèse à confirmer : cette carence a été peu observée sur votre culture.
+
+Pour confirmer :
+- Les symptômes sont-ils surtout sur les jeunes feuilles et fruits ?
+- Voyez-vous : jeunes feuilles déformées, brûlure des pointes ; cul noir des fruits ?
+
+Engrais correcteurs disponibles :
+- Archer Eclipse (CaO 33.0 %)
+- ALCAPLUS (CaO 33.0 %)
+- BLANCAL PLUS (CaO 33.0 %)
+
+Irrigation en mai à Jendouba : besoin moyen d'environ 146.1 mm (1461 m³/ha), soit 4.71 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c089,Zn_deficiency,pepper,deficiency,conseil,,CODIPLUS ZN MN | NUTRICAT Zn-Mn 28-17 | NUTRICAT Zn-Mn 16-16,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,20,"Diagnostic : carence en zinc (Zn) (confiance 95 %).
+
+Engrais correcteurs disponibles :
+- CODIPLUS ZN MN (Zn 28.0 %)
+- NUTRICAT Zn-Mn 28-17 (Zn 28.0 %)
+- NUTRICAT Zn-Mn 16-16 (Zn 16.0 %)
+
+Irrigation en mai à Sfax : besoin moyen d'environ 180.1 mm (1801 m³/ha), soit 5.81 mm par jour après la pluie.
+
+À savoir :
+- sur le poivron, une plante saine peut être prise pour une carence en zinc : répondez aux questions avant d'acheter un engrais
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c090,Mn_deficiency,datepalm,deficiency,conseil,,CODIPLUS ZN MN | NUTRICAT Zn-Mn 28-17 | NUTRICAT Zn-Mn 16-16,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,24,"Diagnostic : carence en manganèse (Mn) (confiance 95 %).
+
+Engrais correcteurs disponibles :
+- CODIPLUS ZN MN (Mn 17.0 %)
+- NUTRICAT Zn-Mn 28-17 (Mn 17.0 %)
+- NUTRICAT Zn-Mn 16-16 (Mn 16.0 %)
+
+Irrigation en mai à Sidi Bouzid : besoin moyen d'environ 163.3 mm (1633 m³/ha), soit 5.27 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c091,B_deficiency,olive,deficiency,conseil,,KELKAT BORE | Kelik Bore | CODIPLUS B,,,True,False,False,False,False,True,0,0,0,False,,False,,,,,15,"Il pourrait s'agir de : carence en bore (B) (confiance 95 %). C'est une hypothèse à confirmer : cette carence a été peu observée sur votre culture.
+
+Pour confirmer :
+- Les symptômes sont-ils surtout sur les bourgeons et jeunes feuilles ?
+- Voyez-vous : pointes de croissance déformées ou mortes, feuilles épaisses et cassantes ; fruits déformés ou fendus ?
+
+Engrais correcteurs disponibles :
+- KELKAT BORE (B 21.0 %)
+- Kelik Bore (B 11.0 %)
+- CODIPLUS B (B 10.0 %)
+
+Irrigation en mai à Béja : besoin moyen d'environ 66.7 mm (667 m³/ha), soit 2.15 mm par jour après la pluie.
+
+Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+c092,tomato__healthy,tomato,healthy,conseil,,,,,False,False,False,False,False,,0,0,0,False,,False,,,,,9,"Votre plante semble saine (plante saine (tomate), confiance 95 %). Aucun traitement n'est nécessaire.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie."
+c093,olive__healthy,olive,healthy,conseil,,,,,False,False,False,False,False,,0,0,0,False,,False,,,,,8,"Votre plante semble saine (plante saine (olivier), confiance 95 %). Aucun traitement n'est nécessaire.
+
+Irrigation en mai à Sfax : besoin moyen d'environ 117.0 mm (1170 m³/ha), soit 3.77 mm par jour après la pluie."
+c094,citrus__healthy,citrus,healthy,conseil,,,,,False,False,False,False,False,,0,0,0,False,,False,,,,,8,"Votre plante semble saine (plante saine (agrumes), confiance 95 %). Aucun traitement n'est nécessaire.
+
+Irrigation en mai à Nabeul : besoin moyen d'environ 75.1 mm (751 m³/ha), soit 2.42 mm par jour après la pluie."

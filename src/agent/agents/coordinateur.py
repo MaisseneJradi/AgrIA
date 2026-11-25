@@ -43,7 +43,9 @@ def rediger(d):
     warnings = list(tr.get("avertissements", []))
     if eng.get("avertissement_modele"):
         warnings.append(eng["avertissement_modele"])
-    if any(p["dar_jours"] is None for p in produits):
+    ctx = d.get("contexte") or {}
+    # an unknown DAR with a known harvest date: a sentence with the number, written by redaction.py ("verifier_dar")
+    if any(p["dar_jours"] is None for p in produits) and ctx.get("days_to_harvest") is None:
         warnings.append("délai avant récolte non précisé dans la liste officielle pour certains produits : "
                         "voir l'étiquette")
     if issue == "question":
@@ -53,18 +55,29 @@ def rediger(d):
     elif issue == "autre_photo":
         facts = {"issue": "autre_photo", "sans_photo": bool(diag.get("sans_photo"))}
     else:
+        # blocked for chemical control outside the registered products: the quoted passages go, the facts stay
+        conseils = [] if "lutte chimique" in blocked else tr.get("conseils", [])
         facts = {"issue": issue, "diagnostic": diag, "produits": produits, "aucun_produit": tr.get("aucun_produit"),
-                 "conseils": tr.get("conseils", []), "engrais": engrais, "hypothese": hypothese,
+                 "conseils": conseils, "prevention": tr.get("prevention", []), "besoin": eng.get("besoin"),
+                 "orientation_crda": tr.get("orientation_crda", False), "engrais": engrais, "hypothese": hypothese,
                  "questions": eng.get("questions", []) if hypothese else [], "eau": ag.get("eau"),
                  "avertissements": warnings, "gouvernorat": d.get("gouvernorat_officiel"),
-                 "sources": list({s["lien"]: s for s in d.get("sources", [])}.values())}
+                 "sources": list({(s["lien"], s.get("section")): s for s in d.get("sources", [])}.values()),
+                 "contexte": ctx, "ecartes": tr.get("ecartes", []), "aucun_adapte": tr.get("aucun_adapte", False),
+                 "n_candidats": tr.get("n_candidats", 0), "questions_contexte": tr.get("questions_contexte", []),
+                 "dernier_groupe": tr.get("dernier_groupe", []), "rotation_impossible": tr.get("rotation_impossible"),
+                 "rotation_conseil": tr.get("rotation_conseil"),
+                 "meteo": tr.get("meteo") if produits else None, "securite": bool(produits),
+                 "verifier_dar": ctx.get("days_to_harvest")
+                 if any(p["dar_jours"] is None for p in produits) else None}
     text = compose(facts, "fr")
     draft = {"task": diag.get("task"), "classe": diag.get("classe"), "culture": d.get("culture_code"),
              "fiable": diag.get("fiable", False), "hypothese": hypothese,
              "produits": [{"nom": p["nom"], "dose": p["dose"], "dar_jours": p["dar_jours"]} for p in produits]
              if issue == "conseil" else [],
              "engrais": [{"nom": e["nom"]} for e in engrais] if issue == "conseil" else [],
-             "texte": text, "avertissements": warnings if issue == "conseil" else [], "faits": facts}
+             "texte": text, "avertissements": warnings if issue == "conseil" else [], "faits": facts,
+             "contexte": ctx, "meteo": facts.get("meteo")}
     n = d.get("essais", 0)
     action = "réponse rédigée" if n == 0 else f"réponse réécrite (essai {n + 1}) sans : {blocked[:120]}"
     return {"brouillon": draft, "trace": step("Coordinateur", action, t0)}
@@ -107,6 +120,9 @@ def finaliser(d):
         "culture": {"code": d.get("culture_code"), **(d.get("culture_info") or {})} if d.get("photo") else None,
         "produits": b["produits"], "engrais": b["engrais"], "avertissements": b.get("avertissements", []),
         "questions": d.get("questions", []) if d.get("issue") == "question" else [],
-        "sources": list({s["lien"]: s for s in d.get("sources", [])}.values()), "verification": d.get("verification"),
+        "sources": list({(s["lien"], s.get("section")): s for s in d.get("sources", [])}.values()), "verification": d.get("verification"),
+        # context used, and the context fields the app should ask for (the farmer answers, then sends again)
+        "contexte": d.get("contexte") or {},
+        "questions_contexte": (b.get("faits") or {}).get("questions_contexte", []) if d.get("issue") == "conseil" else [],
     }
     return {"reponse": reponse, "trace": step("Coordinateur", f"réponse envoyée ({reponse['issue']})", t0)}

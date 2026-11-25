@@ -9,6 +9,7 @@
       "produits": [{"nom": "CIMOXATE C WG", "dose": "3 kg/ha (300 g/hl)", "dar_jours": 3}],
       "engrais": [{"nom": "Sequestrene 138 FE"}],
       "texte": "the text shown to the farmer",
+      "contexte": {"days_to_harvest": 7, "market": "export", "organic": "n"},   # optional
   })
   -> {"valide": False, "raisons": [...blocking...], "avertissements": [...to mention...], "produits_verifies": [...]}
 
@@ -21,15 +22,56 @@ Blocking rules
   6. a deficiency on a crop never seen for it in training, not presented as a hypothesis (H2)
   7. a fertilizer that is not in the catalogue of that deficiency
   8. a product whose registered dose is not written, as such, on the same line as the product in the text
+  9. a substance or a word of chemical control (fongicide, cuivre, azoxystrobine, spray...) outside the lines of the
+     registered products and fertilizers of the answer: advice and quoted sheets never carry a treatment (phyto step 2)
+  10. "contexte".days_to_harvest known: a product whose DAR (shown, else every known DAR of its uses) is longer
+  11. "contexte".market = export: a product with a substance not approved, or of unknown status, in the EU
+  12. "contexte".organic = y: a product with a substance not allowed in organic farming (bio_ue)
+  (rules 10-12, phyto step 3: the context filters of ranking.py, checked again on the final answer)
+  13. "contexte".last_treatment_group known: a product sharing a FRAC / IRAC group with it (low-risk groups M, BM, P,
+      U, UN left out) while another registered product of a known, different group fits the case (phyto step 4)
+  14. a practical dose ("Dose pratique : 48 g pour un pulvérisateur de 16 L ; 1,5 kg pour vos 0,5 ha") whose
+      quantities differ from the official dose converted by dose_calc, written for a dose that cannot be converted,
+      without the sprayer volume or the area it is for, or written outside the lines of a product (phyto step 5)
+  15. a product whose WHO hazard class is known (validated docs/substance_hazard.csv): class not written under it, or
+      a different class written
+  16. a product highly toxic to bees (validated docs/bee_hazard.csv) without its bee warning (no application during
+      flowering)
+  17. a pesticide without the line of protective equipment
+  18. a rain (24 h) or wind (> 15 km/h, 12 h) warning of the forecast ("meteo" of the answer) not written, or written
+      with another number (rules 15-18: phyto step 6)
+  19. an answer about registered products (or saying none fits) without the date of the official list loaded
+      ("liste DGSVCIA du 22/05/2024"), or with another date (phyto step 7)
+  22-26 (phyto step 10, shop_rules): unknown shop address; shop offer without a validated mapping to the advised
+      product or need; offer of another composition; dose on a shop line; manufacturer's fertilizer dose not passing
+      its validated range
+  27. a cited sheet / section / link that is not a row of the table fiche_sections (phyto step 11)
+  28. the address, the offer or the fertilizer of a shop product removed from the site (stock_status "retire":
+      refresh_shops.py, phyto step 12)
+  21. a shop product claiming a protection effect without a registered product of its name
+      (docs/shop_unapproved_claims.csv, unless the reviewer marks the row "rejected"), named in the text or advised,
+      as a treatment or as a fertilizer (phyto step 8; rule 1 also knows the names of both shops' products)
+  20. an MRL written in the text that differs from its table (EU for an export market, Codex for a local one;
+      phyto step 7)
 Warnings (the answer must mention them): restriction, provisional authorisation, relation vecteur or proche,
 DAR not given by the list, model confusions of fertilizers.py.
 """
+import csv
 import re
 from functools import lru_cache
 
-from common import fold, query
+from common import ROOT, fold, query
+import ranking
+import shop
+from dose_calc import TANK_L, area_text, practical_dose
+from fertiliser_dose import label_dose
+from dose_calc import check as check_dose
 from fertilizers import get_fertilizers
-from treatments import get_treatments
+from hazard import bee_toxic, who_class
+from lexicon import crop_code
+from mrl import applicable_mrl
+from mrl import check_line as check_mrl_line
+from treatments import LIST_DATE, get_treatments
 
 
 def _squash(text):
@@ -41,6 +83,7 @@ def _known_products():
     """All pesticide names known (Tunisian list + agrishop shop), as (folded name, display name, pattern)."""
     names = {r["nom_commercial"] for r in query("SELECT DISTINCT nom_commercial FROM pesticides_produits")}
     names |= {r["nom"] for r in query("SELECT DISTINCT nom FROM pesticides_agrishop")}
+    names |= set(_shop_names())  # phyto step 8: every product of both shops (not seeds, not equipment)
     out = []
     for n in sorted({str(x).strip() for x in names if x and str(x) != "nan"}, key=len, reverse=True):
         base = re.sub(r"\s+(sc|ec|wg|wp|sl|ew|od|se|cs|fs|wdg|sg|sp|gr|me|ul|dc)$", "", n.strip(), flags=re.I)
@@ -54,6 +97,209 @@ def _known_products():
     return out
 
 
+# words of chemical control, in French and English (the sheets are in both languages)
+CONTROL_WORDS = r"fongicides?|fungicides?|insecticides?|acaricides?|bactericides?|nematicides?|herbicides?|pesticides?|" \
+                r"bouillies?|sprays?|sprayed|spraying|soufre|sulfur|sulphur|streptomycine?|antibiotiques?|" \
+                r"traite[rz]|pulveris(?:ez|er|ation|ations)"  # 'il faut traiter...': a treatment without a product
+# tokens of the substance table that are not substances (organisms, salts, nutrients, generic chemistry words)
+NOT_CHEMICAL = {"acetate", "acetates", "adjuvant", "alkylphenolexy", "aluminium", "ammonium", "appliquee",
+                "armigera", "armigeranucleopolyhe", "benzoate", "butylglycol", "cannelle", "capsicum", "chlorure",
+                "cinnamomum", "compounds", "derivves", "diethyl", "diethyle", "dodecatrienyl", "ectomyeloisceratoniae",
+                "essence", "essentielle", "ethylene", "ethylhexyl", "extrai", "extrait", "extract", "formate",
+                "formerly", "garlic", "garlicextract", "glutinosa", "helicoverpa", "hydrochloride", "hydrogen",
+                "hydrogene", "hydrolysat", "hydrolysed", "hydrolysees", "hydroxide", "hydroxyde", "lepidopteran",
+                "littoralis", "littoralisnucleopolyhed", "magnesium", "margosa", "melaleuca", "melaleucaalternifolia",
+                "alternifolia", "methyle", "methylheptyl", "minerale", "natural", "orange", "oxychloride",
+                "oxychlorure", "paraffinique", "phosphide", "phosphure", "phytoprotecteur", "plante", "potassium",
+                "proteines", "proteins", "sodium", "sulfate", "sulphate", "nonanol", "nonanone", "lambada",
+                "isothiocyanate", "acides", "active", "dattes", "drovirus", "rovirus", "pyrale", "pythium", "sexuelle",
+                "souche", "souches", "spores", "straight", "strain", "strains", "spodoptera", "vegetaux", "verticilium",
+                "unsaturated", "tribasic", "tribasique", "tricalcique", "tetraborate", "solaten", "safener", "surfer",
+                "renouee", "sakhaline", "swinglea", "trimethylamine", "trimethylaminehcl",
+                "trimethylaminehydrochloride", "kurstakisouche", "bassianastrain", "asperellumstrain"}
+
+
+@lru_cache(maxsize=1)
+def _chemical_pattern():
+    words = set()
+    for r in query("SELECT substance_tn, eu_name FROM substances"):
+        for n in (r["substance_tn"], r["eu_name"]):
+            words |= {w for w in re.findall(r"[a-z]{6,}", fold(n)) if w not in NOT_CHEMICAL}
+    words |= {"cuivre", "copper", "cuivrique", "cuivriques"}
+    return re.compile(r"(?<![a-z])(?:" + CONTROL_WORDS + "|" + "|".join(sorted(map(re.escape, words), key=len,
+                                                                             reverse=True)) + r")(?![a-z])")
+
+
+def chemical_terms(text):
+    """Substances and words of chemical control written in a text ('cuivre', 'fongicide', 'azoxystrobine'...)."""
+    return list(dict.fromkeys(m.group(0) for m in _chemical_pattern().finditer(fold(text))))
+
+
+def _without_pack(name):
+    """'PERFECTOSE 1 L' -> 'PERFECTOSE', 'ALGA PLUS FL 1 KG' -> 'ALGA PLUS FL': the pack size is not the name."""
+    return re.sub(r"\s*\b\d+(?:[.,]\d+)?\s*(?:l|cc|ml|g|gr|kg|litres?)\b\.?\s*$", "", str(name), flags=re.I).strip()
+
+
+def _shop_names():
+    try:
+        rows = query("SELECT name, shop_category FROM shop_products")
+    except Exception:  # base built before step 8
+        return []
+    return [_without_pack(r["name"]) for r in rows
+            if not re.search(r"semence|materiel|irrigation|germination", fold(r["shop_category"]))]
+
+
+@lru_cache(maxsize=1)
+def _claim_names():
+    """Shop products claiming a protection effect without a registered product of that name
+    (docs/shop_unapproved_claims.csv, classify_shop_products.py); a row the reviewer marks 'rejected' is left out."""
+    if not CLAIMS.exists():
+        return []
+    with open(CLAIMS, encoding="utf-8") as f:
+        return [_without_pack(r["name"]) for r in csv.DictReader(f) if r.get("status") != "rejected"]
+
+
+SHOP_URL = re.compile(r"https?://(?:www\.)?(?:agrishop|agriclic)\.tn[^\s)]*", re.I)
+SHOP_LINE = ("En boutique pour ", "في المتجر لـ")
+SHOP_DOSE = re.compile(r"\d+(?:[.,]\d+)?\s*(?:g|kg|ml|cc|l)\s*/\s*(?:ha|hl|100\s*l)\b", re.I)
+FERT_DOSE = ("Dose indiquée par le fabricant : ", "الجرعة حسب المصنّع: ")
+
+
+def _shop_by_url():
+    return {p["product_url"]: sid for sid, p in shop._products().items() if p.get("product_url")}
+
+
+def _retired(shop_id):
+    """Removed from the site (refresh_shops.py, phyto step 12): its address is known but never shown."""
+    return (shop._products().get(shop_id) or {}).get("stock_status") == "retire"
+
+
+def _shop_ids_in(line):
+    """Shop products whose name (pack size left out) is written in a line."""
+    folded = fold(line)
+    return [sid for sid, p in shop._products().items()
+            if len(_without_pack(p["name"])) >= 4 and fold(_without_pack(p["name"])) in folded]
+
+
+def shop_rules(answer, text, produits, engrais, registered, cls):
+    """Rules 22-26 of phyto step 10.
+    22 a shop address that is not the product_url of a product of the table shop_products;
+    23 a shop offer (line "En boutique pour <product> : ..." or a fertilizer of the answer) without a VALIDATED mapping
+       to that registered product (pesticide) or to the need of the deficiency (fertilizer);
+    24 a pesticide offer whose substances or concentrations differ from the registered product it is offered for;
+    25 a dose written on a shop line (a pesticide dose comes from the official list only);
+    26 a manufacturer's dose of a fertilizer that is not exactly the one that passes its VALIDATED range;
+    28 (phyto step 12) the address, offer or fertilizer of a product removed from the site."""
+    out = []
+    by_url = _shop_by_url()
+    for url in SHOP_URL.findall(text):
+        if url not in by_url:
+            out.append(f"adresse de boutique inconnue de la table shop_products : {url}")
+        elif _retired(by_url[url]):  # rule 28
+            out.append(f"adresse d'un produit retiré du site : {url}")
+    for line in text.splitlines():
+        marker = next((m for m in SHOP_LINE if m in line), None)
+        if marker is None:
+            continue
+        if SHOP_DOSE.search(line):
+            out.append("dose écrite sur une ligne de boutique (une dose vient de la liste officielle seulement)")
+        # "En boutique pour <registered product> : <offer>": the product is read before the colon only
+        name, _, offer = line.split(marker, 1)[1].partition(":")
+        p = next((p for p in produits if p.get("nom") and p["nom"].strip() == name.strip()), None)
+        usages = registered(p["nom"]) if p else []
+        if not usages:
+            out.append("ligne de boutique sans produit homologué de la réponse")
+            continue
+        ids = {u["product_id"] for u in usages}
+        named = _shop_ids_in(offer)
+        if named and all(_retired(sid) for sid in named):  # rule 28
+            out.append(f"offre d'un produit retiré du site : {offer.strip()[:60]}")
+        for sid in named:
+            if not shop.validated_targets(sid) & ids:
+                out.append(f"« {shop._products()[sid]['name']} » : lien sans correspondance validée vers {p['nom']}")
+            elif not same_composition(sid, ids):
+                out.append(f"« {shop._products()[sid]['name']} » : substances ou concentrations différentes de "
+                           f"{p['nom']}")
+    if engrais and cls.endswith("_deficiency"):
+        need = {f"besoin:{cls}", f"besoin:{cls}:calcaire"}
+        lines = text.splitlines()
+        for e in engrais:
+            sids = [sid for sid, s in shop._products().items() if _same_product(s["name"], e.get("nom", ""))]
+            if sids and all(_retired(sid) for sid in sids):  # rule 28
+                out.append(f"« {e.get('nom')} » : engrais retiré du site")
+            if sids and not any(shop.validated_targets(s) & need for s in sids):
+                out.append(f"« {e.get('nom')} » : engrais sans correspondance validée vers le besoin {cls}")
+            for i, line in enumerate(lines):
+                if e.get("nom") and e["nom"] in line:
+                    for nxt in lines[i + 1:i + 2]:
+                        written = next((nxt.split(m, 1)[1].strip() for m in FERT_DOSE if m in nxt), None)
+                        if written is None:
+                            continue
+                        compo = shop._composition().get(sids[0], {}) if sids else {}
+                        ok = label_dose(compo.get("doses_etiquette"), cls.split("_")[0],
+                                        crop_code(answer.get("culture")) or "*" if answer.get("culture") else "*")
+                        if not ok.get("montrer") or ok.get("texte") != written:
+                            out.append(f"« {e['nom']} » : dose du fabricant non validée ({written})")
+    return out
+
+
+CITATION = [re.compile(r"Source : fiche « (?P<nom>[^»]+) », section (?P<section>[^:]+?) : (?P<lien>\S+)"),
+            re.compile(r"المصدر: بطاقة «(?P<nom>[^»]+)»، قسم (?P<section>[^:]+?): (?P<lien>\S+)")]
+
+
+@lru_cache(maxsize=1)
+def _sheet_sections():
+    """(sheet name, section, link) of the table fiche_sections (build_sections.py); the five fields of the sheets
+    before step 11."""
+    try:
+        rows = query("SELECT nom, section, source FROM fiche_sections")
+    except Exception:
+        rows = []
+    return {(r["nom"], r["section"], r["source"]) for r in rows}
+
+
+def citation_rules(text):
+    """Rule 27: a citation 'Source : fiche « X », section Y : link' whose sheet, section or link is not a row of the
+    table fiche_sections (a sheet, a section or a source that does not exist is never cited)."""
+    from rag import SECTION_LABELS
+    codes = {label: code for labels in SECTION_LABELS.values() for code, label in labels.items()}
+    known = _sheet_sections()
+    out = []
+    for rx in CITATION:
+        for m in rx.finditer(text):
+            sec = codes.get(m["section"].strip())
+            if (m["nom"].strip(), sec, m["lien"].strip()) not in known:
+                out.append(f"citation inconnue de la table fiche_sections : fiche « {m['nom']} », section "
+                           f"{m['section'].strip()}")
+    return out
+
+
+def same_composition(shop_id, product_ids):
+    """The shop product has the substances and concentrations of one of these registered products (match rules of
+    src/preparation/match_shop_products.py, recomputed: a validated row is checked again)."""
+    M = _matcher()
+    row = shop._composition().get(shop_id) or {}
+    reg = _registry()
+    return any(r["target_id"] in product_ids and r["match_score"] >= 0.6
+               for r in M.match_pesticide({"name": shop._products().get(shop_id, {}).get("name", ""),
+                                           "substances": row.get("substances", ""),
+                                           "formulation": row.get("formulation", "")}, reg))
+
+
+def _matcher():
+    import sys
+    path = str(ROOT / "src" / "preparation")
+    if path not in sys.path:
+        sys.path.insert(0, path)
+    import match_shop_products
+    return match_shop_products
+
+
+@lru_cache(maxsize=1)
+def _registry():
+    return _matcher().registry()
+
+
 def _named_in_text(text):
     found, folded = [], fold(text)
     for key, name, pat, one_word in _known_products():
@@ -61,6 +307,48 @@ def _named_in_text(text):
         if pat.search(hay) and not any(key in fold(f) for f in found):
             found.append(name)
     return found
+
+
+CLAIMS = ROOT / "docs" / "shop_unapproved_claims.csv"
+PRACTICAL_MARKERS = ("Dose pratique", "الكمية العملية")  # first words of the practical-dose line (redaction.py)
+# step 6 (redaction.py): protective equipment line, weather lines, bee warning, WHO class written in the reasons
+PPE_MARKERS = ("Protection :", "الوقاية:")
+WEATHER_MARKERS = ("Météo :", "الطقس:")
+RAIN_WORDS, WIND_WORDS, BEE_WORDS = ("pluie", "أمطار"), ("vent", "رياح"), ("abeilles", "النحل")
+LIST_IN_TEXT = re.compile(r"DGSVCIA\D{0,12}(\d{2}/\d{2}/\d{4})")  # "liste DGSVCIA du 22/05/2024", "DGSVCIA بتاريخ ..."
+WHO_IN_TEXT = re.compile(r"(?:OMS|صنف السمية|صنف)\s+(Ia|Ib|III|II|U)(?![A-Za-z])")
+
+
+def _num_text(x):
+    return f"{x:.1f}".rstrip("0").rstrip(".").replace(".", ",")
+
+
+def product_block(p, text):
+    """The line of product p and the indented lines under it (practical dose, reasons)."""
+    lines, out = text.splitlines(), []
+    for i, line in enumerate(lines):
+        if p.get("nom") and p["nom"] in line and (p.get("dose") or "") in line:
+            out.append(line)
+            for nxt in lines[i + 1:]:
+                if not nxt.startswith("  "):
+                    break
+                out.append(nxt)
+            break
+    return "\n".join(out)
+
+
+def practical_line_of(p, text):
+    """The practical-dose line written under the line of product p (indented lines that follow it), or None."""
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        if p.get("nom") and p["nom"] in line and (p.get("dose") or "") in line:
+            for nxt in lines[i + 1:]:
+                if not nxt.startswith("  "):
+                    break
+                if any(m in nxt for m in PRACTICAL_MARKERS):
+                    return nxt
+            return None
+    return None
 
 
 def _same_product(a, b):
@@ -92,6 +380,20 @@ def check_answer(answer):
     def registered(name):
         return [u for u in allowed if _same_product(u["produit"], name)]
 
+    # rule 13: same FRAC / IRAC group as the last treatment while a product of another known group fits the case
+    ctx = answer.get("contexte") or {}
+    last = ranking.last_groups(ctx.get("last_treatment_group"))
+    alternative = False
+    if last and allowed:
+        main = [u for u in allowed if u["relation"] != "proche"] or allowed
+        dars = {}
+        for u in main:
+            if u["dar_jours"] is not None:
+                dars.setdefault(u["produit"], []).append(u["dar_jours"])
+        alternative = any(ranking.moa_groups(u) and not ranking.shared_groups(ranking.moa_groups(u), last)
+                          for u in main if not ranking.set_aside(u, ctx, dars.get(u["produit"], ())))
+
+    attached = set()  # practical-dose lines that belong to a product of the answer
     for p in produits:
         usages = registered(p.get("nom", ""))
         if not usages:
@@ -108,6 +410,54 @@ def check_answer(answer):
                 reasons.append(f"délai avant récolte de « {p['nom']} » inventé : la liste n'en donne pas")
             elif p["dar_jours"] not in dars:
                 reasons.append(f"délai avant récolte de « {p['nom']} » faux (liste : {sorted(d for d in dars if d is not None)})")
+        # rule 14: the practical dose written under the product = the official dose converted (dose_calc)
+        line = practical_line_of(p, text)
+        if line is not None:
+            attached.add(line)
+            official = next((u["dose"] for u in usages if _squash(u["dose"]) == _squash(p.get("dose") or "")),
+                            usages[0]["dose"])
+            expected = practical_dose(official, ctx.get("area"))
+            if expected is None:
+                reasons.append(f"« {p['nom']} » : dose pratique écrite alors que la dose officielle ({official}) ne se "
+                               "convertit pas")
+            else:
+                for err in check_dose(line, expected):
+                    reasons.append(f"« {p['nom']} » : dose pratique fausse ({err})")
+                if expected.get("pulverisateur") and f"{TANK_L} L" not in line:
+                    reasons.append(f"« {p['nom']} » : la dose pratique ne dit pas le volume du pulvérisateur")
+                if expected.get("surface") and area_text(ctx["area"]) not in line:
+                    reasons.append(f"« {p['nom']} » : la dose pratique ne dit pas la surface")
+        # rule 20: the MRL written for this product = the one of its market (EU / Tunisian list / Codex)
+        expected_mrl = applicable_mrl(usages[0], crop_code(crop) if crop else None, ctx.get("market"))
+        for err in check_mrl_line(text, p["nom"], expected_mrl):
+            reasons.append(f"« {p['nom']} » : {err}")
+        # rules 15-16: the WHO class and the bee warning of the validated tables are written for this product
+        block = product_block(p, text)
+        cls_expected = who_class(usages[0])
+        if cls_expected:
+            written = WHO_IN_TEXT.findall(block)
+            if not written:
+                reasons.append(f"« {p['nom']} » : classe de toxicité OMS ({cls_expected}) non écrite")
+            elif any(c != cls_expected for c in written):
+                reasons.append(f"« {p['nom']} » : classe de toxicité OMS fausse (liste OMS : {cls_expected})")
+        if bee_toxic(usages[0]) and not any(p["nom"] in x and any(b in x for b in BEE_WORDS)
+                                            for x in text.splitlines()):
+            reasons.append(f"« {p['nom']} » : très toxique pour les abeilles, avertissement absent")
+        same = ranking.shared_groups(ranking.moa_groups(usages[0]), last) if last else set()
+        if same and alternative:
+            reasons.append(f"« {p['nom']} » : même groupe ({' + '.join(sorted(same))}) que le dernier traitement alors "
+                           "qu'un produit d'un autre groupe est homologué pour ce cas")
+        # rules 10-12: the situation of the farmer (contexte), when it is known
+        dth = ctx.get("days_to_harvest")
+        if dth is not None:
+            shown = p.get("dar_jours")
+            known = [x["dar_jours"] for x in usages if x["dar_jours"] is not None]
+            if (shown is not None and shown > dth) or (shown is None and known and min(known) > dth):
+                reasons.append(f"« {p['nom']} » : délai avant récolte plus long que les {dth} jours avant la récolte")
+        if ctx.get("market") == "export" and not all(x.get("ue_approuve") for x in usages):
+            reasons.append(f"« {p['nom']} » : substance non approuvée (ou inconnue) dans l'UE pour un marché export")
+        if ctx.get("organic") == "y" and not all(x.get("bio_ue") for x in usages):
+            reasons.append(f"« {p['nom']} » : substance non autorisée en agriculture biologique")
         u = usages[0]
         if u["dar_jours"] is None:
             warnings.append(f"« {u['produit']} » : {u['dar_message']}")
@@ -119,9 +469,57 @@ def check_answer(answer):
             warnings.append(f"« {u['produit']} » : {u['relation_sens']}")
         checked.append({"nom": u["produit"], "product_id": u["product_id"], "relation": u["relation"]})
 
+    stray = [x for x in text.splitlines() if any(m in x for m in PRACTICAL_MARKERS) and x not in attached]
+    if stray:
+        reasons.append("dose pratique écrite hors de la ligne d'un produit retenu")
+
+    # rule 17: protective equipment with any pesticide; rule 18: the weather warnings of the forecast, with its numbers
+    # rule 19: the date of the official list, in every answer that speaks of registered products (or of none)
+    facts = answer.get("faits") or {}
+    if text and (produits or facts.get("aucun_produit") or facts.get("aucun_adapte")):
+        dates = LIST_IN_TEXT.findall(text)
+        if not dates:
+            reasons.append(f"date de la liste officielle absente (liste DGSVCIA du {LIST_DATE})")
+        elif any(x != LIST_DATE for x in dates):
+            reasons.append(f"date de la liste officielle fausse (liste chargée : {LIST_DATE})")
+
+    # (like rule 8, they read the text: an answer given without text is checked on its facts only)
+    if produits and text and not any(m in text for m in PPE_MARKERS):
+        reasons.append("équipement de protection non indiqué alors qu'un pesticide est conseillé")
+    meteo = answer.get("meteo") or {}
+    if produits and text and meteo:
+        lines = [x for x in text.splitlines() if any(m in x for m in WEATHER_MARKERS)]
+        if meteo.get("pluie") and not any(_num_text(meteo["pluie_mm"]) in x and any(w in x for w in RAIN_WORDS)
+                                          for x in lines):
+            reasons.append(f"pluie prévue ({meteo['pluie_mm']} mm) non signalée ou chiffre différent")
+        if meteo.get("vent") and not any(_num_text(meteo["vent_max_kmh"]) in x and any(w in x for w in WIND_WORDS)
+                                         for x in lines):
+            reasons.append(f"vent prévu ({meteo['vent_max_kmh']} km/h) non signalé ou chiffre différent")
+
     for name in _named_in_text(text):
         if not registered(name) and not any(_same_product(name, e.get("nom", "")) for e in engrais):
             reasons.append(f"le texte cite « {name} », non homologué pour {cls}" + (f" sur {crop}" if crop else ""))
+
+    # rules 22-26 (phyto step 10): shop links and fertilizer doses
+    reasons.extend(shop_rules(answer, text, produits, engrais, registered, cls))
+
+    # rule 27 (phyto step 11): every sheet and section cited exists, with the link of that sheet
+    reasons.extend(citation_rules(text))
+
+    # rule 21: a shop product that claims a protection effect without a registered product of its name is never in
+    # an answer, as a treatment nor as a fertilizer (plan rule 4)
+    listed = [x.get("nom", "") for x in produits + engrais]
+    named = {fold(n) for n in _named_in_text(text)}
+    for c in _claim_names():
+        if fold(c) in named or any(_same_product(c, x) or _same_product(_without_pack(x), c) for x in listed if x):
+            reasons.append(f"« {c} » : allégation de protection sans homologation (docs/shop_unapproved_claims.csv)")
+
+    # rule 9: chemistry only on the lines of the registered products (or fertilizers) of the answer
+    names = [n for n in [p.get("nom") for p in produits] + [e.get("nom") for e in engrais] if n]
+    free = "\n".join(line for line in text.splitlines() if not any(n in line for n in names))
+    chem = chemical_terms(free)
+    if chem:
+        reasons.append("lutte chimique hors des produits homologués retenus : " + ", ".join(chem))
 
     if answer.get("task") == "deficiency" and not healthy:
         try:

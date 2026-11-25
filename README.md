@@ -47,9 +47,9 @@ AgrIA est un **système multi-agents** : sept agents spécialisés, orchestrés 
 | **Linguistique** | comprend le message (culture, symptômes, gouvernorat) et écrit la réponse en français ou en arabe | lexique, phrases écrites par le code |
 | **Identification de la culture** | reconnaît la plante sur la photo et la propose à l'agriculteur | vote du modèle de culture et du modèle des maladies, VLM en contrôle et en secours |
 | **Diagnostic** | dit si c'est une carence ou une maladie, puis donne la classe ; décide si le diagnostic est fiable | routeur, modèle feuille, modèle des maladies restreint à la culture, VLM |
-| **Phytosanitaire** | choisit les traitements homologués et les conseils des fiches | base SQLite, recherche TF-IDF |
+| **Phytosanitaire** | choisit les traitements homologués et les conseils des fiches | base SQLite, recherche hybride BM25 + vecteurs bge-m3 locaux |
 | **Agronome** | propose les engrais d'une carence et calcule le besoin en eau du mois | base SQLite, FAO-56 |
-| **Vérificateur** | contrôle la réponse finale et la bloque si une règle n'est pas respectée | 8 règles bloquantes codées |
+| **Vérificateur** | contrôle la réponse finale et la bloque si une règle n'est pas respectée | 28 règles bloquantes codées |
 
 ```mermaid
 flowchart TD
@@ -82,22 +82,27 @@ Phytosanitaire et Agronome travaillent en parallèle.
 
 Tous les modèles sont des EfficientNet-B0 entraînés en local, sur une NVIDIA RTX 2050 (4 Go). Pour chaque tâche, le modèle est choisi sur la validation. Le test sert uniquement à mesurer.
 
-| Modèle | Tâche | Test laboratoire | Photos de terrain (PlantDoc, 199) |
+| Modèle | Tâche | Test laboratoire | Photos de terrain (test, avant → après l'ajout de photos de terrain) |
 |---|---|---|---|
 | Routeur | feuille, fruit ou autre | 99,8 % | — |
-| Maladies | 51 classes | 99,0 % (macro-F1 0,968) | 61,8 % ; 89 % des réponses justes au-dessus du seuil de 0,9 |
-| Feuille (v3) | 51 maladies + 9 carences | carence ou maladie : 97,6 % / 98,9 % ; bon nutriment : 91,4 % | — |
+| Maladies (s300, 22/11) | 51 classes | 99,4 % | 52,9 → 80,1 → **82,8 %** (703 photos) ; PlantDoc seul 61,9 → 71,6 → 75,6 % |
+| Feuille (s300, 22/11) | 51 maladies + 9 carences | 97,0 % ; type de problème (carence ou maladie) 97,3 % | 50,9 → 78,5 → **81,4 %** (703 photos) |
 | Fruits | 18 classes | 98,3 % (macro-F1 0,897) | — |
-| Culture (v3a) | 14 cultures + « autre plante » | 99,2 % | 85,9 % |
+| Culture (v4) | 14 cultures + « autre plante » | 99,9 % | 58,9 → **94,3 %** (1 861 photos) |
 
-**Combinaison utilisée par les agents.** Les poids sont appris sur la validation. Les chiffres donnent : culture juste / culture fausse avec une confiance d'au moins 85 %.
+Les photos de terrain de PlantWild, de pommes de terre au champ et de vignes (GVLiD) ont été ajoutées le 20/11/2026. Les gains sur ces sources sont optimistes, car leur test vient de la même source que leur entraînement. Sur PlantDoc, source inchangée, le modèle des maladies gagne 9,7 points (McNemar p = 0,008).
 
-| Culture reconnue | Labo (358) | Terrain (199) | Nouvelles sources (216) | Photos d'Internet (15) |
+**Combinaison utilisée par les agents.** Les poids sont appris sur la validation. Les chiffres donnent : culture juste / culture fausse avec une confiance d'au moins 85 %. Mêmes jeux de test avant et après.
+
+| Décision de l'agent (vote + VLM) | Labo (358) | Terrain (703) | Nouvelles sources (216) | Photos d'Internet (15) |
 |---|---|---|---|---|
-| Combinaison des modèles | 99,2 / 0 | 86,9 / 2,0 | 99,5 / 0 | 26,7 / 26,7 |
-| Combinaison + VLM (contrôle et secours) | 98,6 / 0 | 85,4 / 1,0 | 96,8 / 0 | 66,7 / 0 |
+| anciens modèles | 98,6 / 0 | 78,0 / 2,0 | 96,8 / 0 | 66,7 / 0 |
+| modèles avec photos de terrain (20/11) | 97,2 / 0 | 88,9 / 0,4 | 97,2 / 0 | 100 / 0 |
+| **modèles en taille 300 (22/11)** | 97,5 / 0 | **89,2 / 0,6** | 97,7 / 0 | **100 / 0** |
 
-Avec le VLM, le choix entre carence et maladie est juste dans 98,0 % des cas sur les photos de terrain. La chaîne complète (culture, puis type de problème, puis classe) est juste dans 95 % des cas sur les photos de laboratoire et dans environ 63 % des cas sur les photos de terrain.
+Avec les nouveaux modèles, le choix entre carence et maladie est juste dans 99,9 % des cas sur les photos de terrain. La chaîne complète (culture, puis type de problème, puis classe) est juste dans 97,2 % des cas sur les photos de laboratoire et dans **80,8 %** des cas sur les photos de terrain (55,2 % avant les photos de terrain, 78,2 % avant les modèles en taille 300).
+
+**Plan d'amélioration sur le terrain (21–22/11/2026).** Les modèles maladies et feuille passent en taille 300 avec label smoothing et EMA. Sur le terrain : maladies 82,8 % (McNemar p = 0,023), feuille 81,4 % (p = 0,023), et une confiance fiable (ECE 0,14 → 0,05–0,06). Les seuils de l'agent sont revus sur la confiance de la combinaison : maladies 0,9 → 0,8, avec autant de photos répondues et 93,7 % de réponses justes au lieu de 92,7 % ; carences 0,95 → 0,7, avec la même exactitude qu'avant (98,5 %). Le recadrage sur la feuille, les augmentations « terrain » et les modèles de fondation gelés (DINOv2, BioCLIP) ont été mesurés mais pas installés. Le leave-one-source-out montre qu'une source jamais vue tombe vers 37–52 %. L'application demande maintenant l'accord de l'agriculteur avant de garder sa photo, pour constituer un jeu de test tunisien gelé (`data/field_tn/`). Le détail est dans la section 15 de [docs/results_vision.md](docs/results_vision.md), et le journal des expériences dans [docs/experiments.csv](docs/experiments.csv).
 
 Le détail est dans [docs/results_vision.md](docs/results_vision.md) : comparaison CNN et ViT, hypothèses H1 à H3, seuils de confiance, combinaison et VLM.
 
@@ -198,13 +203,16 @@ curl -F "photo=@feuille.jpg" -F "message=taches brunes sur les feuilles" \
 ## Tests et évaluation
 
 ```bash
-python -m unittest discover -s tests -t .      # 69 tests : outils, agents, API
+python -m unittest discover -s tests -t .      # 117 tests : outils, agents, API, évaluation, préparation
 ```
 
 | Commande | Ce qu'elle mesure |
 |---|---|
 | `python src/vision/evaluate.py --task diseases --model-dir models/diseases --splits val test test_field` | un modèle, sur le laboratoire et le terrain |
 | `python src/vision/calibrate.py --task diseases --model-dir models/diseases` | seuils de confiance |
+| `python src/evaluation/compare.py --new models/diseases_s300 --current models/diseases --change "taille 300"` | deux modèles sur les mêmes photos : exactitude, macro-F1, ECE, McNemar (`reports/compare/`) |
+| `python src/evaluation/loso.py --task diseases --sources plantdoc plantwild potato_field --epochs 5` | leave-one-source-out : chaque source de terrain jamais vue à l'entraînement |
+| `python src/evaluation/temperature.py --task diseases` | température, couverture et exactitude selon le seuil (`reports/temperature/`) |
 | `python src/agent/eval_ensemble.py --tune --vlm` | apprend les poids de la combinaison sur la validation, puis évalue sur tous les jeux de test (`docs/eval_ensemble_vlm.md`) |
 
 ---
@@ -237,6 +245,7 @@ AgrIA/
 | PlantVillage, PlantDoc, OLID I | images de maladies et de carences (laboratoire et terrain) |
 | Jeux de carences : poivron, maïs (Mendeley), tomate (Mendeley, Tomato-Village), CitrusUAT (Zenodo) | carences des cultures du projet |
 | Jeux d'olivier et d'agrumes (dont lemon_bd) | reconnaissance de la culture |
+| PlantWild v2 (CC BY-NC-ND 4.0), pommes de terre au champ (Mendeley, CC BY 4.0), GVLiD vigne (Mendeley, CC BY 4.0) | photos de terrain ajoutées le 20/11/2026 ; GVLiD pour la culture seulement |
 | Liste des pesticides homologués en Tunisie (Ministère de l'Agriculture, 22/05/2024) | traitements, doses, délais avant récolte |
 | Base de données des pesticides de l'UE | limites maximales de résidus |
 | agrishop, agriclic | engrais : composition et doses |
@@ -257,7 +266,7 @@ Chaque jeu garde sa propre licence. La plupart sont en CC BY 4.0. **Tomato-Villa
 
 ## Limites connues
 
-- **Photos de terrain.** Les modèles ont surtout appris sur des photos de laboratoire. Sur le terrain, le diagnostic exact de la maladie tombe à environ 62 %, d'où le seuil de 0,9 et les questions de confirmation.
+- **Photos de terrain.** Les modèles ont surtout appris sur des photos de laboratoire. Sur le terrain, le diagnostic exact de la maladie était d'environ 62 % ; avec les photos de terrain ajoutées et la taille 300, il atteint 83 % sur le test terrain et 76 % sur PlantDoc, mais une source jamais vue tombe vers 37–52 % (leave-one-source-out), d'où les seuils de l'agent et les questions de confirmation. La vraie mesure viendra des photos tunisiennes gardées avec l'accord des agriculteurs (`data/field_tn/`).
 - **Peu de photos tunisiennes.** L'olivier, le palmier et les agrumes ont moins d'images et des sources peu variées. Le modèle apprend en partie le style des photos de chaque source. Un jeu de test de photos tunisiennes reste à construire.
 - **Carences de certaines cultures.** Aucun jeu public n'existe pour l'olivier, la vigne, la pomme de terre et les arbres fruitiers : leurs carences sont toujours présentées comme des hypothèses.
 - **VLM.** Il est faible sur les photos de laboratoire et très bon sur les photos d'Internet. Son seuil de secours a été réglé en partie sur un petit échantillon de 15 photos. Il ajoute environ 8 secondes par nouvelle photo et dépend du service NVIDIA.
