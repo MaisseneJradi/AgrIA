@@ -7,7 +7,7 @@ change which product is advised.
   registry_composition(product_id) -> "Azoxystrobine 250 g/l"   (what to ask for when no shop sells it)
 
 An offer is never: a product of docs/shop_unapproved_claims.csv (unless the reviewer marked it 'rejected'), a product
-whose shop marks it inactive, a product whose name the official list does not register for the case (caller's check).
+whose shop marks it inactive, a product removed from the site (stock_status 'retire', refresh_shops.py), a product whose name the official list does not register for the case (caller's check).
 "resume" is written from the composition read by rules (docs/shop_composition.csv): substances + concentrations +
 formulation, or N-P-K + nutrient + chelate. Never a marketing sentence, never a dose of the shop.
 "url": only the product_url of the table shop_products (agriclic pages); agrishop pages have no address in the data.
@@ -87,7 +87,9 @@ def summary(shop_id):
 
 def _offer(shop_id):
     p = _products().get(shop_id)
-    if not p or shop_id in _claims() or p.get("stock_status") == "inactif":
+    # never: a claim without registration, a product the shop marks inactive, a product removed from the site
+    # (refresh_shops.py, phyto step 12: gone from a new export or collection, or its page answers 404 / 410)
+    if not p or shop_id in _claims() or p.get("stock_status") in ("inactif", "retire"):
         return None
     return {"shop_id": shop_id, "nom": p["name"], "resume": summary(shop_id), "stock": p.get("stock_status"),
             "url": p.get("product_url") or None, "boutique": SHOPS.get(shop_id.split(":")[0], shop_id)}
