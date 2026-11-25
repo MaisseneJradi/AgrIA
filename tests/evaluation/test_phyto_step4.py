@@ -47,7 +47,7 @@ class TestTable(unittest.TestCase):
     def test_rows_are_well_formed_and_proposed(self):
         rows = read_groups()
         self.assertGreater(len(rows), 100)
-        self.assertEqual({r["status"] for r in rows}, {"proposed"})
+        self.assertLessEqual({r["status"] for r in rows}, {"proposed", "validated", "rejected"})  # rows the reviewer validates or rejects stay valid
         for r in rows:
             self.assertRegex(r["groupe"], r"^(FRAC|IRAC) [A-Z]{0,2}\d{0,3}[A-Z]?$|^IRAC UN$", r)
             self.assertEqual(r["faible_risque"] == "oui", R.low_risk(r["groupe"]), r)

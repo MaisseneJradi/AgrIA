@@ -85,7 +85,9 @@ def page_facts(pid, raw=AGRICLIC):
     if not m:
         return "inconnu", ""
     d = json.loads(html.unescape(m.group(1)))
-    status = {"available": "en_stock", "last_remaining_items": "en_stock", "unavailable": "rupture"}.get(
+    # PrestaShop writes "available" or "in_stock" (both seen on agriclic.tn, 25/11/2026)
+    status = {"available": "en_stock", "in_stock": "en_stock", "last_remaining_items": "en_stock",
+              "unavailable": "rupture", "out_of_stock": "rupture"}.get(
         d.get("availability"), "inconnu")
     image = ((d.get("cover") or {}).get("large") or {}).get("url", "")
     return status, image
