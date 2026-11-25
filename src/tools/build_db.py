@@ -97,6 +97,9 @@ def build():
     codex = PROC / "pesticides" / "codex_mrl.csv"  # phyto step 7 (build_codex_mrl.py): optional, needs the internet once
     if codex.exists():
         tables["codex_mrl"] = (pd.read_csv(codex), str(codex.relative_to(ROOT)))
+    shop = PROC / "shop" / "shop_products.csv"  # phyto step 8 (build_shop_products.py): every product of both shops
+    if shop.exists():
+        tables["shop_products"] = (pd.read_csv(shop), str(shop.relative_to(ROOT)))
     fiches = pd.read_json(KNOW / "fiches.jsonl", lines=True)
     tables["fiches"] = (fiches.astype(str).replace({"nan": None, "None": None}), "knowledge/fiches.jsonl")
     rules = json.load(open(KNOW / "regles_carences.json", encoding="utf-8"))

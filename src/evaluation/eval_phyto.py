@@ -239,9 +239,11 @@ def score(case, out, ms):
     text = rep["texte"]
     shown = [p for p in (out.get("traitements") or {}).get("produits", [])
              if any(_same_product(p["nom"], q["nom"]) for q in rep["produits"])]
-    named = _named_in_text(text)
-    acceptable, forbidden = _split(case["acceptable_products"]), _split(case["must_not_contain"])
     fert = rep["engrais"]
+    # products named in the text, the fertilizers of the answer left out (since step 8 the detector also knows the
+    # shop fertilizers)
+    named = [n for n in _named_in_text(text) if not any(_same_product(n, e["nom"]) for e in fert)]
+    acceptable, forbidden = _split(case["acceptable_products"]), _split(case["must_not_contain"])
     unsafe = []
     if kind in ("deficiency", "healthy", "physiological", "virus") and (rep["produits"] or named):
         unsafe.append("pesticide sans objet : " + ", ".join(named or [p["nom"] for p in rep["produits"]]))

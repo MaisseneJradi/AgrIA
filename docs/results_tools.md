@@ -29,7 +29,7 @@ from src.tools import get_treatments, get_fertilizers, get_water_need, search_kn
 | `get_water_need(gouvernorat, culture, mois, forecast=False)` | [water.py](../src/tools/water.py) | Besoin en eau FAO-56 : ET0 × Kc − pluie | Hors saison : pas de besoin calculé. Prévision Open-Meteo sur 7 jours en option, avec le Kc du mois en cours. Sans réseau, la réponse mensuelle reste donnée. |
 | `search_knowledge(question, k=3, classe=None)` | [rag.py](../src/tools/rag.py) | Passages des 76 fiches, avec leur source et leur licence | Question enrichie par le lexique (darija → français). Priorité à la section demandée (lutte, symptômes, biologie). Liste vide si rien ne répond. |
 | `normalize_terms(texte)` | [lexicon.py](../src/tools/lexicon.py) | Cultures, maladies, ravageurs, symptômes et organes reconnus, langue, classes possibles | Français, arabe, darija, arabizi. Pluriels et préfixes arabes acceptés. `a_valider` signale une graphie darija pas encore validée. |
-| `check_answer(reponse)` | [safety.py](../src/tools/safety.py) | Contrôle final : `valide`, `raisons` (bloquantes), `avertissements` (à dire au fermier) | Les 20 règles bloquantes de la section 4 |
+| `check_answer(reponse)` | [safety.py](../src/tools/safety.py) | Contrôle final : `valide`, `raisons` (bloquantes), `avertissements` (à dire au fermier) | Les 21 règles bloquantes de la section 4 |
 
 Les noms de culture et de gouvernorat sont acceptés sous toutes leurs formes : « tomate », « tomates », « طماطم », « tmatem », « TOMATE SOUS SERRE » ; « Gabès », « gabes », « قابس », « le kef ».
 
@@ -66,6 +66,7 @@ Les noms de culture et de gouvernorat sont acceptés sous toutes leurs formes : 
 18. Pluie (24 h) ou vent (plus de 15 km/h, 12 h) prévus non signalés, ou signalés avec un autre chiffre (règles 15 à 18 : plan phyto, étape 6).
 19. Réponse sur des produits homologués (ou leur absence) sans la date de la liste officielle chargée (« liste DGSVCIA du 22/05/2024 ») ou avec une autre date.
 20. LMR écrite différente de sa table (UE pour l'export, liste DGSVCIA ou Codex pour le marché local), ou LMR écrite sans marché connu (règles 19 et 20 : plan phyto, étape 7).
+21. Produit d'une boutique qui revendique un effet de protection sans produit homologué de ce nom (`docs/shop_unapproved_claims.csv`, sauf ligne `rejected`), nommé dans le texte ou conseillé, comme traitement ou comme engrais (plan phyto, étape 8).
 
 **Avertissements (à dire dans la réponse) :**
 - DAR non précisé ;
