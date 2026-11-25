@@ -26,7 +26,7 @@ AgrIA est un **système de sept agents** qui coopèrent autour d'un dossier part
 | **Diagnostic** | lit la photo (routeur puis modèle maladies, carences ou fruits) ; décide si le diagnostic est fiable, sinon pose des questions | `predict()`, `ensemble.kind_share` | routeur + combinaison : modèle feuille (carence ou maladie) + avis du VLM, puis modèle des maladies restreint à la culture ou carence du modèle feuille |
 | **Phytosanitaire** | choisit les traitements homologués (dose, DAR, LMR, restrictions), écarte ceux qui ne conviennent pas à la situation (DAR plus long que la récolte, export UE, bio), classe les autres par un score écrit en code avec une ligne « pourquoi », et des conseils des fiches sans aucune lutte chimique | `get_treatments`, `ranking.rank`, `ranking.decisive_fields`, `dose_calc.practical_dose`, `hazard`, `weather.spray_conditions`, `search_knowledge`, `prevention` | base SQLite + règles + recherche TF-IDF |
 | **Agronome** | besoin d'une carence (élément ; chélate EDDHA, EDDHSA ou HBED si le sol du gouvernorat est calcaire), engrais de boutique seulement par correspondance validée vers ce besoin, et besoin en eau du mois | `get_fertilizers`, `get_water_need` | base SQLite + règles |
-| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **26 règles codées** |
+| **Vérificateur** | contrôle la réponse finale, dans la langue du fermier ; la bloque et la renvoie au Coordinateur | `check_answer` | **27 règles codées** |
 
 **Pas de LLM pour écrire.** Le seul modèle de langage est un VLM (NVIDIA, optionnel) qui **regarde** la photo et donne un avis (culture, carence ou maladie, symptômes) ; il n'écrit jamais la réponse, ne choisit aucun produit et ne peut pas contredire la culture donnée par l'agriculteur (docs/results_vision.md, section 13). AgrIA répond en **français ou en arabe** (pas de darija). Toutes les phrases sont écrites par le code (`src/agent/redaction.py`), donc aucun fait (produit, dose, délai) ne peut être inventé ni mal traduit. Un essai avec un petit LLM local (`derja`, Qwen3 4B, Ollama) l'a montré : il changeait des doses (« 300 g/hl » devenu « 300 g/l ») et traduisait mal les termes agricoles. Dans une réponse en arabe, les passages des fiches (français ou anglais) sont remplacés par leurs liens.
 
@@ -167,7 +167,7 @@ get_fertilizers(deficiency: str, crop: str | None = None, governorate: str | Non
 # produits, teneur, dose, niveau de fiabilité (« hypothese » hors culture vue), questions de confirmation, sol
 get_water_need(governorate: str, crop: str, month: int, forecast: bool = False) -> dict
 # ET0, Kc, besoin, pluie, déficit (mm et m³/ha), prévision 7 jours en option
-search_knowledge(query: str, k: int = 3, classe: str | None = None) -> list[dict]
+search_knowledge(query: str, k: int = 3, classe: str | None = None, method: str | None = None) -> list[dict]
 # extrait, fiche, section, langue, lien de la source, licence
 normalize_terms(text: str) -> dict
 # cultures, maladies, ravageurs, symptômes, organes reconnus en français, arabe, darija, arabizi ; classes possibles
@@ -245,7 +245,7 @@ POST /diagnose
 2. `treatments.py` : traitements par classe et culture, en préférant les liens `direct`, puis `vecteur`, `groupe` et `proche`.
 3. `fertilizers.py` : engrais par carence, avec `regles_carences.json` et le pH du gouvernorat.
 4. `water.py` : besoins en eau à partir de `besoins_eau_mensuels.csv`, prévisions avec `forecast_url()` de `fetch_context_tn.py`.
-5. `rag.py` : recherche dans les fiches, chaque extrait gardant le lien de sa source. Choix fait : TF-IDF local (76 fiches, hors ligne, aucun modèle à télécharger) au lieu de Chroma, remplaçable derrière la même fonction.
+5. `rag.py` : recherche dans les fiches, chaque extrait gardant sa fiche, sa section et le lien de sa source. Depuis l'étape 11 du plan phyto : fiches découpées en sections par règles (`src/preparation/build_sections.py` : description, symptômes, biologie, lutte, prévention, répartition ; table `fiche_sections`), recherche hybride BM25 + vecteurs locaux du modèle `BAAI/bge-m3` (`src/tools/embed.py`, vecteurs dans `data/processed/knowledge/vectors_bge-m3.npz`, `src/preparation/build_rag_index.py`), sans base vectorielle. Rappel@3 sur 50 questions (français, arabe, darija ; `src/evaluation/eval_rag.py`) : 80 % contre 68 % pour l'ancien TF-IDF. Sans vecteurs ni modèle, la recherche passe à BM25 seul. Chaque réponse cite la fiche et la section utilisées (règle 27).
 6. `lexicon.py` : reconnaissance des termes. Les 88 entrées marquées `a_valider` sont relues avec un locuteur tunisien.
 7. `safety.py` : bloquer toute réponse citant un produit hors de la liste homologuée.
 

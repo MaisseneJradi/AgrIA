@@ -47,9 +47,9 @@ AgrIA est un **système multi-agents** : sept agents spécialisés, orchestrés 
 | **Linguistique** | comprend le message (culture, symptômes, gouvernorat) et écrit la réponse en français ou en arabe | lexique, phrases écrites par le code |
 | **Identification de la culture** | reconnaît la plante sur la photo et la propose à l'agriculteur | vote du modèle de culture et du modèle des maladies, VLM en contrôle et en secours |
 | **Diagnostic** | dit si c'est une carence ou une maladie, puis donne la classe ; décide si le diagnostic est fiable | routeur, modèle feuille, modèle des maladies restreint à la culture, VLM |
-| **Phytosanitaire** | choisit les traitements homologués et les conseils des fiches | base SQLite, recherche TF-IDF |
+| **Phytosanitaire** | choisit les traitements homologués et les conseils des fiches | base SQLite, recherche hybride BM25 + vecteurs bge-m3 locaux |
 | **Agronome** | propose les engrais d'une carence et calcule le besoin en eau du mois | base SQLite, FAO-56 |
-| **Vérificateur** | contrôle la réponse finale et la bloque si une règle n'est pas respectée | 26 règles bloquantes codées |
+| **Vérificateur** | contrôle la réponse finale et la bloque si une règle n'est pas respectée | 27 règles bloquantes codées |
 
 ```mermaid
 flowchart TD

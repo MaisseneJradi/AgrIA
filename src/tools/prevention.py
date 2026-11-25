@@ -51,7 +51,12 @@ def clean_sentence(s):
 
 
 def cultural_sentences(passages, max_sentences=MAX_SENTENCES):
-    out = []
+    return cultural_quotes(passages, max_sentences)[0]
+
+
+def cultural_quotes(passages, max_sentences=MAX_SENTENCES):
+    """(sentences, passages they come from): the answer cites the sheet and section of each quoted sentence."""
+    out, used = [], []
     for p in passages:
         if p.get("langue") != "fr":
             continue
@@ -59,6 +64,8 @@ def cultural_sentences(passages, max_sentences=MAX_SENTENCES):
             s = clean_sentence(s)
             if s and s not in out:
                 out.append(s)
+                if p not in used:
+                    used.append(p)
             if len(out) >= max_sentences:
-                return out
-    return out
+                return out, used
+    return out, used

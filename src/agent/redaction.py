@@ -16,6 +16,7 @@ from dose_calc import TANK_L, area_text, qty_text
 from hazard import LABELS as HAZARD_LABELS
 from hazard import SEVERE
 from mrl import mrl_number
+from rag import SECTION_LABELS
 from treatments import LIST_DATE
 
 MONTHS = {
@@ -55,6 +56,7 @@ P = {
         "prevention": "Mesures de prévention :",
         "conseils": "Extraits des fiches :",
         "sources": "Pour en savoir plus :",
+        "source": "Source : fiche « {nom} », section {section} : {lien}",
         "engrais": "Engrais correcteurs disponibles :",
         "eau": "Irrigation en {mois} à {gov} : besoin moyen d'environ {mm} mm ({m3} m³/ha), soit {mmj} mm par jour "
                "après la pluie.",
@@ -160,6 +162,7 @@ P = {
         "prevention": "إجراءات وقائية:",
         "conseils": "نصائح من البطاقات التقنية:",
         "sources": "مزيد من المعلومات (بالفرنسية أو بالإنجليزية):",
+        "source": "المصدر: بطاقة «{nom}»، قسم {section}: {lien}",
         "engrais": "أسمدة تصحيحية متوفرة:",
         "eau": "الري في {mois} بـ{gov}: حاجة متوسطة تقارب {mm} مم ({m3} م³/هكتار)، أي {mmj} مم في اليوم بعد "
                "احتساب الأمطار.",
@@ -276,6 +279,14 @@ def _offer_text(o, t):
     where = o["url"] or t["boutique_sans_lien"].format(boutique=o["boutique"])
     resume = (o.get("resume") or "").replace("chélate", t["mot_chelate"])  # the summary of shop.py is French
     return f"{o['nom']} ({resume}){stock} — {where}" if resume else f"{o['nom']}{stock} — {where}"
+
+
+def source_lines(d, t, lang):
+    """'Source : fiche « Mildiou de la vigne », section lutte : https://...' for every sheet section the answer used
+    (phyto step 11); the Vérificateur checks each one against the table fiche_sections (rule 27)."""
+    return [t["source"].format(nom=s["fiche"], lien=s["lien"],
+                               section=SECTION_LABELS[lang].get(s.get("section"), s.get("section") or ""))
+            for s in d.get("sources", [])]
 
 
 def shop_lines(p, t):
@@ -545,10 +556,10 @@ def compose(d, lang="fr"):
             parts.append(t["affiner"] + "\n" + bullets(t["q_" + q] for q in d["questions_contexte"]))
         if d.get("prevention"):  # validated rows of docs/conseils_prevention.csv, in the language of the answer
             parts.append(t["prevention"] + "\n" + bullets(p[lang] for p in d["prevention"]))
-        if d.get("conseils") and lang == "fr":
-            parts.append(t["conseils"] + "\n" + bullets(d["conseils"]))
-        elif d.get("sources"):  # Arabic answer, or no French sentence to quote: the links of the sheets
-            parts.append(t["sources"] + "\n" + bullets(f"{s['fiche']} : {s['lien']}" for s in d["sources"]))
+        if d.get("conseils") and lang == "fr":  # the quoted sentences, then the sheet and section they come from
+            parts.append(t["conseils"] + "\n" + bullets(d["conseils"]) + "\n" + "\n".join(source_lines(d, t, lang)))
+        elif d.get("sources"):  # Arabic answer, or no French sentence to quote: the sheets and sections found
+            parts.append(t["sources"] + "\n" + bullets(source_lines(d, t, lang)))
         if d.get("orientation_crda"):  # nothing registered: a technician, never a product
             gov = t["crda_gov"].format(gov=gov_label(d["gouvernorat"], lang)) if d.get("gouvernorat") \
                 else t["crda_sans_gov"]

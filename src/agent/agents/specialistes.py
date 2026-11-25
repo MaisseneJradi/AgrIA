@@ -26,7 +26,7 @@ from shop import _composition as _shop_compositions
 from lexicon import crop_code
 from mrl import applicable_mrl
 from weather import spray_conditions
-from prevention import cultural_sentences, prevention_advice
+from prevention import cultural_quotes, prevention_advice
 from rag import search_knowledge
 from ranking import decisive_fields, rank
 from src.agent.agents.aides import step
@@ -79,7 +79,9 @@ def phytosanitaire(d):
     meteo = spray_conditions(d.get("gouvernorat_officiel")) if produits and ctx.get("greenhouse") != "y" else None
     # advice never carries a product: sentences of the sheets without chemistry, and, when nothing is registered,
     # the validated prevention advice of docs/conseils_prevention.csv and the CRDA referral
-    conseils = cultural_sentences(passages)
+    conseils, quoted = cultural_quotes(passages)
+    # the sheets and sections the answer used (step 11): those of the quoted sentences, else every passage found
+    cited = quoted or passages
     prevention = prevention_advice(cls) if not usages else []
     # registered products exist, but none fits the farmer's situation (DAR, export, organic): say why, then the CRDA
     none_fits = bool(main) and not chosen
@@ -100,7 +102,8 @@ def phytosanitaire(d):
                             # one line on rotation when a product of the answer has a known FRAC / IRAC group
                             "rotation_conseil": any(r[0] in ("groupe", "rotation") for p in produits
                                                     for r in p["raisons"])},
-            "sources": [{"fiche": p["nom"], "lien": p["source"], "licence": p["licence"]} for p in passages],
+            "sources": [{"fiche": p["nom"], "fiche_id": p["fiche"], "section": p["section"], "lien": p["source"],
+                         "licence": p["licence"]} for p in cited],
             "trace": step("Phytosanitaire", note, t0)}
 
 

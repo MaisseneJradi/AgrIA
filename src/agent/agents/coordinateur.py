@@ -62,7 +62,7 @@ def rediger(d):
                  "orientation_crda": tr.get("orientation_crda", False), "engrais": engrais, "hypothese": hypothese,
                  "questions": eng.get("questions", []) if hypothese else [], "eau": ag.get("eau"),
                  "avertissements": warnings, "gouvernorat": d.get("gouvernorat_officiel"),
-                 "sources": list({s["lien"]: s for s in d.get("sources", [])}.values()),
+                 "sources": list({(s["lien"], s.get("section")): s for s in d.get("sources", [])}.values()),
                  "contexte": ctx, "ecartes": tr.get("ecartes", []), "aucun_adapte": tr.get("aucun_adapte", False),
                  "n_candidats": tr.get("n_candidats", 0), "questions_contexte": tr.get("questions_contexte", []),
                  "dernier_groupe": tr.get("dernier_groupe", []), "rotation_impossible": tr.get("rotation_impossible"),
@@ -120,7 +120,7 @@ def finaliser(d):
         "culture": {"code": d.get("culture_code"), **(d.get("culture_info") or {})} if d.get("photo") else None,
         "produits": b["produits"], "engrais": b["engrais"], "avertissements": b.get("avertissements", []),
         "questions": d.get("questions", []) if d.get("issue") == "question" else [],
-        "sources": list({s["lien"]: s for s in d.get("sources", [])}.values()), "verification": d.get("verification"),
+        "sources": list({(s["lien"], s.get("section")): s for s in d.get("sources", [])}.values()), "verification": d.get("verification"),
         # context used, and the context fields the app should ask for (the farmer answers, then sends again)
         "contexte": d.get("contexte") or {},
         "questions_contexte": (b.get("faits") or {}).get("questions_contexte", []) if d.get("issue") == "conseil" else [],

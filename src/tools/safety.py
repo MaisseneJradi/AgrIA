@@ -45,6 +45,7 @@ Blocking rules
   22-26 (phyto step 10, shop_rules): unknown shop address; shop offer without a validated mapping to the advised
       product or need; offer of another composition; dose on a shop line; manufacturer's fertilizer dose not passing
       its validated range
+  27. a cited sheet / section / link that is not a row of the table fiche_sections (phyto step 11)
   21. a shop product claiming a protection effect without a registered product of its name
       (docs/shop_unapproved_claims.csv, unless the reviewer marks the row "rejected"), named in the text or advised,
       as a treatment or as a fertilizer (phyto step 8; rule 1 also knows the names of both shops' products)
@@ -224,6 +225,37 @@ def shop_rules(answer, text, produits, engrais, registered, cls):
                                         crop_code(answer.get("culture")) or "*" if answer.get("culture") else "*")
                         if not ok.get("montrer") or ok.get("texte") != written:
                             out.append(f"« {e['nom']} » : dose du fabricant non validée ({written})")
+    return out
+
+
+CITATION = [re.compile(r"Source : fiche « (?P<nom>[^»]+) », section (?P<section>[^:]+?) : (?P<lien>\S+)"),
+            re.compile(r"المصدر: بطاقة «(?P<nom>[^»]+)»، قسم (?P<section>[^:]+?): (?P<lien>\S+)")]
+
+
+@lru_cache(maxsize=1)
+def _sheet_sections():
+    """(sheet name, section, link) of the table fiche_sections (build_sections.py); the five fields of the sheets
+    before step 11."""
+    try:
+        rows = query("SELECT nom, section, source FROM fiche_sections")
+    except Exception:
+        rows = []
+    return {(r["nom"], r["section"], r["source"]) for r in rows}
+
+
+def citation_rules(text):
+    """Rule 27: a citation 'Source : fiche « X », section Y : link' whose sheet, section or link is not a row of the
+    table fiche_sections (a sheet, a section or a source that does not exist is never cited)."""
+    from rag import SECTION_LABELS
+    codes = {label: code for labels in SECTION_LABELS.values() for code, label in labels.items()}
+    known = _sheet_sections()
+    out = []
+    for rx in CITATION:
+        for m in rx.finditer(text):
+            sec = codes.get(m["section"].strip())
+            if (m["nom"].strip(), sec, m["lien"].strip()) not in known:
+                out.append(f"citation inconnue de la table fiche_sections : fiche « {m['nom']} », section "
+                           f"{m['section'].strip()}")
     return out
 
 
@@ -455,6 +487,9 @@ def check_answer(answer):
 
     # rules 22-26 (phyto step 10): shop links and fertilizer doses
     reasons.extend(shop_rules(answer, text, produits, engrais, registered, cls))
+
+    # rule 27 (phyto step 11): every sheet and section cited exists, with the link of that sheet
+    reasons.extend(citation_rules(text))
 
     # rule 21: a shop product that claims a protection effect without a registered product of its name is never in
     # an answer, as a treatment nor as a fertilizer (plan rule 4)
