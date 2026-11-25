@@ -97,6 +97,7 @@ class TestRules10to12(unittest.TestCase):
     BASE = {"task": "diseases", "classe": "tomato__late_blight", "culture": "tomate", "fiable": True}
     GOOD = {"nom": "CIMOXATE C WG", "dose": "3 kg/ha (300 g/hl)", "dar_jours": 3}
     TEXT = ("- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours"
+            " ; classe de toxicité OMS II (modérément dangereux)"  # rule 15, since the WHO table is validated
             "\nProtection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes\nListe DGSVCIA du 22/05/2024")
 
     def check(self, **ctx):

@@ -24,7 +24,8 @@ values). --apply then:
     "produit modifié le <date> : à relire"): a validated mapping is never kept on a text that changed;
   - rebuilds the SQLite base (build_db.py).
 --check-links: a page that answers 404 or 410 is a removed product (stock_status "retire"); other errors (timeout,
-5xx, 403) are reported and change nothing. Columns lien_http and lien_verifie_le keep the last answer.
+5xx, 403, a page that does not answer twice) are reported and change nothing; 5 pages in a row without an answer
+stop the check ("réseau indisponible"). Columns lien_http and lien_verifie_le keep the last answer.
 """
 import argparse
 import datetime
@@ -175,8 +176,10 @@ def read_reviewed():
 class Polite:
     """robots.txt of each site read once and obeyed; at most one request per DELAY (or Crawl-delay) seconds."""
 
+    MAX_FAILURES = 5  # consecutive pages without an answer: the network is down
+
     def __init__(self, delay=DELAY, opener=urllib.request.urlopen):
-        self.delay, self.opener, self.robots, self.last = delay, opener, {}, 0.0
+        self.delay, self.opener, self.robots, self.last, self.failures = delay, opener, {}, 0.0, 0
 
     def _robots(self, url):
         site = "/".join(url.split("/")[:3])
@@ -220,23 +223,32 @@ class Polite:
         time.sleep(max(0.0, self.last + delay - time.time()))
         self.last = time.time()
 
-    def status(self, url):
-        """HTTP status of a page (HEAD, then GET when HEAD is refused); None when robots.txt forbids it."""
+    def status(self, url, tries=2):
+        """HTTP status of a page (HEAD, then GET when HEAD is refused); None when robots.txt forbids it; "sans réponse"
+        when the page does not answer (timeout...) after `tries` attempts. NoNetwork after MAX_FAILURES pages in a row
+        without an answer."""
         if not self.allowed(url):
             return None
-        for method in ("HEAD", "GET"):
+        method, attempt = "HEAD", 0
+        while attempt < tries:
             self.wait(url)
             req = urllib.request.Request(url, method=method, headers={"User-Agent": UA})
             try:
                 with self.opener(req, timeout=30) as r:
+                    self.failures = 0
                     return r.status
             except urllib.error.HTTPError as e:
+                self.failures = 0
                 if e.code == 405 and method == "HEAD":
+                    method = "GET"
                     continue
                 return e.code
-            except (urllib.error.URLError, socket.timeout, OSError) as e:
-                raise NoNetwork(str(e))
-        return None
+            except (urllib.error.URLError, socket.timeout, OSError):
+                attempt += 1
+        self.failures += 1
+        if self.failures >= self.MAX_FAILURES:
+            raise NoNetwork(f"{self.failures} pages de suite sans réponse")
+        return "sans réponse"
 
 
 def check_links(df, polite=None, date=None):
@@ -246,7 +258,7 @@ def check_links(df, polite=None, date=None):
     report = []
     for i, r in df[(df["product_url"] != "") & (df["stock_status"] != "retire")].iterrows():
         code = polite.status(r["product_url"])
-        df.at[i, "lien_http"] = "" if code is None else str(code)
+        df.at[i, "lien_http"] = "" if code is None else str(code)  # "sans réponse": reported, changes nothing
         df.at[i, "lien_verifie_le"] = date
         if code in (404, 410):
             df.at[i, "stock_status"], df.at[i, "retire_le"] = "retire", date
@@ -356,7 +368,7 @@ def main(argv=None):
     catalogue.to_csv(SHOP, index=False, encoding="utf-8")
     if sitemap != B.SITEMAP:  # the new sitemap becomes the current one
         shutil.copy(sitemap, B.SITEMAP)
-    if args.agriclic and raw != B.AGRICLIC:  # the new collection becomes the current one
+    if raw != B.AGRICLIC:  # the new collection becomes the current one
         shutil.copy(raw / "products.jsonl", B.AGRICLIC / "products.jsonl")
         for page in (raw / "html").glob("p_*.html"):
             shutil.copy(page, B.AGRICLIC / "html" / page.name)

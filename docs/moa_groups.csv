@@ -1,143 +1,143 @@
 substance,groupe,liste,nom_liste,groupe_libelle,faible_risque,correspondance,source,status,note
-Abamectin (aka avermectin),IRAC 6,IRAC,Abamectin,"Glutamate-gated chloride channel (GluCl) allosteric modulators Avermectins, Milbemycins",non,sans souche,IRAC MoA Classification online (2026-11-23),proposed,
-Acetamiprid,IRAC 4A,IRAC,Acetamiprid,4A Nicotinic acetylcholine receptor (nAChR) competitive modulators Neonicotinoids,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Acibenzolar-S-methyl (benzothiadiazole),FRAC P01,FRAC,acibenzolar-S-methyl,benzo-thiadiazole (BTH),oui,sans souche,FRAC Code List 2026,proposed,
-Acrinathrin,IRAC 3A,IRAC,Acrinathrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Afidopyropen,IRAC 9D,IRAC,Afidopyropen,9D Chordotonal Organ TRPV Channel Modulators Pyropenes,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Alpha-Cypermethrin (aka alphamethrin),IRAC 3A,IRAC,alpha-Cypermethrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,sans souche,IRAC MoA Classification online (2026-11-23),proposed,
-Aluminium phosphide,IRAC 24A,IRAC,Aluminium phosphide,24A Mitochondrial complex IV electron transport inhibitors Phosphides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Ametoctradin,FRAC 45,FRAC,ametoctradin,"QioSI fungicide (Quinone inside and outside inhibitor, stigmatellin binding mode)",non,exact,FRAC Code List 2026,proposed,
-Amisulbrom,FRAC 21,FRAC,amisulbrom,QiI-fungicides (Quinone inside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Azadirachtin (Margosa extract),IRAC UN,IRAC,Azadirachtin,Compounds of unknown or uncertain MoA Azadirachtin,oui,sans souche,IRAC MoA Classification online (2026-11-23),proposed,
-Azoxystrobin,FRAC 11,FRAC,azoxystrobin,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Bacillus amyloliquefaciens (formerly subtilis) str. QST 713,FRAC BM02,FRAC,Bacillus amyloliquefaciens,"microbial (strains of living microbes or extract, metabolites)",oui,sans souche,FRAC Code List 2026,proposed,
-Bacillus amyloliquefaciens strain MBI 600,FRAC BM02,FRAC,Bacillus amyloliquefaciens,"microbial (strains of living microbes or extract, metabolites)",oui,sans souche,FRAC Code List 2026,proposed,
-Bacillus thuringiensis subsp. Kurstaki strain ABTS-351,IRAC 11A,IRAC,Bacillus thuringiensis subsp. kurstaki,11A Microbial disruptors of insect midgut membranes Bacillus thuringiensis and the insecticidal proteins they produce,non,sans souche,IRAC MoA Classification online (2026-11-23),proposed,
-Beauveria bassiana strain ATCC 74040,IRAC UNF,IRAC,Beauveria bassiana strains,Fungal agents of unknown or uncertain MoA,oui,genre espece,IRAC MoA Classification online (2026-11-23),proposed,genre et espèce seulement : vérifier la souche
-Benzovindiflupyr,FRAC 7,FRAC,benzovindiflupyr,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,proposed,
-Bifenazate,IRAC 20D,IRAC,Bifenazate,20D Mitochondrial complex III electron transport inhibitors – Qo site Bifenazate,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Bixafen,FRAC 7,FRAC,bixafen,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,proposed,
-Boscalid (formerly nicobifen),FRAC 7,FRAC,boscalid,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,sans souche,FRAC Code List 2026,proposed,
-Bromuconazole,FRAC 3,FRAC,bromuconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Bupirimate,FRAC 8,FRAC,bupirimate,hydroxy- (2-amino-) pyrimidines,non,exact,FRAC Code List 2026,proposed,
-Buprofezin,IRAC 16,IRAC,Buprofezin,"Inhibitors of chitin biosynthesis, type 1 Buprofezin",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Captan,FRAC M04,FRAC,captan,phthalimides (electrophiles),oui,exact,FRAC Code List 2026,proposed,
-Chlorantraniliprole,IRAC 28,IRAC,Chlorantraniliprole,Ryanodine receptor modulators Diamides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Chlorothalonil,FRAC M05,FRAC,chlorothalonil,chloronitriles (phthalonitriles) (unspecified mechanism),oui,exact,FRAC Code List 2026,proposed,
-Chlorpyrifos,IRAC 1B,IRAC,Chlorpyrifos,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Chromafenozide,IRAC 18,IRAC,Chromafenozide,Ecdysone receptor agonists Diacylhydrazines,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Clofentezine,IRAC 10A,IRAC,Clofentezine,"10A Mite growth inhibitors affecting CHS1 Clofentezine, Diflovidazin, Hexythiazox",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Copper compounds,FRAC M01,FRAC,copper,inorganic (electrophiles),oui,cuivre,FRAC Code List 2026,proposed,
-Copper hydroxide,FRAC M01,FRAC,copper,inorganic (electrophiles),oui,cuivre,FRAC Code List 2026,proposed,
-Copper oxychloride,FRAC M01,FRAC,copper,inorganic (electrophiles),oui,cuivre,FRAC Code List 2026,proposed,
-Cyantraniliprole,IRAC 28,IRAC,Cyantraniliprole,Ryanodine receptor modulators Diamides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Cyazofamid,FRAC 21,FRAC,cyazofamid,QiI-fungicides (Quinone inside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Cyflufenamid,FRAC U06,FRAC,cyflufenamid,phenyl- acetamide,oui,exact,FRAC Code List 2026,proposed,
-Cyflumetofen,IRAC 25A,IRAC,Cyflumetofen,25A Mitochondrial complex II electron transport inhibitors Beta-ketonitrile derivatives,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Cymoxanil,FRAC 27,FRAC,cymoxanil,cyanoacetamide- oxime,non,exact,FRAC Code List 2026,proposed,
-Cypermethrin,IRAC 3A,IRAC,Cypermethrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Cyproconazole,FRAC 3,FRAC,cyproconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Cyprodinil,FRAC 9,FRAC,cyprodinil,AP-fungicides (Anilino- Pyrimidines),non,exact,FRAC Code List 2026,proposed,
-Deltamethrin,IRAC 3A,IRAC,Deltamethrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Diafenthiuron,IRAC 12A,IRAC,Diafenthiuron,12A Inhibitors of mitochondrial ATP synthase Diafenthiuron,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Diethofencarb,FRAC 10,FRAC,diethofencarb,N-phenyl carbamates,non,exact,FRAC Code List 2026,proposed,
-Difenoconazole,FRAC 3,FRAC,difenoconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Dimethoate,IRAC 1B,IRAC,Dimethoate,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Dimethomorph,FRAC 40,FRAC,dimethomorph,CAA-fungicides (Carboxylic Acid Amides),non,exact,FRAC Code List 2026,proposed,
-Dinotefuran,IRAC 4A,IRAC,Dinotefuran,4A Nicotinic acetylcholine receptor (nAChR) competitive modulators Neonicotinoids,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Dithianon,FRAC M09,FRAC,dithianon,quinones (anthraquinones) (electrophiles),oui,exact,FRAC Code List 2026,proposed,
-Dodine,FRAC U12,FRAC,dodine,guanidines,oui,exact,FRAC Code List 2026,proposed,
-Emamectin,IRAC 6,IRAC,Emamectin benzoate,"Glutamate-gated chloride channel (GluCl) allosteric modulators Avermectins, Milbemycins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Esfenvalerate,IRAC 3A,IRAC,Esfenvalerate,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Etofenprox,IRAC 3A,IRAC,Etofenprox,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Etoxazole,IRAC 10B,IRAC,Etoxazole,10B Mite growth inhibitors affecting CHS1 Etoxazole,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Famoxadone,FRAC 11,FRAC,famoxadone,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Fenazaquin,IRAC 21A,IRAC,Fenazaquin,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Fenhexamid,FRAC 17,FRAC,fenhexamid,KRI-fungicides (KetoReductase Inhibitors) (SBI: Class III),non,exact,FRAC Code List 2026,proposed,
-Fenpropimorph,FRAC 5,FRAC,fenpropimorph,Amines (“morpholines”) (SBI: Class II),non,exact,FRAC Code List 2026,proposed,
-Fenpyrazamine,FRAC 17,FRAC,fenpyrazamine,KRI-fungicides (KetoReductase Inhibitors) (SBI: Class III),non,exact,FRAC Code List 2026,proposed,
-Fenpyroximate,IRAC 21A,IRAC,Fenpyroximate,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Flonicamid (IKI-220),IRAC 29,IRAC,Flonicamid,Chordotonal organ nicotinamidase inhibitors Flonicamid,non,sans souche,IRAC MoA Classification online (2026-11-23),proposed,
-Fluazinam,FRAC 21,FRAC,fluazinam,QiI-fungicides (Quinone inside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Flubendiamide,IRAC 28,IRAC,Flubendiamide,Ryanodine receptor modulators Diamides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Fludioxonil,FRAC 12,FRAC,fludioxonil,PP-fungicides (PhenylPyrroles),non,exact,FRAC Code List 2026,proposed,
-Flufenoxuron,IRAC 15,IRAC,Flufenoxuron,Inhibitors of chitin biosynthesis affecting CHS1 Benzoylureas,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Fluopicolide,FRAC 43,FRAC,fluopicolide,benzamides,non,exact,FRAC Code List 2026,proposed,
-Fluopyram,FRAC 7,FRAC,fluopyram,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,proposed,
-Fluoxastrobin,FRAC 11,FRAC,fluoxastrobin,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Flupyradifurone,IRAC 4D,IRAC,Flupyradifurone,4D Nicotinic acetylcholine receptor (nAChR) competitive modulators Butenolides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Flutriafol,FRAC 3,FRAC,flutriafol,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Fluxapyroxad,FRAC 7,FRAC,fluxapyroxad,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,proposed,
-Folpet,FRAC M04,FRAC,folpet,phthalimides (electrophiles),oui,exact,FRAC Code List 2026,proposed,
-Fosetyl,FRAC P07,FRAC,fosetyl-Al,phosphonates,oui,exact,FRAC Code List 2026,proposed,
-Gamma-cyhalothrin,IRAC 3A,IRAC,gamma-Cyhalothrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Helicoverpa armigera nucleopolyhedrovirus (HearNPV),IRAC 31,IRAC,Helicoverpa armigera NPV,"Baculoviruses Granuloviruses (GVs), Nucleopolyhedroviruses (NPVs)",non,genre espece,IRAC MoA Classification online (2026-11-23),proposed,genre et espèce seulement : vérifier la souche
-Hexythiazox,IRAC 10A,IRAC,Hexythiazox,"10A Mite growth inhibitors affecting CHS1 Clofentezine, Diflovidazin, Hexythiazox",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Hymexazol,FRAC 32,FRAC,hymexazole,heteroaromatics,non,exact,FRAC Code List 2026,proposed,
-Imidacloprid,IRAC 4A,IRAC,Imidacloprid,4A Nicotinic acetylcholine receptor (nAChR) competitive modulators Neonicotinoids,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Indoxacarb,IRAC 22A,IRAC,Indoxacarb,22A Voltage-dependent sodium channel blockers Oxadiazines,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Iprovalicarb,FRAC 40,FRAC,iprovalicarb,CAA-fungicides (Carboxylic Acid Amides),non,exact,FRAC Code List 2026,proposed,
-Isofetamid,FRAC 7,FRAC,isofetamid,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,proposed,
-Kresoxim-methyl,FRAC 11,FRAC,kresoxim-methyl,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Laminarin,FRAC P04,FRAC,laminarin,natural compound,oui,exact,FRAC Code List 2026,proposed,
-Malathion,IRAC 1B,IRAC,Malathion,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Mandipropamid,FRAC 40,FRAC,mandipropamid,CAA-fungicides (Carboxylic Acid Amides),non,exact,FRAC Code List 2026,proposed,
-Mefentrifluconazole,FRAC 3,FRAC,mefentrifluconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Meptyldinocap,FRAC 21,FRAC,meptyldinocap,QiI-fungicides (Quinone inside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Metaflumizone,IRAC 22B,IRAC,Metaflumizone,22B Voltage-dependent sodium channel blockers Semicarbazones,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Metalaxyl,FRAC 4,FRAC,metalaxyl,PA-fungicides (PhenylAmides),non,exact,FRAC Code List 2026,proposed,
-Metalaxyl-M,FRAC 4,FRAC,metalaxyl-M,PA-fungicides (PhenylAmides),non,exact,FRAC Code List 2026,proposed,
-Metam (incl. -potassium and -sodium),IRAC 8F,IRAC,Metam,8F Miscellaneous non-specific (multi-site) inhibitors Methyl isothiocyanate generators,non,sans souche,IRAC MoA Classification online (2026-11-23),proposed,
-Metarhizium brunneum strain Ma 43 (formerly Metarhizium anisopliae var anisopliae),IRAC UNF,IRAC,Metarhizium brunneum strain F52,Fungal agents of unknown or uncertain MoA,oui,genre espece,IRAC MoA Classification online (2026-11-23),proposed,genre et espèce seulement : vérifier la souche
-Metconazole,FRAC 3,FRAC,metconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Methoxyfenozide,IRAC 18,IRAC,Methoxyfenozide,Ecdysone receptor agonists Diacylhydrazines,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Methyl isothiocyanate,IRAC 8F,IRAC,Methyl isothiocyanate,8F Miscellaneous non-specific (multi-site) inhibitors Methyl isothiocyanate generators,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Metiram,FRAC M03,FRAC,metiram,dithiocarbamates and relatives (electrophiles),oui,exact,FRAC Code List 2026,proposed,
-Metrafenone,FRAC 50,FRAC,metrafenone,aryl-phenyl- ketones,non,exact,FRAC Code List 2026,proposed,
-Milbemectin,IRAC 6,IRAC,Milbemectin,"Glutamate-gated chloride channel (GluCl) allosteric modulators Avermectins, Milbemycins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Myclobutanil,FRAC 3,FRAC,myclobutanil,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Oxamyl,IRAC 1A,IRAC,Oxamyl,1A Acetylcholinesterase (AChE) inhibitors Carbamates,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Oxathiapiprolin,FRAC 49,FRAC,oxathiapiprolin,OSBPI- fungicides oxysterol binding protein homologue inhibition,non,exact,FRAC Code List 2026,proposed,
-Penconazole,FRAC 3,FRAC,penconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Pencycuron,FRAC 20,FRAC,pencycuron,phenylureas,non,exact,FRAC Code List 2026,proposed,
-Penthiopyrad,FRAC 7,FRAC,penthiopyrad,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,proposed,
-Phosmet,IRAC 1B,IRAC,Phosmet,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Pirimicarb,IRAC 1A,IRAC,Pirimicarb,1A Acetylcholinesterase (AChE) inhibitors Carbamates,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Pirimiphos-methyl,IRAC 1B,IRAC,Pirimiphos-methyl,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Prochloraz,FRAC 3,FRAC,prochloraz,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Propamocarb,FRAC 28,FRAC,propamocarb,Carbamates,non,exact,FRAC Code List 2026,proposed,
-Proquinazid,FRAC 13,FRAC,proquinazid,aza- naphthalenes,non,exact,FRAC Code List 2026,proposed,
-Prothioconazole,FRAC 3,FRAC,prothioconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Pydiflumetofen,FRAC 7,FRAC,pydiflumetofen,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,proposed,
-Pyraclostrobin,FRAC 11,FRAC,pyraclostrobin,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Pyrethrins,IRAC 3A,IRAC,Pyrethrins (pyrethrum),"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Pyridaben,IRAC 21A,IRAC,Pyridaben,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Pyridalyl,IRAC UN,IRAC,Pyridalyl,Compounds of unknown or uncertain MoA Pyridalyl,oui,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Pyrifluquinazon,IRAC 9B,IRAC,Pyrifluquinazon,9B Chordotonal Organ TRPV Channel Modulators pyridine azomethine derivatives,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Pyrimethanil,FRAC 9,FRAC,pyrimethanil,AP-fungicides (Anilino- Pyrimidines),non,exact,FRAC Code List 2026,proposed,
-Pyriofenone,FRAC 50,FRAC,pyriofenone,aryl-phenyl- ketones,non,exact,FRAC Code List 2026,proposed,
-Pyriproxyfen,IRAC 7C,IRAC,Pyriproxyfen,7C Juvenile hormone receptor modulators Pyriproxyfen,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Sedaxane,FRAC 7,FRAC,sedaxane,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,proposed,
-Spinetoram,IRAC 5,IRAC,Spinetoram,Nicotinic acetylcholine receptor (nAChR) allosteric modulators - Site I Spinosyns,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Spinosad,IRAC 5,IRAC,Spinosad,Nicotinic acetylcholine receptor (nAChR) allosteric modulators - Site I Spinosyns,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Spirodiclofen,IRAC 23,IRAC,Spirodiclofen,Inhibitors of acetyl-CoA carboxylase Tetronic and Tetramic acid derivatives,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Spiromesifen,IRAC 23,IRAC,Spiromesifen,Inhibitors of acetyl-CoA carboxylase Tetronic and Tetramic acid derivatives,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Spirotetramat,IRAC 23,IRAC,Spirotetramat,Inhibitors of acetyl-CoA carboxylase Tetronic and Tetramic acid derivatives,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Spiroxamine,FRAC 5,FRAC,spiroxamine,Amines (“morpholines”) (SBI: Class II),non,exact,FRAC Code List 2026,proposed,
-Sulfoxaflor,IRAC 4C,IRAC,Sulfoxaflor,4C Nicotinic acetylcholine receptor (nAChR) competitive modulators Sulfoximines,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Sulphur,FRAC M02,FRAC,sulphur,inorganic (electrophiles),oui,exact,FRAC Code List 2026,proposed,
-"Swinglea glutinosa, ext.",FRAC BM01,FRAC,Swinglea glutinosa,plant extract,oui,genre espece,FRAC Code List 2026,proposed,genre et espèce seulement : vérifier la souche
-Tebuconazole,FRAC 3,FRAC,tebuconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Tebufenpyrad,IRAC 21A,IRAC,Tebufenpyrad,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Tefluthrin,IRAC 3A,IRAC,Tefluthrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Thiabendazole,FRAC 1,FRAC,thiabendazole,MBC-fungicides (Methyl Benzimidazole Carbamates),non,exact,FRAC Code List 2026,proposed,
-Thiamethoxam,IRAC 4A,IRAC,Thiamethoxam,4A Nicotinic acetylcholine receptor (nAChR) competitive modulators Neonicotinoids,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Tolfenpyrad,IRAC 21A,IRAC,Tolfenpyrad,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-Tribasic copper sulphate,FRAC M01,FRAC,copper,inorganic (electrophiles),oui,cuivre,FRAC Code List 2026,proposed,
-Trichoderma atroviride 77B,FRAC BM02,FRAC,Trichoderma atroviride,"microbial (strains of living microbes or extract, metabolites)",oui,genre espece,FRAC Code List 2026,proposed,genre et espèce seulement : vérifier la souche
-Trifloxystrobin,FRAC 11,FRAC,trifloxystrobin,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,proposed,
-Triticonazole,FRAC 3,FRAC,triticonazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,proposed,
-Ziram,FRAC M03,FRAC,ziram,dithiocarbamates and relatives (electrophiles),oui,exact,FRAC Code List 2026,proposed,
-Zoxamide,FRAC 22,FRAC,zoxamide,benzamides,non,exact,FRAC Code List 2026,proposed,
-lambda-Cyhalothrin,IRAC 3A,IRAC,lambda-Cyhalothrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
-tau-Fluvalinate,IRAC 3A,IRAC,tau-Fluvalinate,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),proposed,
+Abamectin (aka avermectin),IRAC 6,IRAC,Abamectin,"Glutamate-gated chloride channel (GluCl) allosteric modulators Avermectins, Milbemycins",non,sans souche,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 6 conforme à la classification IRAC
+Acetamiprid,IRAC 4A,IRAC,Acetamiprid,4A Nicotinic acetylcholine receptor (nAChR) competitive modulators Neonicotinoids,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 4A conforme à la classification IRAC
+Acibenzolar-S-methyl (benzothiadiazole),FRAC P01,FRAC,acibenzolar-S-methyl,benzo-thiadiazole (BTH),oui,sans souche,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC P01 conforme à la classification FRAC
+Acrinathrin,IRAC 3A,IRAC,Acrinathrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+Afidopyropen,IRAC 9D,IRAC,Afidopyropen,9D Chordotonal Organ TRPV Channel Modulators Pyropenes,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 9D conforme à la classification IRAC
+Alpha-Cypermethrin (aka alphamethrin),IRAC 3A,IRAC,alpha-Cypermethrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,sans souche,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+Aluminium phosphide,IRAC 24A,IRAC,Aluminium phosphide,24A Mitochondrial complex IV electron transport inhibitors Phosphides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 24A conforme à la classification IRAC
+Ametoctradin,FRAC 45,FRAC,ametoctradin,"QioSI fungicide (Quinone inside and outside inhibitor, stigmatellin binding mode)",non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 45 conforme à la classification FRAC
+Amisulbrom,FRAC 21,FRAC,amisulbrom,QiI-fungicides (Quinone inside Inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 21 conforme à la classification FRAC
+Azadirachtin (Margosa extract),IRAC UN,IRAC,Azadirachtin,Compounds of unknown or uncertain MoA Azadirachtin,oui,sans souche,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC UN conforme à la classification IRAC
+Azoxystrobin,FRAC 11,FRAC,azoxystrobin,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 11 conforme à la classification FRAC
+Bacillus amyloliquefaciens (formerly subtilis) str. QST 713,FRAC BM02,FRAC,Bacillus amyloliquefaciens,"microbial (strains of living microbes or extract, metabolites)",oui,sans souche,FRAC Code List 2026,validated,relecture 2026-11-25 : Groupe FRAC BM02 correct pour cette espèce (souche sans incidence sur le groupe)
+Bacillus amyloliquefaciens strain MBI 600,FRAC BM02,FRAC,Bacillus amyloliquefaciens,"microbial (strains of living microbes or extract, metabolites)",oui,sans souche,FRAC Code List 2026,validated,relecture 2026-11-25 : Groupe FRAC BM02 correct pour cette espèce (souche sans incidence sur le groupe)
+Bacillus thuringiensis subsp. Kurstaki strain ABTS-351,IRAC 11A,IRAC,Bacillus thuringiensis subsp. kurstaki,11A Microbial disruptors of insect midgut membranes Bacillus thuringiensis and the insecticidal proteins they produce,non,sans souche,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : Groupe IRAC 11A correct pour cette espèce (souche sans incidence sur le groupe)
+Beauveria bassiana strain ATCC 74040,IRAC UNF,IRAC,Beauveria bassiana strains,Fungal agents of unknown or uncertain MoA,oui,genre espece,IRAC MoA Classification online (2026-11-23),validated,genre et espèce seulement : vérifier la souche | relecture 2026-11-25 : B. bassiana : IRAC UNF quel que soit la souche (ATCC 74040 incluse)
+Benzovindiflupyr,FRAC 7,FRAC,benzovindiflupyr,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 7 conforme à la classification FRAC
+Bifenazate,IRAC 20D,IRAC,Bifenazate,20D Mitochondrial complex III electron transport inhibitors – Qo site Bifenazate,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 20D conforme à la classification IRAC
+Bixafen,FRAC 7,FRAC,bixafen,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 7 conforme à la classification FRAC
+Boscalid (formerly nicobifen),FRAC 7,FRAC,boscalid,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,sans souche,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 7 conforme à la classification FRAC
+Bromuconazole,FRAC 3,FRAC,bromuconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Bupirimate,FRAC 8,FRAC,bupirimate,hydroxy- (2-amino-) pyrimidines,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 8 conforme à la classification FRAC
+Buprofezin,IRAC 16,IRAC,Buprofezin,"Inhibitors of chitin biosynthesis, type 1 Buprofezin",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 16 conforme à la classification IRAC
+Captan,FRAC M04,FRAC,captan,phthalimides (electrophiles),oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC M04 conforme à la classification FRAC
+Chlorantraniliprole,IRAC 28,IRAC,Chlorantraniliprole,Ryanodine receptor modulators Diamides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 28 conforme à la classification IRAC
+Chlorothalonil,FRAC M05,FRAC,chlorothalonil,chloronitriles (phthalonitriles) (unspecified mechanism),oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC M05 conforme à la classification FRAC
+Chlorpyrifos,IRAC 1B,IRAC,Chlorpyrifos,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 1B conforme à la classification IRAC
+Chromafenozide,IRAC 18,IRAC,Chromafenozide,Ecdysone receptor agonists Diacylhydrazines,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 18 conforme à la classification IRAC
+Clofentezine,IRAC 10A,IRAC,Clofentezine,"10A Mite growth inhibitors affecting CHS1 Clofentezine, Diflovidazin, Hexythiazox",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 10A conforme à la classification IRAC
+Copper compounds,FRAC M01,FRAC,copper,inorganic (electrophiles),oui,cuivre,FRAC Code List 2026,validated,"relecture 2026-11-25 : Cuivre : FRAC M01 (multisite), faible risque de résistance"
+Copper hydroxide,FRAC M01,FRAC,copper,inorganic (electrophiles),oui,cuivre,FRAC Code List 2026,validated,"relecture 2026-11-25 : Cuivre : FRAC M01 (multisite), faible risque de résistance"
+Copper oxychloride,FRAC M01,FRAC,copper,inorganic (electrophiles),oui,cuivre,FRAC Code List 2026,validated,"relecture 2026-11-25 : Cuivre : FRAC M01 (multisite), faible risque de résistance"
+Cyantraniliprole,IRAC 28,IRAC,Cyantraniliprole,Ryanodine receptor modulators Diamides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 28 conforme à la classification IRAC
+Cyazofamid,FRAC 21,FRAC,cyazofamid,QiI-fungicides (Quinone inside Inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 21 conforme à la classification FRAC
+Cyflufenamid,FRAC U06,FRAC,cyflufenamid,phenyl- acetamide,oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC U06 conforme à la classification FRAC
+Cyflumetofen,IRAC 25A,IRAC,Cyflumetofen,25A Mitochondrial complex II electron transport inhibitors Beta-ketonitrile derivatives,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 25A conforme à la classification IRAC
+Cymoxanil,FRAC 27,FRAC,cymoxanil,cyanoacetamide- oxime,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 27 conforme à la classification FRAC
+Cypermethrin,IRAC 3A,IRAC,Cypermethrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+Cyproconazole,FRAC 3,FRAC,cyproconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Cyprodinil,FRAC 9,FRAC,cyprodinil,AP-fungicides (Anilino- Pyrimidines),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 9 conforme à la classification FRAC
+Deltamethrin,IRAC 3A,IRAC,Deltamethrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+Diafenthiuron,IRAC 12A,IRAC,Diafenthiuron,12A Inhibitors of mitochondrial ATP synthase Diafenthiuron,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 12A conforme à la classification IRAC
+Diethofencarb,FRAC 10,FRAC,diethofencarb,N-phenyl carbamates,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 10 conforme à la classification FRAC
+Difenoconazole,FRAC 3,FRAC,difenoconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Dimethoate,IRAC 1B,IRAC,Dimethoate,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 1B conforme à la classification IRAC
+Dimethomorph,FRAC 40,FRAC,dimethomorph,CAA-fungicides (Carboxylic Acid Amides),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 40 conforme à la classification FRAC
+Dinotefuran,IRAC 4A,IRAC,Dinotefuran,4A Nicotinic acetylcholine receptor (nAChR) competitive modulators Neonicotinoids,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 4A conforme à la classification IRAC
+Dithianon,FRAC M09,FRAC,dithianon,quinones (anthraquinones) (electrophiles),oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC M09 conforme à la classification FRAC
+Dodine,FRAC U12,FRAC,dodine,guanidines,oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC U12 conforme à la classification FRAC
+Emamectin,IRAC 6,IRAC,Emamectin benzoate,"Glutamate-gated chloride channel (GluCl) allosteric modulators Avermectins, Milbemycins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 6 conforme à la classification IRAC
+Esfenvalerate,IRAC 3A,IRAC,Esfenvalerate,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+Etofenprox,IRAC 3A,IRAC,Etofenprox,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+Etoxazole,IRAC 10B,IRAC,Etoxazole,10B Mite growth inhibitors affecting CHS1 Etoxazole,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 10B conforme à la classification IRAC
+Famoxadone,FRAC 11,FRAC,famoxadone,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 11 conforme à la classification FRAC
+Fenazaquin,IRAC 21A,IRAC,Fenazaquin,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 21A conforme à la classification IRAC
+Fenhexamid,FRAC 17,FRAC,fenhexamid,KRI-fungicides (KetoReductase Inhibitors) (SBI: Class III),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 17 conforme à la classification FRAC
+Fenpropimorph,FRAC 5,FRAC,fenpropimorph,Amines (“morpholines”) (SBI: Class II),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 5 conforme à la classification FRAC
+Fenpyrazamine,FRAC 17,FRAC,fenpyrazamine,KRI-fungicides (KetoReductase Inhibitors) (SBI: Class III),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 17 conforme à la classification FRAC
+Fenpyroximate,IRAC 21A,IRAC,Fenpyroximate,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 21A conforme à la classification IRAC
+Flonicamid (IKI-220),IRAC 29,IRAC,Flonicamid,Chordotonal organ nicotinamidase inhibitors Flonicamid,non,sans souche,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 29 conforme à la classification IRAC
+Fluazinam,FRAC 21,FRAC,fluazinam,QiI-fungicides (Quinone inside Inhibitors),non,exact,FRAC Code List 2026,rejected,"relecture 2026-11-25 : Fluazinam = découpleur de la phosphorylation oxydative, FRAC 29 (et non 21 QiI) : vérifier la lecture de la liste FRAC 2026"
+Flubendiamide,IRAC 28,IRAC,Flubendiamide,Ryanodine receptor modulators Diamides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 28 conforme à la classification IRAC
+Fludioxonil,FRAC 12,FRAC,fludioxonil,PP-fungicides (PhenylPyrroles),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 12 conforme à la classification FRAC
+Flufenoxuron,IRAC 15,IRAC,Flufenoxuron,Inhibitors of chitin biosynthesis affecting CHS1 Benzoylureas,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 15 conforme à la classification IRAC
+Fluopicolide,FRAC 43,FRAC,fluopicolide,benzamides,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 43 conforme à la classification FRAC
+Fluopyram,FRAC 7,FRAC,fluopyram,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 7 conforme à la classification FRAC
+Fluoxastrobin,FRAC 11,FRAC,fluoxastrobin,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 11 conforme à la classification FRAC
+Flupyradifurone,IRAC 4D,IRAC,Flupyradifurone,4D Nicotinic acetylcholine receptor (nAChR) competitive modulators Butenolides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 4D conforme à la classification IRAC
+Flutriafol,FRAC 3,FRAC,flutriafol,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Fluxapyroxad,FRAC 7,FRAC,fluxapyroxad,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 7 conforme à la classification FRAC
+Folpet,FRAC M04,FRAC,folpet,phthalimides (electrophiles),oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC M04 conforme à la classification FRAC
+Fosetyl,FRAC P07,FRAC,fosetyl-Al,phosphonates,oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : Fosétyl-Al : FRAC P07 (phosphonates)
+Gamma-cyhalothrin,IRAC 3A,IRAC,gamma-Cyhalothrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+Helicoverpa armigera nucleopolyhedrovirus (HearNPV),IRAC 31,IRAC,Helicoverpa armigera NPV,"Baculoviruses Granuloviruses (GVs), Nucleopolyhedroviruses (NPVs)",non,genre espece,IRAC MoA Classification online (2026-11-23),validated,"genre et espèce seulement : vérifier la souche | relecture 2026-11-25 : HearNPV = baculovirus, IRAC 31 quel que soit l'isolat"
+Hexythiazox,IRAC 10A,IRAC,Hexythiazox,"10A Mite growth inhibitors affecting CHS1 Clofentezine, Diflovidazin, Hexythiazox",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 10A conforme à la classification IRAC
+Hymexazol,FRAC 32,FRAC,hymexazole,heteroaromatics,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 32 conforme à la classification FRAC
+Imidacloprid,IRAC 4A,IRAC,Imidacloprid,4A Nicotinic acetylcholine receptor (nAChR) competitive modulators Neonicotinoids,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 4A conforme à la classification IRAC
+Indoxacarb,IRAC 22A,IRAC,Indoxacarb,22A Voltage-dependent sodium channel blockers Oxadiazines,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 22A conforme à la classification IRAC
+Iprovalicarb,FRAC 40,FRAC,iprovalicarb,CAA-fungicides (Carboxylic Acid Amides),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 40 conforme à la classification FRAC
+Isofetamid,FRAC 7,FRAC,isofetamid,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 7 conforme à la classification FRAC
+Kresoxim-methyl,FRAC 11,FRAC,kresoxim-methyl,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 11 conforme à la classification FRAC
+Laminarin,FRAC P04,FRAC,laminarin,natural compound,oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC P04 conforme à la classification FRAC
+Malathion,IRAC 1B,IRAC,Malathion,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 1B conforme à la classification IRAC
+Mandipropamid,FRAC 40,FRAC,mandipropamid,CAA-fungicides (Carboxylic Acid Amides),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 40 conforme à la classification FRAC
+Mefentrifluconazole,FRAC 3,FRAC,mefentrifluconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Meptyldinocap,FRAC 21,FRAC,meptyldinocap,QiI-fungicides (Quinone inside Inhibitors),non,exact,FRAC Code List 2026,rejected,"relecture 2026-11-25 : Meptyldinocap = découpleur de la phosphorylation oxydative, FRAC 29 (et non 21 QiI) : vérifier la lecture de la liste FRAC 2026"
+Metaflumizone,IRAC 22B,IRAC,Metaflumizone,22B Voltage-dependent sodium channel blockers Semicarbazones,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 22B conforme à la classification IRAC
+Metalaxyl,FRAC 4,FRAC,metalaxyl,PA-fungicides (PhenylAmides),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 4 conforme à la classification FRAC
+Metalaxyl-M,FRAC 4,FRAC,metalaxyl-M,PA-fungicides (PhenylAmides),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 4 conforme à la classification FRAC
+Metam (incl. -potassium and -sodium),IRAC 8F,IRAC,Metam,8F Miscellaneous non-specific (multi-site) inhibitors Methyl isothiocyanate generators,non,sans souche,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 8F conforme à la classification IRAC
+Metarhizium brunneum strain Ma 43 (formerly Metarhizium anisopliae var anisopliae),IRAC UNF,IRAC,Metarhizium brunneum strain F52,Fungal agents of unknown or uncertain MoA,oui,genre espece,IRAC MoA Classification online (2026-11-23),validated,"genre et espèce seulement : vérifier la souche | relecture 2026-11-25 : Souche Ma 43 = F52 (Met52) : même souche, groupe IRAC UNF correct"
+Metconazole,FRAC 3,FRAC,metconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Methoxyfenozide,IRAC 18,IRAC,Methoxyfenozide,Ecdysone receptor agonists Diacylhydrazines,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 18 conforme à la classification IRAC
+Methyl isothiocyanate,IRAC 8F,IRAC,Methyl isothiocyanate,8F Miscellaneous non-specific (multi-site) inhibitors Methyl isothiocyanate generators,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 8F conforme à la classification IRAC
+Metiram,FRAC M03,FRAC,metiram,dithiocarbamates and relatives (electrophiles),oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC M03 conforme à la classification FRAC
+Metrafenone,FRAC 50,FRAC,metrafenone,aryl-phenyl- ketones,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 50 conforme à la classification FRAC
+Milbemectin,IRAC 6,IRAC,Milbemectin,"Glutamate-gated chloride channel (GluCl) allosteric modulators Avermectins, Milbemycins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 6 conforme à la classification IRAC
+Myclobutanil,FRAC 3,FRAC,myclobutanil,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Oxamyl,IRAC 1A,IRAC,Oxamyl,1A Acetylcholinesterase (AChE) inhibitors Carbamates,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 1A conforme à la classification IRAC
+Oxathiapiprolin,FRAC 49,FRAC,oxathiapiprolin,OSBPI- fungicides oxysterol binding protein homologue inhibition,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 49 conforme à la classification FRAC
+Penconazole,FRAC 3,FRAC,penconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Pencycuron,FRAC 20,FRAC,pencycuron,phenylureas,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 20 conforme à la classification FRAC
+Penthiopyrad,FRAC 7,FRAC,penthiopyrad,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 7 conforme à la classification FRAC
+Phosmet,IRAC 1B,IRAC,Phosmet,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 1B conforme à la classification IRAC
+Pirimicarb,IRAC 1A,IRAC,Pirimicarb,1A Acetylcholinesterase (AChE) inhibitors Carbamates,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 1A conforme à la classification IRAC
+Pirimiphos-methyl,IRAC 1B,IRAC,Pirimiphos-methyl,1B Acetylcholinesterase (AChE) inhibitors Organophosphates,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 1B conforme à la classification IRAC
+Prochloraz,FRAC 3,FRAC,prochloraz,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Propamocarb,FRAC 28,FRAC,propamocarb,Carbamates,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 28 conforme à la classification FRAC
+Proquinazid,FRAC 13,FRAC,proquinazid,aza- naphthalenes,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 13 conforme à la classification FRAC
+Prothioconazole,FRAC 3,FRAC,prothioconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Pydiflumetofen,FRAC 7,FRAC,pydiflumetofen,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 7 conforme à la classification FRAC
+Pyraclostrobin,FRAC 11,FRAC,pyraclostrobin,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 11 conforme à la classification FRAC
+Pyrethrins,IRAC 3A,IRAC,Pyrethrins (pyrethrum),"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+Pyridaben,IRAC 21A,IRAC,Pyridaben,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 21A conforme à la classification IRAC
+Pyridalyl,IRAC UN,IRAC,Pyridalyl,Compounds of unknown or uncertain MoA Pyridalyl,oui,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC UN conforme à la classification IRAC
+Pyrifluquinazon,IRAC 9B,IRAC,Pyrifluquinazon,9B Chordotonal Organ TRPV Channel Modulators pyridine azomethine derivatives,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 9B conforme à la classification IRAC
+Pyrimethanil,FRAC 9,FRAC,pyrimethanil,AP-fungicides (Anilino- Pyrimidines),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 9 conforme à la classification FRAC
+Pyriofenone,FRAC 50,FRAC,pyriofenone,aryl-phenyl- ketones,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 50 conforme à la classification FRAC
+Pyriproxyfen,IRAC 7C,IRAC,Pyriproxyfen,7C Juvenile hormone receptor modulators Pyriproxyfen,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 7C conforme à la classification IRAC
+Sedaxane,FRAC 7,FRAC,sedaxane,SDHI-fungicides (Succinate- dehydrogenase inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 7 conforme à la classification FRAC
+Spinetoram,IRAC 5,IRAC,Spinetoram,Nicotinic acetylcholine receptor (nAChR) allosteric modulators - Site I Spinosyns,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 5 conforme à la classification IRAC
+Spinosad,IRAC 5,IRAC,Spinosad,Nicotinic acetylcholine receptor (nAChR) allosteric modulators - Site I Spinosyns,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 5 conforme à la classification IRAC
+Spirodiclofen,IRAC 23,IRAC,Spirodiclofen,Inhibitors of acetyl-CoA carboxylase Tetronic and Tetramic acid derivatives,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 23 conforme à la classification IRAC
+Spiromesifen,IRAC 23,IRAC,Spiromesifen,Inhibitors of acetyl-CoA carboxylase Tetronic and Tetramic acid derivatives,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 23 conforme à la classification IRAC
+Spirotetramat,IRAC 23,IRAC,Spirotetramat,Inhibitors of acetyl-CoA carboxylase Tetronic and Tetramic acid derivatives,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 23 conforme à la classification IRAC
+Spiroxamine,FRAC 5,FRAC,spiroxamine,Amines (“morpholines”) (SBI: Class II),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 5 conforme à la classification FRAC
+Sulfoxaflor,IRAC 4C,IRAC,Sulfoxaflor,4C Nicotinic acetylcholine receptor (nAChR) competitive modulators Sulfoximines,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 4C conforme à la classification IRAC
+Sulphur,FRAC M02,FRAC,sulphur,inorganic (electrophiles),oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC M02 conforme à la classification FRAC
+"Swinglea glutinosa, ext.",FRAC BM01,FRAC,Swinglea glutinosa,plant extract,oui,genre espece,FRAC Code List 2026,validated,genre et espèce seulement : vérifier la souche | relecture 2026-11-25 : Extrait végétal Swinglea glutinosa : FRAC BM01 correct
+Tebuconazole,FRAC 3,FRAC,tebuconazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Tebufenpyrad,IRAC 21A,IRAC,Tebufenpyrad,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 21A conforme à la classification IRAC
+Tefluthrin,IRAC 3A,IRAC,Tefluthrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+Thiabendazole,FRAC 1,FRAC,thiabendazole,MBC-fungicides (Methyl Benzimidazole Carbamates),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 1 conforme à la classification FRAC
+Thiamethoxam,IRAC 4A,IRAC,Thiamethoxam,4A Nicotinic acetylcholine receptor (nAChR) competitive modulators Neonicotinoids,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 4A conforme à la classification IRAC
+Tolfenpyrad,IRAC 21A,IRAC,Tolfenpyrad,21A Mitochondrial complex I electron transport inhibitors METI acaricides and insecticides,non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 21A conforme à la classification IRAC
+Tribasic copper sulphate,FRAC M01,FRAC,copper,inorganic (electrophiles),oui,cuivre,FRAC Code List 2026,validated,"relecture 2026-11-25 : Cuivre : FRAC M01 (multisite), faible risque de résistance"
+Trichoderma atroviride 77B,FRAC BM02,FRAC,Trichoderma atroviride,"microbial (strains of living microbes or extract, metabolites)",oui,genre espece,FRAC Code List 2026,validated,genre et espèce seulement : vérifier la souche | relecture 2026-11-25 : Trichoderma atroviride : FRAC BM02 (microbien) quelle que soit la souche
+Trifloxystrobin,FRAC 11,FRAC,trifloxystrobin,QoI-fungicides (Quinone outside Inhibitors),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 11 conforme à la classification FRAC
+Triticonazole,FRAC 3,FRAC,triticonazole,DMI-fungicides (DeMethylation Inhibitors) (SBI: Class I),non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 3 conforme à la classification FRAC
+Ziram,FRAC M03,FRAC,ziram,dithiocarbamates and relatives (electrophiles),oui,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC M03 conforme à la classification FRAC
+Zoxamide,FRAC 22,FRAC,zoxamide,benzamides,non,exact,FRAC Code List 2026,validated,relecture 2026-11-25 : FRAC 22 conforme à la classification FRAC
+lambda-Cyhalothrin,IRAC 3A,IRAC,lambda-Cyhalothrin,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC
+tau-Fluvalinate,IRAC 3A,IRAC,tau-Fluvalinate,"3A Sodium channel modulators Pyrethroids, Pyrethrins",non,exact,IRAC MoA Classification online (2026-11-23),validated,relecture 2026-11-25 : IRAC 3A conforme à la classification IRAC

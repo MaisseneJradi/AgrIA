@@ -25,7 +25,7 @@ MIN_LEN, MAX_SENTENCES = 30, 3
 def _rows(path=ADVICE):
     with open(path, encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
-    bad = {r["status"] for r in rows} - {"proposed", "validated"}
+    bad = {r["status"] for r in rows} - {"proposed", "validated", "rejected"}  # only validated rows are used
     if bad:
         raise ValueError(f"{path}: unknown status {sorted(bad)}")
     return rows

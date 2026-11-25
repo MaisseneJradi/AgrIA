@@ -541,7 +541,6 @@ agriclic:378,Gypsophyle,agriclic,Jardinage > Semences > Fleuris,semence,catégor
 agriclic:364,Cosmos Rouge Sensation,agriclic,Jardinage > Semences > Fleuris,semence,catégorie boutique : Jardinage > Semences > Fleuris,,,,proposed,
 agriclic:360,Coloquinte petit fruit,agriclic,Jardinage > Semences > Fleuris,semence,catégorie boutique : Jardinage > Semences > Fleuris,,,,proposed,
 agriclic:357,Cleome,agriclic,Jardinage > Semences > Fleuris,semence,catégorie boutique : Jardinage > Semences > Fleuris,,,,proposed,
-agriclic:356,Clarkia,agriclic,Jardinage > Semences > Fleuris,semence,catégorie boutique : Jardinage > Semences > Fleuris,,,,proposed,
 agriclic:341,Violette Pourpre,agriclic,Jardinage > Semences > Fleuris,semence,catégorie boutique : Jardinage > Semences > Fleuris,,,,proposed,
 agriclic:248,SEMENCE CHOU RAVE HATIF DE VIENNE BADDAR,agriclic,Jardinage > Semences > Potager,semence,catégorie boutique : Jardinage > Semences > Potager,,,,proposed,
 agriclic:232,SEMENCE FENOUIL LATINA BADDAR,agriclic,Jardinage > Semences > Potager,semence,catégorie boutique : Jardinage > Semences > Potager,,,,proposed,
@@ -613,3 +612,6 @@ agriclic:423,Rose trémière simple,agriclic,Jardinage > Semences > Fleuris,seme
 agriclic:359,Coleus,agriclic,Jardinage > Semences > Fleuris,semence,catégorie boutique : Jardinage > Semences > Fleuris,,,,proposed,
 agriclic:242,SEMENCE PASTEQUE CHARLESTON,agriclic,Jardinage > Semences > Potager,semence,catégorie boutique : Jardinage > Semences > Potager,,,,proposed,
 agriclic:243,SEMENCE MELON ANANAS AMERIQUE,agriclic,Jardinage > Semences > Potager,semence,catégorie boutique : Jardinage > Semences > Potager,,,,proposed,
+agriclic:567,BIOPOWER®,agriclic,Engrais & Fertilisants > Adjuvant,pesticide,catégorie boutique : Engrais & Fertilisants > Adjuvant ; nom trouvé dans la liste DGSVCIA (prefix) : Biopower SL [homo-div-048] et sa substance est écrite dans la description,homo-div-048,Biopower SL,prefix,proposed,
+agriclic:569,BREAK-THRU® S 240,agriclic,Engrais & Fertilisants > Adjuvant,autre,catégorie boutique : Engrais & Fertilisants > Adjuvant ; régulateur ou adjuvant absent de la liste (un produit phytopharmaceutique doit être homologué),,,,proposed,
+agriclic:356,Clarkia,agriclic,Jardinage > Semences > Fleuris,semence,catégorie boutique : Jardinage > Semences > Fleuris,,,,proposed,produit modifié le 2026-11-25 : à relire

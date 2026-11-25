@@ -79,9 +79,9 @@ class TestAnswers(unittest.TestCase):
     def setUpClass(cls):
         cls.capitol = {"homo-fon-107": ids("Score 250 EC")}
         cls.iron = ids("FERROSTRENE K PREMIUM") + ids("ULTRAFERRO 5 KG")
-        cls.scab_real = run(SCAB)
+        cls.scab_real = run(SCAB, {})  # no validated mapping
         cls.scab_shop = run(SCAB, cls.capitol)
-        cls.iron_real = run(IRON)
+        cls.iron_real = run(IRON, {})
         cls.iron_shop = run(IRON, {"besoin:Fe_deficiency": cls.iron, "besoin:Fe_deficiency:calcaire": cls.iron})
 
     def test_without_mapping_the_answer_says_what_to_ask_for(self):

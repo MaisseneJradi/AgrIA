@@ -1,44 +1,44 @@
 culture,denree_codex,niveau,status,note
-tomato,Tomato,denree,proposed,
-tomato,Tomatoes (subgroup),sous-groupe,proposed,
-pepper,Peppers (subgroup),sous-groupe,proposed,
-pepper,Peppers chili,denree,proposed,
-pepper,"Peppers, sweet (including pimento or pimiento)",denree,proposed,
-potato,Potato,denree,proposed,
-potato,Tuberous and corm vegetables (subgroup),sous-groupe,proposed,
-potato,Root and tuber vegetables (group),groupe,proposed,
-squash,"Squash, summer",denree,proposed,
-squash,"Fruiting vegetables, cucurbits (group)",groupe,proposed,
-squash,"Fruiting vegetables, cucurbits - cucumbers and summer squashes (subgroup)",sous-groupe,proposed,
-squash,"Fruiting vegetables, cucurbits – melons, pumpkins and winter squashes (subgroup)",sous-groupe,proposed,
-grape,Grapes,denree,proposed,
-grape,Small fruit vine climbing (subgroup),sous-groupe,proposed,
-grape,Berries and other small fruits,groupe,proposed,
-citrus,Lemons and limes (including citron) (subgroup),sous-groupe,proposed,
-citrus,Mandarins (including mandarin-like hybrids) (subgroup),sous-groupe,proposed,
-citrus,"Oranges, sweet, sour (including Orange-like hybrids) (subgroup)",sous-groupe,proposed,
-citrus,Citrus fruits (group),groupe,proposed,
-apple,Apple,denree,proposed,
-apple,Pome fruits (group),groupe,proposed,
-peach,Peach,denree,proposed,
-peach,Peaches (including apricots and nectarine) (subgroup),sous-groupe,proposed,
-peach,Stone fruits (group),groupe,proposed,
-cherry,Cherries (subgroup),sous-groupe,proposed,
-cherry,Stone fruits (group),groupe,proposed,
-strawberry,Low growing berries (subgroup),sous-groupe,proposed,
-strawberry,Berries and other small fruits,groupe,proposed,
-olive,Olives for oil production,denree,proposed,
-olive,Table olives,denree,proposed,
-wheat,Wheat,denree,proposed,
-wheat,"Wheat, similar grains, and pseudocereals without husks (subgroup)",sous-groupe,proposed,
-wheat,Cereal grains (group),groupe,proposed,
-corn,Maize,denree,proposed,
-corn,Maize cereals (subgroup),sous-groupe,proposed,
-corn,Sweet corn,denree,proposed,
-corn,Sweet corn (corn on the cob) (kernels plus cob with husk removed),denree,proposed,
-corn,Sweet corn (corn-on-the-cob),denree,proposed,
-corn,Sweet corn (kernels),denree,proposed,
-corn,Sweet corns (subgroup),sous-groupe,proposed,
-corn,Cereal grains (group),groupe,proposed,
-datepalm,Date,denree,proposed,
-pomegranate,Pomegranate,denree,proposed,
+tomato,Tomato,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+tomato,Tomatoes (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+pepper,Peppers (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+pepper,Peppers chili,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+pepper,"Peppers, sweet (including pimento or pimiento)",denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+potato,Potato,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+potato,Tuberous and corm vegetables (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+potato,Root and tuber vegetables (group),groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+squash,"Squash, summer",denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+squash,"Fruiting vegetables, cucurbits (group)",groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+squash,"Fruiting vegetables, cucurbits - cucumbers and summer squashes (subgroup)",sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+squash,"Fruiting vegetables, cucurbits – melons, pumpkins and winter squashes (subgroup)",sous-groupe,validated,relecture 2026-11-25 : Correct pour courges d'hiver / potirons et melon (la classe couvre aussi melon et pastèque)
+grape,Grapes,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+grape,Small fruit vine climbing (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+grape,Berries and other small fruits,groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+citrus,Lemons and limes (including citron) (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+citrus,Mandarins (including mandarin-like hybrids) (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+citrus,"Oranges, sweet, sour (including Orange-like hybrids) (subgroup)",sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+citrus,Citrus fruits (group),groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+apple,Apple,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+apple,Pome fruits (group),groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+peach,Peach,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+peach,Peaches (including apricots and nectarine) (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+peach,Stone fruits (group),groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+cherry,Cherries (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+cherry,Stone fruits (group),groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+strawberry,Low growing berries (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+strawberry,Berries and other small fruits,groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+olive,Olives for oil production,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+olive,Table olives,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+wheat,Wheat,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+wheat,"Wheat, similar grains, and pseudocereals without husks (subgroup)",sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+wheat,Cereal grains (group),groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+corn,Maize,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+corn,Maize cereals (subgroup),sous-groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (sous-groupe)
+corn,Sweet corn,denree,rejected,relecture 2026-11-25 : Le maïs de l'application est le maïs grain / fourrager ; la LMR du maïs doux est différente (sauf si l'app distingue le maïs doux)
+corn,Sweet corn (corn on the cob) (kernels plus cob with husk removed),denree,rejected,relecture 2026-11-25 : Le maïs de l'application est le maïs grain / fourrager ; la LMR du maïs doux est différente (sauf si l'app distingue le maïs doux)
+corn,Sweet corn (corn-on-the-cob),denree,rejected,relecture 2026-11-25 : Le maïs de l'application est le maïs grain / fourrager ; la LMR du maïs doux est différente (sauf si l'app distingue le maïs doux)
+corn,Sweet corn (kernels),denree,rejected,relecture 2026-11-25 : Le maïs de l'application est le maïs grain / fourrager ; la LMR du maïs doux est différente (sauf si l'app distingue le maïs doux)
+corn,Sweet corns (subgroup),sous-groupe,rejected,relecture 2026-11-25 : Le maïs de l'application est le maïs grain / fourrager ; la LMR du maïs doux est différente (sauf si l'app distingue le maïs doux)
+corn,Cereal grains (group),groupe,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (groupe)
+datepalm,Date,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)
+pomegranate,Pomegranate,denree,validated,relecture 2026-11-25 : Denrée Codex correspondant à la culture (denree)

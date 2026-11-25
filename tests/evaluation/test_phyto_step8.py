@@ -23,14 +23,16 @@ def read(path):
 class TestTable(unittest.TestCase):
     def test_every_product_of_both_shops(self):
         rows = query("SELECT * FROM shop_products")
-        self.assertEqual(len(rows), 614)
+        # 614 at step 8; refresh_shops.py (step 12) adds and keeps rows: at least the products of step 8
+        self.assertGreaterEqual(len(rows), 614)
         self.assertEqual(len({r["id"] for r in rows}), len(rows))
         for col in ("id", "name", "shop_category", "description", "technical_sheet", "price", "stock_status",
                     "image_url", "product_url", "source", "last_updated"):
             self.assertIn(col, rows[0])
         agrishop = [r for r in rows if r["id"].startswith("agrishop:")]
         agriclic = [r for r in rows if r["id"].startswith("agriclic:")]
-        self.assertEqual((len(agrishop), len(agriclic)), (383, 231))
+        self.assertGreaterEqual(len(agrishop), 383)
+        self.assertGreaterEqual(len(agriclic), 231)
         # agrishop: the export has no page address; since phyto step 12 it comes from the sitemap of the site, the page
         # whose last part is EXACTLY the slug (never built from a pattern); no image address
         self.assertTrue(all(not r["image_url"] for r in agrishop))
@@ -49,11 +51,12 @@ class TestClasses(unittest.TestCase):
 
     def test_one_proposed_class_per_product(self):
         rows = read(K.CLASSES)
-        self.assertEqual(len(rows), 614)
-        self.assertEqual(len({r["shop_product_id"] for r in rows}), 614)
+        n = len(query("SELECT id FROM shop_products"))  # one row per product of the catalogue
+        self.assertEqual(len(rows), n)
+        self.assertEqual(len({r["shop_product_id"] for r in rows}), n)
         for r in rows:
             self.assertIn(r["category_agria"], CATEGORIES)
-            self.assertEqual(r["status"], "proposed")
+            self.assertIn(r["status"], ("proposed", "validated", "rejected"))
 
     def test_known_products(self):
         expected = {"Motoculteur Stihl MH 610": "equipement", "MANCHON PET UNIDELTA": "equipement",
@@ -85,7 +88,7 @@ class TestClaims(unittest.TestCase):
     def test_claim_list(self):
         rows = read(K.CLAIMS)
         self.assertGreater(len(rows), 10)
-        self.assertEqual({r["status"] for r in rows}, {"proposed"})
+        self.assertLessEqual({r["status"] for r in rows}, {"proposed", "validated", "rejected"})  # rows the reviewer validates or rejects stay valid
         self.assertIn("MITOVER SC", {r["name"] for r in rows})  # sold as a pesticide, not in the official list
 
     def test_no_claiming_product_in_the_agronomist_answers(self):

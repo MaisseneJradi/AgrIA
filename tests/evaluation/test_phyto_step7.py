@@ -18,6 +18,7 @@ from src.preparation.phi_report import read_dar
 import mrl  # noqa: E402  (src/tools)
 import treatments as T  # noqa: E402
 from safety import check_answer  # noqa: E402
+from tests.review_state import proposed_copy
 
 PPE = "Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes"
 LIST = f"Produits homologués en Tunisie pour ce cas (liste DGSVCIA du {T.LIST_DATE}) :"
@@ -49,10 +50,19 @@ class TestPhi(unittest.TestCase):
         with open(T.COMPLETIONS, encoding="utf-8") as f:
             rows = list(csv.DictReader(f))
         self.assertTrue(rows)
-        self.assertEqual({r["status"] for r in rows}, {"proposed"})
-        u = next(u for u in T.get_treatments("olive__peacock_spot", "olive") if u["produit"] == "DECIBEL MAX WG")
-        self.assertIsNone(u["dar_jours"])
-        self.assertEqual(u["dar_message"], "DAR non indiqué : vérifiez l'étiquette")
+        self.assertLessEqual({r["status"] for r in rows}, {"proposed", "validated", "rejected"})  # rows the reviewer validates or rejects stay valid
+        tmp = tempfile.mkdtemp()
+        saved = T.COMPLETIONS
+        try:
+            T.COMPLETIONS = proposed_copy(saved, tmp)  # the completions back to 'proposed' (reviewed since)
+            T._completions.cache_clear()
+            u = next(u for u in T.get_treatments("olive__peacock_spot", "olive") if u["produit"] == "DECIBEL MAX WG")
+            self.assertIsNone(u["dar_jours"])
+            self.assertEqual(u["dar_message"], "DAR non indiqué : vérifiez l'étiquette")
+        finally:
+            T.COMPLETIONS = saved
+            T._completions.cache_clear()
+            shutil.rmtree(tmp)
 
     def test_validated_completion_is_used_and_said(self):
         tmp = tempfile.mkdtemp()
@@ -67,7 +77,8 @@ class TestPhi(unittest.TestCase):
                           dar_text(u, P["fr"]))
             base = {"task": "diseases", "classe": "olive__peacock_spot", "culture": "olive", "fiable": True}
             good = {"nom": "DECIBEL MAX WG", "dose": u["dose"], "dar_jours": 0}
-            line = f"- DECIBEL MAX WG (x) : dose {u['dose']} ; délai avant récolte : non requis"
+            line = (f"- DECIBEL MAX WG (x) : dose {u['dose']} ; délai avant récolte : non requis"
+                    " ; classe de toxicité OMS II (modérément dangereux)")  # rule 15 (WHO table validated)
             text = "\n".join([LIST, line, PPE])
             self.assertTrue(check_answer(dict(base, produits=[good], texte=text))["valide"])
             bad = check_answer(dict(base, produits=[dict(good, dar_jours=5)], texte=text))
@@ -81,7 +92,8 @@ class TestPhi(unittest.TestCase):
 class TestListDate(unittest.TestCase):
     BASE = {"task": "diseases", "classe": "tomato__late_blight", "culture": "tomate", "fiable": True}
     GOOD = {"nom": "CIMOXATE C WG", "dose": "3 kg/ha (300 g/hl)", "dar_jours": 3}
-    LINE = "- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours"
+    LINE = ("- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours"
+            " ; classe de toxicité OMS II (modérément dangereux)")  # rule 15, since the WHO table is validated
 
     def test_rule_19(self):
         ok = check_answer(dict(self.BASE, produits=[self.GOOD], texte="\n".join([LIST, self.LINE, PPE])))
