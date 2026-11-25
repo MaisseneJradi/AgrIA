@@ -42,15 +42,19 @@ Blocking rules
       with another number (rules 15-18: phyto step 6)
   19. an answer about registered products (or saying none fits) without the date of the official list loaded
       ("liste DGSVCIA du 22/05/2024"), or with another date (phyto step 7)
+  21. a shop product claiming a protection effect without a registered product of its name
+      (docs/shop_unapproved_claims.csv, unless the reviewer marks the row "rejected"), named in the text or advised,
+      as a treatment or as a fertilizer (phyto step 8; rule 1 also knows the names of both shops' products)
   20. an MRL written in the text that differs from its table (EU for an export market, Codex for a local one;
       phyto step 7)
 Warnings (the answer must mention them): restriction, provisional authorisation, relation vecteur or proche,
 DAR not given by the list, model confusions of fertilizers.py.
 """
+import csv
 import re
 from functools import lru_cache
 
-from common import fold, query
+from common import ROOT, fold, query
 import ranking
 from dose_calc import TANK_L, area_text, practical_dose
 from dose_calc import check as check_dose
@@ -71,6 +75,7 @@ def _known_products():
     """All pesticide names known (Tunisian list + agrishop shop), as (folded name, display name, pattern)."""
     names = {r["nom_commercial"] for r in query("SELECT DISTINCT nom_commercial FROM pesticides_produits")}
     names |= {r["nom"] for r in query("SELECT DISTINCT nom FROM pesticides_agrishop")}
+    names |= set(_shop_names())  # phyto step 8: every product of both shops (not seeds, not equipment)
     out = []
     for n in sorted({str(x).strip() for x in names if x and str(x) != "nan"}, key=len, reverse=True):
         base = re.sub(r"\s+(sc|ec|wg|wp|sl|ew|od|se|cs|fs|wdg|sg|sp|gr|me|ul|dc)$", "", n.strip(), flags=re.I)
@@ -122,6 +127,30 @@ def chemical_terms(text):
     return list(dict.fromkeys(m.group(0) for m in _chemical_pattern().finditer(fold(text))))
 
 
+def _without_pack(name):
+    """'PERFECTOSE 1 L' -> 'PERFECTOSE', 'ALGA PLUS FL 1 KG' -> 'ALGA PLUS FL': the pack size is not the name."""
+    return re.sub(r"\s*\b\d+(?:[.,]\d+)?\s*(?:l|cc|ml|g|gr|kg|litres?)\b\.?\s*$", "", str(name), flags=re.I).strip()
+
+
+def _shop_names():
+    try:
+        rows = query("SELECT name, shop_category FROM shop_products")
+    except Exception:  # base built before step 8
+        return []
+    return [_without_pack(r["name"]) for r in rows
+            if not re.search(r"semence|materiel|irrigation|germination", fold(r["shop_category"]))]
+
+
+@lru_cache(maxsize=1)
+def _claim_names():
+    """Shop products claiming a protection effect without a registered product of that name
+    (docs/shop_unapproved_claims.csv, classify_shop_products.py); a row the reviewer marks 'rejected' is left out."""
+    if not CLAIMS.exists():
+        return []
+    with open(CLAIMS, encoding="utf-8") as f:
+        return [_without_pack(r["name"]) for r in csv.DictReader(f) if r.get("status") != "rejected"]
+
+
 def _named_in_text(text):
     found, folded = [], fold(text)
     for key, name, pat, one_word in _known_products():
@@ -131,6 +160,7 @@ def _named_in_text(text):
     return found
 
 
+CLAIMS = ROOT / "docs" / "shop_unapproved_claims.csv"
 PRACTICAL_MARKERS = ("Dose pratique", "الكمية العملية")  # first words of the practical-dose line (redaction.py)
 # step 6 (redaction.py): protective equipment line, weather lines, bee warning, WHO class written in the reasons
 PPE_MARKERS = ("Protection :", "الوقاية:")
@@ -320,6 +350,14 @@ def check_answer(answer):
     for name in _named_in_text(text):
         if not registered(name) and not any(_same_product(name, e.get("nom", "")) for e in engrais):
             reasons.append(f"le texte cite « {name} », non homologué pour {cls}" + (f" sur {crop}" if crop else ""))
+
+    # rule 21: a shop product that claims a protection effect without a registered product of its name is never in
+    # an answer, as a treatment nor as a fertilizer (plan rule 4)
+    listed = [x.get("nom", "") for x in produits + engrais]
+    named = {fold(n) for n in _named_in_text(text)}
+    for c in _claim_names():
+        if fold(c) in named or any(_same_product(c, x) or _same_product(_without_pack(x), c) for x in listed if x):
+            reasons.append(f"« {c} » : allégation de protection sans homologation (docs/shop_unapproved_claims.csv)")
 
     # rule 9: chemistry only on the lines of the registered products (or fertilizers) of the answer
     names = [n for n in [p.get("nom") for p in produits] + [e.get("nom") for e in engrais] if n]
