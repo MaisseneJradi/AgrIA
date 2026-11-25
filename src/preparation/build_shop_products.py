@@ -34,18 +34,20 @@ COLUMNS = ["id", "name", "shop_category", "description", "technical_sheet", "pri
            "image_url", "product_url", "source", "last_updated", "slug", "fiches_pdf"]
 
 
-def raw_records():
+def raw_records(export=None):
     """id -> raw text of its record in the export, cut exactly as build_agrishop.read_export cuts the records."""
-    raw = Path(ROOT / A.SRC).read_text(encoding="utf-8")
+    raw = Path(export or ROOT / A.SRC).read_text(encoding="utf-8")
     start = re.compile(r'(?m)^(\d+),("[^"]*"|[^\n]*?),([a-z0-9][a-z0-9-]*),')
     starts = [(m.start(), int(m.group(1))) for m in start.finditer(raw)]
     return {pid: raw[a:b] for (a, pid), (b, _) in zip(starts, starts[1:] + [(len(raw), None)])}
 
 
-def agrishop():
-    df = A.read_export(str(ROOT / A.SRC))
+def agrishop(export=None):
+    """export: a newer PostgreSQL export of the products table (refresh_shops.py), same format; default the one of
+    the repository."""
+    df = A.read_export(str(export or ROOT / A.SRC))
     df["category_id"] = pd.to_numeric(df["category_id"], errors="coerce")
-    records = raw_records()
+    records = raw_records(export)
     rows = []
     for r in df.itertuples():
         qty = pd.to_numeric(r.stock, errors="coerce")
@@ -60,9 +62,9 @@ def agrishop():
     return rows
 
 
-def page_facts(pid):
+def page_facts(pid, raw=AGRICLIC):
     """Availability and cover image of a cached agriclic product page (no request)."""
-    path = AGRICLIC / "html" / f"p_{pid}.html"
+    path = Path(raw) / "html" / f"p_{pid}.html"
     if not path.exists():
         return "inconnu", ""
     m = re.search(r'data-product="([^"]+)"', path.read_text(encoding="utf-8", errors="replace"))
@@ -75,11 +77,12 @@ def page_facts(pid):
     return status, image
 
 
-def agriclic():
+def agriclic(raw=AGRICLIC):
+    """raw: a folder with products.jsonl and html/ (scrape_agriclic.py, or a fresh collection of refresh_shops.py)."""
     rows = []
-    for line in open(AGRICLIC / "products.jsonl", encoding="utf-8"):
+    for line in open(Path(raw) / "products.jsonl", encoding="utf-8"):
         r = json.loads(line)
-        status, image = page_facts(r["id"])
+        status, image = page_facts(r["id"], raw)
         sheet = " ; ".join(f"{k} : {', '.join(v)}" for k, v in (r.get("fiche") or {}).items())
         rows.append({"id": f"agriclic:{r['id']}", "name": r["nom"], "shop_category": " > ".join(r["categories"]),
                      "description": " ".join(x for x in (r.get("resume"), r.get("description")) if x),
@@ -90,8 +93,12 @@ def agriclic():
     return rows
 
 
+def build(export=None, raw=AGRICLIC):
+    return pd.DataFrame(agrishop(export) + agriclic(raw), columns=COLUMNS)
+
+
 def main():
-    df = pd.DataFrame(agrishop() + agriclic(), columns=COLUMNS)
+    df = build()
     OUT.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUT, index=False, encoding="utf-8")
     print(f"{OUT.relative_to(ROOT)}: {len(df)} products")

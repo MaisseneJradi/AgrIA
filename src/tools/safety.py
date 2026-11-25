@@ -46,6 +46,8 @@ Blocking rules
       product or need; offer of another composition; dose on a shop line; manufacturer's fertilizer dose not passing
       its validated range
   27. a cited sheet / section / link that is not a row of the table fiche_sections (phyto step 11)
+  28. the address, the offer or the fertilizer of a shop product removed from the site (stock_status "retire":
+      refresh_shops.py, phyto step 12)
   21. a shop product claiming a protection effect without a registered product of its name
       (docs/shop_unapproved_claims.csv, unless the reviewer marks the row "rejected"), named in the text or advised,
       as a treatment or as a fertilizer (phyto step 8; rule 1 also knows the names of both shops' products)
@@ -167,6 +169,11 @@ def _shop_by_url():
     return {p["product_url"]: sid for sid, p in shop._products().items() if p.get("product_url")}
 
 
+def _retired(shop_id):
+    """Removed from the site (refresh_shops.py, phyto step 12): its address is known but never shown."""
+    return (shop._products().get(shop_id) or {}).get("stock_status") == "retire"
+
+
 def _shop_ids_in(line):
     """Shop products whose name (pack size left out) is written in a line."""
     folded = fold(line)
@@ -181,12 +188,15 @@ def shop_rules(answer, text, produits, engrais, registered, cls):
        to that registered product (pesticide) or to the need of the deficiency (fertilizer);
     24 a pesticide offer whose substances or concentrations differ from the registered product it is offered for;
     25 a dose written on a shop line (a pesticide dose comes from the official list only);
-    26 a manufacturer's dose of a fertilizer that is not exactly the one that passes its VALIDATED range."""
+    26 a manufacturer's dose of a fertilizer that is not exactly the one that passes its VALIDATED range;
+    28 (phyto step 12) the address, offer or fertilizer of a product removed from the site."""
     out = []
     by_url = _shop_by_url()
     for url in SHOP_URL.findall(text):
         if url not in by_url:
             out.append(f"adresse de boutique inconnue de la table shop_products : {url}")
+        elif _retired(by_url[url]):  # rule 28
+            out.append(f"adresse d'un produit retiré du site : {url}")
     for line in text.splitlines():
         marker = next((m for m in SHOP_LINE if m in line), None)
         if marker is None:
@@ -201,7 +211,10 @@ def shop_rules(answer, text, produits, engrais, registered, cls):
             out.append("ligne de boutique sans produit homologué de la réponse")
             continue
         ids = {u["product_id"] for u in usages}
-        for sid in _shop_ids_in(offer):
+        named = _shop_ids_in(offer)
+        if named and all(_retired(sid) for sid in named):  # rule 28
+            out.append(f"offre d'un produit retiré du site : {offer.strip()[:60]}")
+        for sid in named:
             if not shop.validated_targets(sid) & ids:
                 out.append(f"« {shop._products()[sid]['name']} » : lien sans correspondance validée vers {p['nom']}")
             elif not same_composition(sid, ids):
@@ -212,6 +225,8 @@ def shop_rules(answer, text, produits, engrais, registered, cls):
         lines = text.splitlines()
         for e in engrais:
             sids = [sid for sid, s in shop._products().items() if _same_product(s["name"], e.get("nom", ""))]
+            if sids and all(_retired(sid) for sid in sids):  # rule 28
+                out.append(f"« {e.get('nom')} » : engrais retiré du site")
             if sids and not any(shop.validated_targets(s) & need for s in sids):
                 out.append(f"« {e.get('nom')} » : engrais sans correspondance validée vers le besoin {cls}")
             for i, line in enumerate(lines):
