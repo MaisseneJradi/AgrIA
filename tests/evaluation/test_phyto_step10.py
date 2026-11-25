@@ -96,7 +96,11 @@ class TestAnswers(unittest.TestCase):
         self.assertTrue(out["reponse"]["verification"]["valide"], out["reponse"]["verification"]["raisons"])
         line = shop_line(out)
         self.assertEqual(line.strip(), "En boutique pour Score 250 EC : Score 250 EC (Difenoconazole 250 g/l, EC) — en stock — "
-                                       "agrishop.tn (adresse de la page non disponible)")
+                                       "https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/")
+        # a product without a page address in the data: the shop is named, no address is made up
+        from src.agent.redaction import P, _offer_text
+        o = {"nom": "X", "resume": "", "stock": None, "url": None, "boutique": "agrishop.tn"}
+        self.assertEqual(_offer_text(o, P["fr"]), "X — agrishop.tn (adresse de la page non disponible)")
 
     def test_offers_do_not_change_the_ranking(self):
         names = [p["nom"] for p in self.scab_real["traitements"]["produits"]]
@@ -125,7 +129,7 @@ class TestAnswers(unittest.TestCase):
         self.assertTrue(out["reponse"]["verification"]["valide"], out["reponse"]["verification"]["raisons"])
         line = shop_line(out, "في المتجر لـ")
         self.assertIn("Score 250 EC (Difenoconazole 250 g/l, EC)", line)
-        self.assertIn("(رابط الصفحة غير متوفر)", line)
+        self.assertIn("https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/", line)
         out = run(IRON, {"besoin:Fe_deficiency": self.iron, "besoin:Fe_deficiency:calcaire": self.iron}, "ar")
         self.assertTrue(out["reponse"]["verification"]["valide"], out["reponse"]["verification"]["raisons"])
         self.assertIn("FERROSTRENE K PREMIUM (Fe 6 %, مخلّب EDDHA)", out["reponse"]["texte"])

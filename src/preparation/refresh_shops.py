@@ -6,8 +6,9 @@ still answers.
     python src/preparation/refresh_shops.py --check-links                                HTTP status of every page
     ... add --apply to write the new catalogue (without it: report only, nothing is changed)
 
-Sources (never guessed): agrishop.tn has no page address in its data, so it is refreshed by a NEW EXPORT of its products
-table, given as a file; agriclic.tn is collected again page by page with scrape_agriclic.py, into a new dated folder
+Sources (never guessed): agrishop.tn is refreshed by a NEW EXPORT of its products table, given as a file, and its
+page addresses by its sitemap (--agrishop-sitemap: the file named in robots.txt; a product gets the address whose last
+part is EXACTLY its slug); agriclic.tn is collected again page by page with scrape_agriclic.py, into a new dated folder
 data/raw/agriclic/refresh_<date>/, robots.txt read first and obeyed (a page it forbids is not requested), one request
 per second at most (or the Crawl-delay of robots.txt if longer). Without network the collection or the link check stop
 quietly: "réseau indisponible", nothing is changed.
@@ -195,6 +196,22 @@ class Polite:
             self.robots[site] = rp
         return self.robots[site]
 
+    def sitemaps(self, url):
+        return list(self._robots(url).site_maps() or [])
+
+    def fetch(self, url):
+        """Text of a page, robots.txt obeyed, one request per delay. Raises NoNetwork, PermissionError."""
+        if not self.allowed(url):
+            raise PermissionError(f"robots.txt interdit {url}")
+        self.wait(url)
+        try:
+            with self.opener(urllib.request.Request(url, headers={"User-Agent": UA}), timeout=60) as r:
+                return r.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError:
+            raise
+        except (urllib.error.URLError, socket.timeout, OSError) as e:
+            raise NoNetwork(str(e))
+
     def allowed(self, url):
         return self._robots(url).can_fetch(UA, url)
 
@@ -238,6 +255,18 @@ def check_links(df, polite=None, date=None):
     return df, pd.DataFrame(report, columns=["id", "name", "url", "http"])
 
 
+def fetch_sitemap(date=None, polite=None):
+    """The sitemap named by robots.txt of agrishop.tn, saved to data/raw/agrishop/sitemap_<date>.xml. Raises
+    NoNetwork."""
+    polite = polite or Polite()
+    urls = polite.sitemaps(SITES["agrishop"] + "/") or [SITES["agrishop"] + "/sitemap.xml"]
+    text = polite.fetch(urls[0])
+    path = B.SITEMAP.parent / f"sitemap_{date or today()}.xml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    return path
+
+
 def collect_agriclic(date=None, polite=None):
     """scrape_agriclic.py into data/raw/agriclic/refresh_<date>/ (its cache is that empty folder: every page is
     requested again), each request checked against robots.txt. Raises NoNetwork."""
@@ -264,6 +293,8 @@ def main(argv=None):
     ap.add_argument("--agrishop-export", help="nouvel export PostgreSQL de la table products d'agrishop.tn")
     ap.add_argument("--agriclic", action="store_true", help="collecter de nouveau les pages d'agriclic.tn")
     ap.add_argument("--agriclic-folder", help="dossier déjà collecté (products.jsonl + html/)")
+    ap.add_argument("--agrishop-sitemap", action="store_true",
+                    help="lire le sitemap d'agrishop.tn (adresses des pages produits, par slug exact)")
     ap.add_argument("--check-links", action="store_true", help="statut HTTP de chaque page produit")
     ap.add_argument("--apply", action="store_true", help="écrire le nouveau catalogue (sinon : rapport seulement)")
     args = ap.parse_args(argv)
@@ -276,12 +307,24 @@ def main(argv=None):
         except NoNetwork as e:
             print(f"réseau indisponible ({e}) : collecte d'agriclic.tn ignorée, rien n'est changé")
             return 0
+    sitemap = B.SITEMAP
+    if args.agrishop_sitemap:
+        try:
+            sitemap = fetch_sitemap(date)
+        except NoNetwork as e:
+            print(f"réseau indisponible ({e}) : sitemap d'agrishop.tn ignoré, rien n'est changé")
+            return 0
     export = Path(args.agrishop_export) if args.agrishop_export else None
     if export and not export.exists():
         print(f"export introuvable : {export}")
         return 1
-    new = normalise(B.build(export, raw))
+    new = normalise(B.build(export, raw, sitemap))
     diff = compare(old, new, date)
+    # products on the site that the export does not have: only a new export can add them (their data is not read)
+    on_site = set(B.sitemap_urls(sitemap)) - set(new.loc[new["id"].str.startswith("agrishop:"), "slug"])
+    if on_site:
+        print(f"{len(on_site)} produits sur agrishop.tn absents de l'export (demandez un nouvel export) :",
+              ", ".join(sorted(on_site)))
     catalogue = merge_catalogue(old, new, diff, date)
     links = None
     if args.check_links:
@@ -311,6 +354,8 @@ def main(argv=None):
     before = read_reviewed()
     others = {p: p.read_bytes() for p in OTHER_DOCS if p.exists()}
     catalogue.to_csv(SHOP, index=False, encoding="utf-8")
+    if sitemap != B.SITEMAP:  # the new sitemap becomes the current one
+        shutil.copy(sitemap, B.SITEMAP)
     if args.agriclic and raw != B.AGRICLIC:  # the new collection becomes the current one
         shutil.copy(raw / "products.jsonl", B.AGRICLIC / "products.jsonl")
         for page in (raw / "html").glob("p_*.html"):
