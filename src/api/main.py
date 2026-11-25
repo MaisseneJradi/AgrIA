@@ -73,6 +73,8 @@ def warm_up():
     for task in ("routing", "diseases", "deficiency", "fruits", "leaf", "crop"):
         if (Path(predict.ROOT) / "models" / task / "model.pt").exists():
             predict._get(task)
+    import rag  # src/tools: the passages, the stored vectors and the local text model (phyto step 11)
+    rag.search_knowledge("lutte prévention traitement", k=2, classe="tomato__late_blight")
 
 
 @app.get("/health")

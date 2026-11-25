@@ -1,0 +1,349 @@
+query_id,langue,kind,methode,hit3,hit3_fiche,hit1,repond,evidence,top3
+q01,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.457},alternariose_solanacees/prevention ; alternariose_solanacees/description ; alternariose_solanacees/lutte
+q02,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.342},cladosporiose_tomate/symptomes ; cladosporiose_tomate/description ; alternariose_solanacees/symptomes
+q03,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.34},mildiou_tomate_pdt/biologie ; mildiou_tomate_pdt/description ; alternariose_solanacees/description
+q04,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.375},pourriture_grise/symptomes ; pourriture_grise/lutte ; pourriture_grise/description
+q05,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.383},pourriture_grise/prevention ; pourriture_grise/lutte ; pourriture_grise/description
+q06,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.242},black_rot_vigne/biologie ; black_rot_vigne/symptomes ; black_rot_vigne/lutte
+q07,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.324},esca_vigne/lutte ; esca_vigne/prevention ; esca_vigne/description
+q08,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.447},tuberculose_olivier/symptomes ; tuberculose_olivier/description ; tuberculose_olivier/biologie
+q09,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.318},rouille_brune_ble/symptomes ; rouille_brune_ble/prevention ; rouille_brune_ble/description
+q10,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.327},rouille_brune_ble/prevention ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q11,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.496},tuta_absoluta/biologie ; tuta_absoluta/description ; tuta_absoluta/repartition
+q12,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.288},bemisia/lutte ; bemisia/biologie ; bemisia/description
+q13,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.326},mouche_olive/lutte ; mouche_olive/description ; mouche_olive/biologie
+q14,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.284},charancon_rouge/prevention ; charancon_rouge/biologie ; charancon_rouge/description
+q15,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.362},carpocapse/lutte ; carpocapse/description ; carpocapse/biologie
+q16,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.265},thrips_californie/symptomes ; thrips_californie/description ; thrips_californie/prevention
+q17,fr,sujet,tfidf,False,True,False,True,{'tfidf': 0.232},carence_Mn/symptomes ; carence_Mg/repartition ; mildiou_vigne/symptomes
+q18,fr,sujet,tfidf,False,False,False,True,{'tfidf': 0.278},carence_Mn/symptomes ; carence_Mn/description ; tylcv/symptomes
+q19,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.128},necrose_apicale/prevention ; tuta_absoluta/biologie ; mineuse_agrumes/description
+q20,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.553},ceratite/biologie ; ceratite/description ; ceratite/repartition
+q21,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.153},tetranyque/biologie ; tuta_absoluta/biologie ; tetranyque/description
+q22,fr,sujet,tfidf,True,True,True,True,{'tfidf': 0.261},greening/symptomes ; greening/repartition ; greening/description
+q23,ar,sujet,tfidf,False,False,False,True,{'tfidf': 0.245},tuta_absoluta/biologie ; tylcv/symptomes ; tomv/biologie
+q24,ar,sujet,tfidf,True,True,False,True,{'tfidf': 0.234},pourriture_grise/lutte ; pourriture_grise/prevention ; pourriture_grise/description
+q25,ar,sujet,tfidf,True,True,True,True,{'tfidf': 0.369},mouche_olive/lutte ; mouche_olive/description ; mouche_olive/biologie
+q26,ar,sujet,tfidf,True,True,True,True,{'tfidf': 0.414},charancon_rouge/biologie ; charancon_rouge/repartition ; charancon_rouge/description
+q27,ar,sujet,tfidf,False,False,False,False,{'tfidf': 0.0},
+q28,ar,sujet,tfidf,False,False,False,False,{'tfidf': 0.0},
+q29,ar,sujet,tfidf,True,True,False,True,{'tfidf': 0.325},rouille_brune_ble/prevention ; rouille_brune_ble/symptomes ; rouille_brune_ble/description
+q30,ar,sujet,tfidf,False,False,False,False,{'tfidf': 0.0},
+q31,ar,sujet,tfidf,True,True,True,True,{'tfidf': 0.166},black_rot_vigne/symptomes ; mildiou_vigne/symptomes ; pourriture_grise/lutte
+q32,ar,sujet,tfidf,False,False,False,True,{'tfidf': 0.257},tavelure_pommier/description ; rouille_pommier/prevention ; black_rot_pommier/prevention
+q33,ar,sujet,tfidf,True,True,True,True,{'tfidf': 0.311},oeil_de_paon/symptomes ; oeil_de_paon/prevention ; verticilliose_olivier/symptomes
+q34,ar,sujet,tfidf,False,False,False,True,{'tfidf': 0.138},pourriture_grise/description ; pourriture_grise/biologie ; pourriture_grise/lutte
+q35,ar,sujet,tfidf,False,False,False,False,{'tfidf': 0.0},
+q36,ar,sujet,tfidf,False,False,False,True,{'tfidf': 0.245},tuta_absoluta/biologie ; tylcv/symptomes ; tomv/biologie
+q37,darija,sujet,tfidf,True,True,True,True,{'tfidf': 0.154},mildiou_tomate_pdt/biologie ; mildiou_vigne/biologie ; mildiou_tomate_pdt/description
+q38,darija,sujet,tfidf,True,True,True,True,{'tfidf': 0.175},mouche_olive/lutte ; oeil_de_paon/lutte ; mouche_olive/description
+q39,darija,sujet,tfidf,True,True,False,True,{'tfidf': 0.192},rouille_brune_ble/prevention ; rouille_brune_ble/symptomes ; rouille_brune_ble/description
+q40,darija,sujet,tfidf,True,True,True,True,{'tfidf': 0.352},charancon_rouge/prevention ; charancon_rouge/repartition ; charancon_rouge/biologie
+q41,darija,sujet,tfidf,True,True,True,True,{'tfidf': 0.321},bemisia/lutte ; bemisia/biologie ; bemisia/description
+q42,darija,sujet,tfidf,False,False,False,True,{'tfidf': 0.278},black_rot_pommier/lutte ; black_scorch/description ; black_rot_pommier/symptomes
+q43,darija,sujet,tfidf,False,False,False,True,{'tfidf': 0.19},bacteriose_xanthomonas/symptomes ; bacteriose_xanthomonas/lutte ; bacteriose_xanthomonas/biologie
+q44,darija,sujet,tfidf,False,False,False,True,{'tfidf': 0.176},tuta_absoluta/biologie ; tomv/biologie ; tuta_absoluta/description
+q45,darija,sujet,tfidf,False,False,False,True,{'tfidf': 0.419},tuta_absoluta/biologie ; tuta_absoluta/description ; tuta_absoluta/repartition
+q46,darija,sujet,tfidf,True,True,False,True,{'tfidf': 0.195},pourriture_grise/description ; pourriture_grise/prevention ; pourriture_grise/biologie
+q47,darija,sujet,tfidf,True,True,True,True,{'tfidf': 0.148},oeil_de_paon/symptomes ; verticilliose_olivier/symptomes ; mouche_olive/description
+q48,darija,sujet,tfidf,True,True,True,True,{'tfidf': 0.325},rouille_brune_ble/prevention ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q49,darija,sujet,tfidf,False,False,False,False,{'tfidf': 0.076},ceratite/repartition ; ceratite/biologie ; ceratite/description
+q50,darija,sujet,tfidf,False,False,False,True,{'tfidf': 0.231},gale_agrumes/biologie ; black_spot_agrumes/biologie ; chancre_agrumes/description
+h01,fr,hors_sujet,tfidf,False,False,False,True,{'tfidf': 0.129},mouche_olive/lutte ; mouche_olive/description ; mouche_olive/prevention
+h02,fr,hors_sujet,tfidf,False,False,False,True,{'tfidf': 0.167},tuta_absoluta/repartition ; tuta_absoluta/description ; tuta_absoluta/biologie
+h03,fr,hors_sujet,tfidf,False,False,False,True,{'tfidf': 0.154},cercosporiose_mais/symptomes ; mildiou_vigne/symptomes ; mildiou_tomate_pdt/biologie
+h04,ar,hors_sujet,tfidf,False,False,False,False,{'tfidf': 0.0},
+h05,ar,hors_sujet,tfidf,False,False,False,False,{'tfidf': 0.0},
+h06,darija,hors_sujet,tfidf,False,False,False,False,{'tfidf': 0.078},ceratite/repartition ; ceratite/biologie ; ceratite/description
+h07,darija,hors_sujet,tfidf,False,False,False,False,{'tfidf': 0.0},
+h08,darija,hors_sujet,tfidf,False,False,False,True,{'tfidf': 0.123},thrips_californie/repartition ; thrips_californie/prevention ; thrips_californie/biologie
+q01,fr,sujet,bm25,True,True,True,True,{'bm25': 2.0},alternariose_solanacees/prevention ; alternariose_solanacees/description ; alternariose_solanacees/lutte
+q02,fr,sujet,bm25,True,True,True,True,{'bm25': 1.697},cladosporiose_tomate/symptomes ; cladosporiose_tomate/description ; alternariose_solanacees/symptomes
+q03,fr,sujet,bm25,True,True,True,True,{'bm25': 2.021},mildiou_tomate_pdt/biologie ; mildiou_tomate_pdt/description ; tetranyque/biologie
+q04,fr,sujet,bm25,True,True,True,True,{'bm25': 2.258},pourriture_grise/symptomes ; pourriture_grise/description ; pourriture_grise/biologie
+q05,fr,sujet,bm25,True,True,True,True,{'bm25': 2.513},pourriture_grise/prevention ; pourriture_grise/biologie ; pourriture_grise/lutte
+q06,fr,sujet,bm25,True,True,True,True,{'bm25': 1.515},black_rot_vigne/biologie ; rouille_brune_ble/biologie ; black_rot_vigne/symptomes
+q07,fr,sujet,bm25,True,True,True,True,{'bm25': 2.719},esca_vigne/lutte ; esca_vigne/prevention ; esca_vigne/description
+q08,fr,sujet,bm25,True,True,True,True,{'bm25': 1.927},tuberculose_olivier/symptomes ; tuberculose_olivier/biologie ; tuberculose_olivier/description
+q09,fr,sujet,bm25,True,True,True,True,{'bm25': 1.913},rouille_brune_ble/symptomes ; rouille_brune_ble/biologie ; rouille_brune_ble/description
+q10,fr,sujet,bm25,True,True,True,True,{'bm25': 2.057},rouille_brune_ble/prevention ; rouille_brune_ble/biologie ; rouille_brune_ble/description
+q11,fr,sujet,bm25,True,True,True,True,{'bm25': 2.527},tuta_absoluta/biologie ; tuta_absoluta/description ; tuta_absoluta/repartition
+q12,fr,sujet,bm25,True,True,True,True,{'bm25': 2.455},bemisia/lutte ; bemisia/description ; bemisia/biologie
+q13,fr,sujet,bm25,True,True,True,True,{'bm25': 1.907},mouche_olive/lutte ; mouche_olive/description ; criquet_pelerin/lutte
+q14,fr,sujet,bm25,True,True,True,True,{'bm25': 1.769},charancon_rouge/prevention ; charancon_rouge/biologie ; charancon_rouge/description
+q15,fr,sujet,bm25,True,True,True,True,{'bm25': 1.651},carpocapse/lutte ; carpocapse/description ; carpocapse/biologie
+q16,fr,sujet,bm25,True,True,True,True,{'bm25': 1.507},thrips_californie/symptomes ; thrips_californie/description ; thrips_californie/repartition
+q17,fr,sujet,bm25,False,False,False,True,{'bm25': 1.23},carence_Mn/symptomes ; tylcv/symptomes ; tylcv/biologie
+q18,fr,sujet,bm25,False,False,False,True,{'bm25': 1.674},carence_Mn/symptomes ; carence_Mn/description ; mildiou_vigne/symptomes
+q19,fr,sujet,bm25,True,True,True,True,{'bm25': 1.222},necrose_apicale/prevention ; tuta_absoluta/biologie ; tetranyque/biologie
+q20,fr,sujet,bm25,True,True,True,True,{'bm25': 2.972},ceratite/biologie ; ceratite/description ; ceratite/repartition
+q21,fr,sujet,bm25,True,True,True,True,{'bm25': 1.599},tetranyque/biologie ; tetranyque/description ; tetranyque/repartition
+q22,fr,sujet,bm25,True,True,True,True,{'bm25': 1.868},greening/symptomes ; greening/repartition ; greening/description
+q23,ar,sujet,bm25,False,False,False,True,{'bm25': 0.354},necrose_apicale/symptomes ; tylcv/symptomes ; cladosporiose_tomate/symptomes
+q24,ar,sujet,bm25,True,True,True,True,{'bm25': 0.823},pourriture_grise/prevention ; pourriture_grise/lutte ; pourriture_grise/description
+q25,ar,sujet,bm25,True,True,True,True,{'bm25': 1.555},mouche_olive/lutte ; mouche_olive/description ; mouche_olive/biologie
+q26,ar,sujet,bm25,True,True,True,True,{'bm25': 1.419},charancon_rouge/biologie ; charancon_rouge/repartition ; charancon_rouge/description
+q27,ar,sujet,bm25,False,False,False,False,{'bm25': 0.0},
+q28,ar,sujet,bm25,False,False,False,False,{'bm25': 0.0},
+q29,ar,sujet,bm25,True,True,True,True,{'bm25': 1.3},rouille_brune_ble/symptomes ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q30,ar,sujet,bm25,False,False,False,False,{'bm25': 0.0},
+q31,ar,sujet,bm25,True,True,False,True,{'bm25': 0.69},mildiou_vigne/symptomes ; black_rot_vigne/symptomes ; pourriture_grise/symptomes
+q32,ar,sujet,bm25,False,False,False,True,{'bm25': 0.686},rouille_pommier/prevention ; alternariose_solanacees/prevention ; tavelure_pommier/description
+q33,ar,sujet,bm25,True,True,True,True,{'bm25': 1.58},oeil_de_paon/symptomes ; oeil_de_paon/prevention ; oeil_de_paon/biologie
+q34,ar,sujet,bm25,False,False,False,True,{'bm25': 0.805},pourriture_grise/description ; pourriture_grise/biologie ; pourriture_grise/lutte
+q35,ar,sujet,bm25,False,False,False,False,{'bm25': 0.0},
+q36,ar,sujet,bm25,True,True,True,True,{'bm25': 0.456},necrose_apicale/symptomes ; tylcv/symptomes ; cladosporiose_tomate/symptomes
+q37,darija,sujet,bm25,True,True,True,True,{'bm25': 0.918},mildiou_tomate_pdt/biologie ; mildiou_tomate_pdt/description ; ceratite/repartition
+q38,darija,sujet,bm25,True,True,True,True,{'bm25': 1.447},mouche_olive/lutte ; mouche_olive/description ; oeil_de_paon/prevention
+q39,darija,sujet,bm25,True,True,True,True,{'bm25': 1.138},rouille_brune_ble/symptomes ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q40,darija,sujet,bm25,True,True,True,True,{'bm25': 1.301},charancon_rouge/prevention ; charancon_rouge/repartition ; charancon_rouge/biologie
+q41,darija,sujet,bm25,True,True,True,True,{'bm25': 1.927},bemisia/lutte ; bemisia/biologie ; bemisia/description
+q42,darija,sujet,bm25,False,False,False,True,{'bm25': 1.326},black_rot_pommier/lutte ; black_rot_pommier/symptomes ; black_rot_pommier/prevention
+q43,darija,sujet,bm25,False,False,False,True,{'bm25': 1.186},bacteriose_xanthomonas/symptomes ; bacteriose_xanthomonas/lutte ; bacteriose_xanthomonas/biologie
+q44,darija,sujet,bm25,False,False,False,True,{'bm25': 0.532},tomv/biologie ; tuta_absoluta/biologie ; cladosporiose_tomate/description
+q45,darija,sujet,bm25,False,False,False,True,{'bm25': 1.866},tuta_absoluta/description ; tuta_absoluta/biologie ; tuta_absoluta/repartition
+q46,darija,sujet,bm25,True,True,False,True,{'bm25': 1.298},pourriture_grise/description ; pourriture_grise/biologie ; pourriture_grise/prevention
+q47,darija,sujet,bm25,True,True,True,True,{'bm25': 1.125},oeil_de_paon/symptomes ; mouche_olive/description ; oeil_de_paon/prevention
+q48,darija,sujet,bm25,True,True,True,True,{'bm25': 1.138},rouille_brune_ble/prevention ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q49,darija,sujet,bm25,False,False,False,True,{'bm25': 1.455},ceratite/repartition ; ceratite/biologie ; ceratite/description
+q50,darija,sujet,bm25,False,False,False,True,{'bm25': 0.613},gale_agrumes/biologie ; black_spot_agrumes/biologie ; greening/description
+h01,fr,hors_sujet,bm25,False,False,False,True,{'bm25': 1.258},mouche_olive/lutte ; mouche_olive/prevention ; mouche_olive/description
+h02,fr,hors_sujet,bm25,False,False,False,True,{'bm25': 1.442},tuta_absoluta/repartition ; ceratite/repartition ; tuta_absoluta/description
+h03,fr,hors_sujet,bm25,False,False,False,True,{'bm25': 1.557},cercosporiose_mais/symptomes ; mildiou_vigne/symptomes ; criquet_pelerin/biologie
+h04,ar,hors_sujet,bm25,False,False,False,False,{'bm25': 0.0},
+h05,ar,hors_sujet,bm25,False,False,False,False,{'bm25': 0.0},
+h06,darija,hors_sujet,bm25,False,False,False,True,{'bm25': 1.164},ceratite/repartition ; ceratite/description ; ceratite/biologie
+h07,darija,hors_sujet,bm25,False,False,False,False,{'bm25': 0.0},
+h08,darija,hors_sujet,bm25,False,False,False,True,{'bm25': 1.191},thrips_californie/repartition ; thrips_californie/symptomes ; thrips_californie/lutte
+q01,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 2.0, 'dense': 0.909}",alternariose_solanacees/prevention ; pourriture_grise/prevention ; necrose_apicale/prevention
+q02,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.697, 'dense': 0.928}",cladosporiose_tomate/symptomes ; alternariose_solanacees/symptomes ; pourriture_grise/symptomes
+q03,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 2.021, 'dense': 0.889}",mildiou_tomate_pdt/biologie ; mildiou_vigne/biologie ; carpocapse/biologie
+q04,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 2.258, 'dense': 0.915}",pourriture_grise/symptomes ; black_rot_pommier/symptomes ; diplodia_palmier/symptomes
+q05,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 2.513, 'dense': 0.902}",pourriture_grise/prevention ; black_rot_pommier/prevention ; rouille_brune_ble/prevention
+q06,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.515, 'dense': 0.918}",black_rot_vigne/biologie ; mildiou_vigne/biologie ; oidium_vigne/biologie
+q07,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 2.719, 'dense': 0.899}",esca_vigne/lutte ; eudemis/lutte ; black_rot_vigne/lutte
+q08,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.927, 'dense': 0.898}",tuberculose_olivier/symptomes ; verticilliose_olivier/symptomes ; oidium_vigne/symptomes
+q09,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.913, 'dense': 0.921}",rouille_brune_ble/symptomes ; tache_bronzee/symptomes ; alternariose_solanacees/symptomes
+q10,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 2.057, 'dense': 0.91}",rouille_brune_ble/prevention ; tache_bronzee/prevention ; rouille_pommier/prevention
+q11,fr,sujet,dense:e5-small,True,True,False,True,"{'bm25': 2.527, 'dense': 0.916}",tuta_absoluta/description ; tuta_absoluta/biologie ; tuta_absoluta/repartition
+q12,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 2.455, 'dense': 0.881}",bemisia/lutte ; mouche_olive/lutte ; alternariose_solanacees/lutte
+q13,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.907, 'dense': 0.907}",mouche_olive/lutte ; rouille_brune_ble/lutte ; alternariose_solanacees/lutte
+q14,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.769, 'dense': 0.888}",charancon_rouge/prevention ; black_scorch/prevention ; tuberculose_olivier/prevention
+q15,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.651, 'dense': 0.891}",carpocapse/lutte ; alternariose_solanacees/lutte ; mouche_olive/lutte
+q16,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.507, 'dense': 0.878}",thrips_californie/symptomes ; carence_Mn/symptomes ; oidium_vigne/symptomes
+q17,fr,sujet,dense:e5-small,False,False,False,True,"{'bm25': 1.23, 'dense': 0.893}",carence_Mn/symptomes ; carence_Mn/description ; oidium_vigne/symptomes
+q18,fr,sujet,dense:e5-small,False,False,False,True,"{'bm25': 1.674, 'dense': 0.852}",carence_Mn/symptomes ; tylcv/symptomes ; tylcv/biologie
+q19,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.222, 'dense': 0.86}",necrose_apicale/prevention ; alternariose_solanacees/prevention ; pourriture_grise/prevention
+q20,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 2.972, 'dense': 0.917}",ceratite/biologie ; pourriture_grise/biologie ; black_rot_vigne/biologie
+q21,fr,sujet,dense:e5-small,True,True,False,True,"{'bm25': 1.599, 'dense': 0.879}",tetranyque/description ; tetranyque/biologie ; tetranyque/symptomes
+q22,fr,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.868, 'dense': 0.918}",greening/symptomes ; alternaria_grenadier/symptomes ; gale_agrumes/symptomes
+q23,ar,sujet,dense:e5-small,True,True,False,True,"{'bm25': 0.354, 'dense': 0.86}",tylcv/symptomes ; cladosporiose_tomate/symptomes ; alternariose_solanacees/symptomes
+q24,ar,sujet,dense:e5-small,True,True,True,True,"{'bm25': 0.823, 'dense': 0.841}",pourriture_grise/prevention ; necrose_apicale/prevention ; alternariose_solanacees/prevention
+q25,ar,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.555, 'dense': 0.848}",mouche_olive/lutte ; oeil_de_paon/lutte ; rouille_brune_ble/lutte
+q26,ar,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.419, 'dense': 0.838}",charancon_rouge/biologie ; tetranyque/biologie ; rouille_brune_ble/biologie
+q27,ar,sujet,dense:e5-small,True,True,True,True,"{'bm25': 0.0, 'dense': 0.86}",carence_K/symptomes ; carence_Ca/symptomes ; necrose_apicale/symptomes
+q28,ar,sujet,dense:e5-small,True,True,True,True,"{'bm25': 0.0, 'dense': 0.815}",carence_Fe/lutte ; carence_Zn/lutte ; necrose_apicale/lutte
+q29,ar,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.3, 'dense': 0.873}",rouille_brune_ble/symptomes ; tache_bronzee/symptomes ; alternariose_solanacees/symptomes
+q30,ar,sujet,dense:e5-small,False,False,False,True,"{'bm25': 0.0, 'dense': 0.817}",rouille_brune_ble/biologie ; black_rot_vigne/biologie ; pourriture_grise/biologie
+q31,ar,sujet,dense:e5-small,True,True,True,True,"{'bm25': 0.69, 'dense': 0.861}",black_rot_vigne/symptomes ; oidium_vigne/symptomes ; black_scorch/symptomes
+q32,ar,sujet,dense:e5-small,False,False,False,True,"{'bm25': 0.686, 'dense': 0.829}",black_rot_pommier/prevention ; black_scorch/prevention ; rouille_pommier/prevention
+q33,ar,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.58, 'dense': 0.872}",oeil_de_paon/symptomes ; tuberculose_olivier/symptomes ; verticilliose_olivier/symptomes
+q34,ar,sujet,dense:e5-small,True,True,False,True,"{'bm25': 0.805, 'dense': 0.805}",black_scorch/lutte ; thrips_californie/lutte ; pourriture_grise/lutte
+q35,ar,sujet,dense:e5-small,False,False,False,False,"{'bm25': 0.0, 'dense': 0.793}",parlatoria_palmier/repartition ; gale_agrumes/repartition ; greening/repartition
+q36,ar,sujet,dense:e5-small,True,True,True,True,"{'bm25': 0.456, 'dense': 0.852}",necrose_apicale/symptomes ; carence_K/symptomes ; cladosporiose_tomate/symptomes
+q37,darija,sujet,dense:e5-small,False,False,False,True,"{'bm25': 0.918, 'dense': 0.836}",tuta_absoluta/biologie ; tylcv/biologie ; bemisia/biologie
+q38,darija,sujet,dense:e5-small,True,True,False,True,"{'bm25': 1.447, 'dense': 0.832}",oeil_de_paon/lutte ; mouche_olive/lutte ; bemisia/lutte
+q39,darija,sujet,dense:e5-small,True,True,False,True,"{'bm25': 1.138, 'dense': 0.818}",tache_bronzee/symptomes ; rouille_pommier/symptomes ; rouille_brune_ble/symptomes
+q40,darija,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.301, 'dense': 0.845}",charancon_rouge/prevention ; black_scorch/prevention ; black_rot_pommier/prevention
+q41,darija,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.927, 'dense': 0.837}",bemisia/lutte ; bacteriose_xanthomonas/lutte ; alternariose_solanacees/lutte
+q42,darija,sujet,dense:e5-small,True,True,False,True,"{'bm25': 1.326, 'dense': 0.877}",black_rot_pommier/lutte ; black_rot_vigne/lutte ; black_scorch/lutte
+q43,darija,sujet,dense:e5-small,False,False,False,True,"{'bm25': 1.186, 'dense': 0.828}",charancon_rouge/biologie ; charancon_rouge/repartition ; charancon_rouge/prevention
+q44,darija,sujet,dense:e5-small,False,False,False,True,"{'bm25': 0.532, 'dense': 0.831}",tuta_absoluta/biologie ; helicoverpa/description ; tuta_absoluta/description
+q45,darija,sujet,dense:e5-small,False,False,False,True,"{'bm25': 1.866, 'dense': 0.856}",alternariose_solanacees/lutte ; bemisia/lutte ; necrose_apicale/lutte
+q46,darija,sujet,dense:e5-small,True,True,False,True,"{'bm25': 1.298, 'dense': 0.832}",thrips_californie/prevention ; pourriture_grise/prevention ; tache_bronzee/prevention
+q47,darija,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.125, 'dense': 0.825}",oeil_de_paon/symptomes ; tuberculose_olivier/symptomes ; tache_bronzee/symptomes
+q48,darija,sujet,dense:e5-small,True,True,True,True,"{'bm25': 1.138, 'dense': 0.85}",rouille_brune_ble/prevention ; tache_bronzee/prevention ; rouille_pommier/prevention
+q49,darija,sujet,dense:e5-small,True,True,True,False,"{'bm25': 1.455, 'dense': 0.793}",criquet_pelerin/biologie ; mildiou_tomate_pdt/biologie ; bemisia/biologie
+q50,darija,sujet,dense:e5-small,False,False,False,True,"{'bm25': 0.613, 'dense': 0.833}",gale_agrumes/biologie ; black_spot_agrumes/biologie ; pourriture_grise/biologie
+h01,fr,hors_sujet,dense:e5-small,False,False,False,True,"{'bm25': 1.258, 'dense': 0.82}",tuberculose_olivier/prevention ; pucerons/symptomes ; tetranyque/description
+h02,fr,hors_sujet,dense:e5-small,False,False,False,True,"{'bm25': 1.442, 'dense': 0.803}",tuta_absoluta/repartition ; tuta_absoluta/biologie ; tuta_absoluta/description
+h03,fr,hors_sujet,dense:e5-small,False,False,False,True,"{'bm25': 1.557, 'dense': 0.804}",rouille_brune_ble/biologie ; greening/description ; rouille_brune_ble/lutte
+h04,ar,hors_sujet,dense:e5-small,False,False,False,False,"{'bm25': 0.0, 'dense': 0.783}",black_rot_pommier/lutte ; pourriture_grise/lutte ; black_rot_pommier/prevention
+h05,ar,hors_sujet,dense:e5-small,False,False,False,False,"{'bm25': 0.0, 'dense': 0.727}",bemisia/description ; bemisia/lutte ; cladosporiose_tomate/description
+h06,darija,hors_sujet,dense:e5-small,False,False,False,True,"{'bm25': 1.164, 'dense': 0.803}",bemisia/lutte ; bemisia/description ; bemisia/biologie
+h07,darija,hors_sujet,dense:e5-small,False,False,False,False,"{'bm25': 0.0, 'dense': 0.786}",pyrale_dattes/description ; bacteriose_pecher/symptomes ; bacteriose_pecher/description
+h08,darija,hors_sujet,dense:e5-small,False,False,False,False,"{'bm25': 1.191, 'dense': 0.769}",acarien_dattes/description ; bacteriose_pecher/description ; eudemis/description
+q01,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 2.0, 'dense': 0.803}",alternariose_solanacees/prevention ; necrose_apicale/prevention ; alternariose_solanacees/lutte
+q02,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.697, 'dense': 0.716}",cladosporiose_tomate/symptomes ; cladosporiose_tomate/description ; alternariose_solanacees/symptomes
+q03,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 2.021, 'dense': 0.66}",mildiou_tomate_pdt/biologie ; mildiou_tomate_pdt/description ; mildiou_vigne/biologie
+q04,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 2.258, 'dense': 0.685}",pourriture_grise/symptomes ; black_rot_pommier/symptomes ; black_scorch/symptomes
+q05,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 2.513, 'dense': 0.69}",pourriture_grise/prevention ; black_rot_pommier/prevention ; black_spot_agrumes/prevention
+q06,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.515, 'dense': 0.603}",black_rot_vigne/biologie ; black_rot_vigne/symptomes ; mildiou_vigne/biologie
+q07,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 2.719, 'dense': 0.683}",esca_vigne/lutte ; eudemis/lutte ; black_rot_vigne/lutte
+q08,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.927, 'dense': 0.68}",tuberculose_olivier/symptomes ; verticilliose_olivier/symptomes ; gale_agrumes/symptomes
+q09,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.913, 'dense': 0.718}",rouille_brune_ble/symptomes ; tache_bronzee/symptomes ; rouille_mais/symptomes
+q10,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 2.057, 'dense': 0.717}",rouille_brune_ble/prevention ; tache_bronzee/prevention ; rouille_mais/prevention
+q11,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 2.527, 'dense': 0.759}",tuta_absoluta/biologie ; tuta_absoluta/repartition ; tuta_absoluta/description
+q12,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 2.455, 'dense': 0.613}",bemisia/lutte ; mouche_olive/lutte ; black_rot_pommier/lutte
+q13,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.907, 'dense': 0.736}",mouche_olive/lutte ; mouche_olive/description ; mouche_olive/prevention
+q14,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.769, 'dense': 0.683}",charancon_rouge/prevention ; charancon_rouge/biologie ; charancon_rouge/description
+q15,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.651, 'dense': 0.716}",carpocapse/lutte ; carpocapse/prevention ; carpocapse/description
+q16,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.507, 'dense': 0.592}",thrips_californie/symptomes ; rouille_pommier/symptomes ; graphiola/symptomes
+q17,fr,sujet,dense:bge-m3,False,True,False,True,"{'bm25': 1.23, 'dense': 0.563}",carence_Mn/symptomes ; carence_Mn/description ; carence_Mg/lutte
+q18,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.674, 'dense': 0.54}",carence_Fe/symptomes ; carence_Zn/symptomes ; carence_Fe/description
+q19,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.222, 'dense': 0.621}",necrose_apicale/prevention ; pourriture_grise/prevention ; corynesporiose_tomate/prevention
+q20,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 2.972, 'dense': 0.777}",ceratite/biologie ; ceratite/description ; ceratite/repartition
+q21,fr,sujet,dense:bge-m3,True,True,False,True,"{'bm25': 1.599, 'dense': 0.631}",tetranyque/symptomes ; tetranyque/biologie ; tetranyque/description
+q22,fr,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.868, 'dense': 0.71}",greening/symptomes ; gale_agrumes/symptomes ; black_spot_agrumes/symptomes
+q23,ar,sujet,dense:bge-m3,False,False,False,True,"{'bm25': 0.354, 'dense': 0.628}",cladosporiose_tomate/symptomes ; necrose_apicale/symptomes ; tylcv/symptomes
+q24,ar,sujet,dense:bge-m3,True,True,False,True,"{'bm25': 0.823, 'dense': 0.568}",necrose_apicale/prevention ; pourriture_grise/prevention ; black_spot_agrumes/prevention
+q25,ar,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.555, 'dense': 0.656}",mouche_olive/lutte ; eudemis/lutte ; oeil_de_paon/lutte
+q26,ar,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.419, 'dense': 0.564}",charancon_rouge/biologie ; pou_rouge_agrumes/biologie ; rouille_pommier/biologie
+q27,ar,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 0.0, 'dense': 0.699}",carence_K/symptomes ; carence_Ca/symptomes ; necrose_apicale/symptomes
+q28,ar,sujet,dense:bge-m3,True,True,False,True,"{'bm25': 0.0, 'dense': 0.628}",carence_Ca/lutte ; carence_Fe/lutte ; necrose_apicale/lutte
+q29,ar,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.3, 'dense': 0.631}",rouille_brune_ble/symptomes ; tache_bronzee/symptomes ; rouille_mais/symptomes
+q30,ar,sujet,dense:bge-m3,False,False,False,True,"{'bm25': 0.0, 'dense': 0.478}",rouille_pommier/biologie ; black_spot_agrumes/biologie ; black_rot_vigne/biologie
+q31,ar,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 0.69, 'dense': 0.668}",black_rot_vigne/symptomes ; black_rot_pommier/symptomes ; black_scorch/symptomes
+q32,ar,sujet,dense:bge-m3,True,True,False,True,"{'bm25': 0.686, 'dense': 0.602}",rouille_pommier/prevention ; carpocapse/prevention ; black_scorch/prevention
+q33,ar,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.58, 'dense': 0.654}",oeil_de_paon/symptomes ; tuberculose_olivier/symptomes ; verticilliose_olivier/symptomes
+q34,ar,sujet,dense:bge-m3,False,False,False,True,"{'bm25': 0.805, 'dense': 0.599}",black_spot_agrumes/lutte ; black_scorch/lutte ; tache_bronzee/lutte
+q35,ar,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 0.0, 'dense': 0.459}",criquet_pelerin/repartition ; criquet_pelerin/biologie ; ceratite/repartition
+q36,ar,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 0.456, 'dense': 0.717}",necrose_apicale/symptomes ; carence_K/symptomes ; carence_Ca/symptomes
+q37,darija,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 0.918, 'dense': 0.52}",mildiou_tomate_pdt/biologie ; tuta_absoluta/biologie ; bemisia/biologie
+q38,darija,sujet,dense:bge-m3,True,True,False,True,"{'bm25': 1.447, 'dense': 0.488}",oeil_de_paon/lutte ; mouche_olive/lutte ; black_scorch/lutte
+q39,darija,sujet,dense:bge-m3,True,True,False,True,"{'bm25': 1.138, 'dense': 0.465}",rouille_pommier/symptomes ; rouille_brune_ble/symptomes ; tache_bronzee/symptomes
+q40,darija,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.301, 'dense': 0.559}",charancon_rouge/prevention ; black_scorch/prevention ; necrose_apicale/prevention
+q41,darija,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.927, 'dense': 0.557}",bemisia/lutte ; oeil_de_paon/lutte ; mouche_olive/lutte
+q42,darija,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.326, 'dense': 0.616}",black_rot_vigne/lutte ; black_rot_pommier/lutte ; black_scorch/lutte
+q43,darija,sujet,dense:bge-m3,False,False,False,False,"{'bm25': 1.186, 'dense': 0.435}",rouille_pommier/prevention ; rouille_pommier/lutte ; graphiola/biologie
+q44,darija,sujet,dense:bge-m3,False,False,False,True,"{'bm25': 0.532, 'dense': 0.504}",tuta_absoluta/description ; tuta_absoluta/biologie ; tuta_absoluta/repartition
+q45,darija,sujet,dense:bge-m3,True,True,True,True,"{'bm25': 1.866, 'dense': 0.588}",carpocapse/lutte ; mouche_olive/lutte ; tuta_absoluta/description
+q46,darija,sujet,dense:bge-m3,False,False,False,True,"{'bm25': 1.298, 'dense': 0.473}",black_scorch/prevention ; thrips_californie/prevention ; rouille_pommier/prevention
+q47,darija,sujet,dense:bge-m3,True,True,False,False,"{'bm25': 1.125, 'dense': 0.429}",gale_agrumes/symptomes ; oeil_de_paon/symptomes ; black_scorch/symptomes
+q48,darija,sujet,dense:bge-m3,True,True,False,True,"{'bm25': 1.138, 'dense': 0.582}",rouille_mais/prevention ; tache_bronzee/prevention ; rouille_brune_ble/prevention
+q49,darija,sujet,dense:bge-m3,False,False,False,False,"{'bm25': 1.455, 'dense': 0.34}",tetranyque/biologie ; oidium_vigne/biologie ; nematodes_galles/biologie
+q50,darija,sujet,dense:bge-m3,False,False,False,True,"{'bm25': 0.613, 'dense': 0.521}",black_spot_agrumes/biologie ; pourriture_grise/biologie ; pou_rouge_agrumes/biologie
+h01,fr,hors_sujet,dense:bge-m3,False,False,False,False,"{'bm25': 1.258, 'dense': 0.362}",corynesporiose_tomate/biologie ; pucerons/symptomes ; carence_K/symptomes
+h02,fr,hors_sujet,dense:bge-m3,False,False,False,False,"{'bm25': 1.442, 'dense': 0.379}",carence_Mg/description ; carence_Mg/prevention ; carence_Mg/lutte
+h03,fr,hors_sujet,dense:bge-m3,False,False,False,False,"{'bm25': 1.557, 'dense': 0.394}",carence_Fe/lutte ; carence_Mg/prevention ; carence_Fe/prevention
+h04,ar,hors_sujet,dense:bge-m3,False,False,False,True,"{'bm25': 0.0, 'dense': 0.487}",necrose_apicale/lutte ; necrose_apicale/prevention ; carence_Ca/lutte
+h05,ar,hors_sujet,dense:bge-m3,False,False,False,False,"{'bm25': 0.0, 'dense': 0.349}",mineuse_agrumes/repartition ; helicoverpa/description ; greening/repartition
+h06,darija,hors_sujet,dense:bge-m3,False,False,False,False,"{'bm25': 1.164, 'dense': 0.343}",necrose_apicale/lutte ; eudemis/lutte ; carence_P/lutte
+h07,darija,hors_sujet,dense:bge-m3,False,False,False,False,"{'bm25': 0.0, 'dense': 0.328}",charancon_rouge/biologie ; charancon_rouge/repartition ; charancon_rouge/prevention
+h08,darija,hors_sujet,dense:bge-m3,False,False,False,False,"{'bm25': 1.191, 'dense': 0.36}",corynesporiose_tomate/biologie ; corynesporiose_tomate/lutte ; carence_Fe/lutte
+q01,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 2.0, 'dense': 0.909}",alternariose_solanacees/prevention ; alternariose_solanacees/description ; alternariose_solanacees/lutte
+q02,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.697, 'dense': 0.928}",cladosporiose_tomate/symptomes ; cladosporiose_tomate/description ; alternariose_solanacees/symptomes
+q03,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 2.021, 'dense': 0.889}",mildiou_tomate_pdt/biologie ; mildiou_tomate_pdt/description ; mildiou_vigne/biologie
+q04,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 2.258, 'dense': 0.915}",pourriture_grise/symptomes ; pourriture_grise/description ; pourriture_grise/biologie
+q05,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 2.513, 'dense': 0.902}",pourriture_grise/prevention ; pourriture_grise/biologie ; pourriture_grise/lutte
+q06,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.515, 'dense': 0.918}",black_rot_vigne/biologie ; rouille_brune_ble/biologie ; black_rot_vigne/symptomes
+q07,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 2.719, 'dense': 0.899}",esca_vigne/lutte ; esca_vigne/prevention ; esca_vigne/description
+q08,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.927, 'dense': 0.898}",tuberculose_olivier/symptomes ; tuberculose_olivier/biologie ; tuberculose_olivier/description
+q09,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.913, 'dense': 0.921}",rouille_brune_ble/symptomes ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q10,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 2.057, 'dense': 0.91}",rouille_brune_ble/prevention ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q11,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 2.527, 'dense': 0.916}",tuta_absoluta/biologie ; tuta_absoluta/description ; tuta_absoluta/repartition
+q12,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 2.455, 'dense': 0.881}",bemisia/lutte ; bemisia/description ; bemisia/biologie
+q13,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.907, 'dense': 0.907}",mouche_olive/lutte ; mouche_olive/description ; mouche_olive/prevention
+q14,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.769, 'dense': 0.888}",charancon_rouge/prevention ; charancon_rouge/biologie ; charancon_rouge/description
+q15,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.651, 'dense': 0.891}",carpocapse/lutte ; carpocapse/description ; carpocapse/biologie
+q16,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.507, 'dense': 0.878}",thrips_californie/symptomes ; thrips_californie/description ; thrips_californie/lutte
+q17,fr,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 1.23, 'dense': 0.893}",carence_Mn/symptomes ; tylcv/symptomes ; tylcv/biologie
+q18,fr,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 1.674, 'dense': 0.852}",carence_Mn/symptomes ; carence_Mn/description ; tylcv/symptomes
+q19,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.222, 'dense': 0.86}",necrose_apicale/prevention ; tuta_absoluta/biologie ; alternariose_solanacees/prevention
+q20,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 2.972, 'dense': 0.917}",ceratite/biologie ; ceratite/description ; ceratite/repartition
+q21,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.599, 'dense': 0.879}",tetranyque/biologie ; tetranyque/description ; tetranyque/repartition
+q22,fr,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.868, 'dense': 0.918}",greening/symptomes ; greening/repartition ; greening/description
+q23,ar,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 0.354, 'dense': 0.86}",tylcv/symptomes ; cladosporiose_tomate/symptomes ; necrose_apicale/symptomes
+q24,ar,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 0.823, 'dense': 0.841}",pourriture_grise/prevention ; pourriture_grise/lutte ; pourriture_grise/description
+q25,ar,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.555, 'dense': 0.848}",mouche_olive/lutte ; mouche_olive/description ; mouche_olive/biologie
+q26,ar,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.419, 'dense': 0.838}",charancon_rouge/biologie ; charancon_rouge/description ; charancon_rouge/repartition
+q27,ar,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 0.0, 'dense': 0.86}",carence_K/symptomes ; carence_Ca/symptomes ; necrose_apicale/symptomes
+q28,ar,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 0.0, 'dense': 0.815}",carence_Fe/lutte ; carence_Zn/lutte ; necrose_apicale/lutte
+q29,ar,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.3, 'dense': 0.873}",rouille_brune_ble/symptomes ; rouille_brune_ble/description ; rouille_brune_ble/prevention
+q30,ar,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 0.0, 'dense': 0.817}",rouille_brune_ble/biologie ; black_rot_vigne/biologie ; pourriture_grise/biologie
+q31,ar,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 0.69, 'dense': 0.861}",black_rot_vigne/symptomes ; mildiou_vigne/symptomes ; pourriture_grise/symptomes
+q32,ar,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 0.686, 'dense': 0.829}",black_rot_pommier/prevention ; alternariose_solanacees/prevention ; rouille_pommier/prevention
+q33,ar,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.58, 'dense': 0.872}",oeil_de_paon/symptomes ; oeil_de_paon/prevention ; oeil_de_paon/biologie
+q34,ar,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 0.805, 'dense': 0.805}",pourriture_grise/description ; pourriture_grise/biologie ; pourriture_grise/lutte
+q35,ar,sujet,hybrid:e5-small,False,False,False,False,"{'bm25': 0.0, 'dense': 0.793}",parlatoria_palmier/repartition ; gale_agrumes/repartition ; greening/repartition
+q36,ar,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 0.456, 'dense': 0.852}",necrose_apicale/symptomes ; cladosporiose_tomate/symptomes ; tylcv/symptomes
+q37,darija,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 0.918, 'dense': 0.836}",mildiou_tomate_pdt/biologie ; tuta_absoluta/biologie ; mildiou_tomate_pdt/description
+q38,darija,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.447, 'dense': 0.832}",mouche_olive/lutte ; oeil_de_paon/lutte ; mouche_olive/description
+q39,darija,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.138, 'dense': 0.818}",rouille_brune_ble/symptomes ; rouille_brune_ble/prevention ; rouille_brune_ble/biologie
+q40,darija,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.301, 'dense': 0.845}",charancon_rouge/prevention ; charancon_rouge/description ; charancon_rouge/biologie
+q41,darija,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.927, 'dense': 0.837}",bemisia/lutte ; bemisia/biologie ; bemisia/description
+q42,darija,sujet,hybrid:e5-small,True,True,False,True,"{'bm25': 1.326, 'dense': 0.877}",black_rot_pommier/lutte ; black_rot_vigne/lutte ; black_rot_vigne/symptomes
+q43,darija,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 1.186, 'dense': 0.828}",bacteriose_xanthomonas/symptomes ; bacteriose_xanthomonas/lutte ; bacteriose_xanthomonas/biologie
+q44,darija,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 0.532, 'dense': 0.831}",tuta_absoluta/biologie ; helicoverpa/description ; cladosporiose_tomate/description
+q45,darija,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 1.866, 'dense': 0.856}",tuta_absoluta/description ; tuta_absoluta/biologie ; tuta_absoluta/repartition
+q46,darija,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.298, 'dense': 0.832}",pourriture_grise/prevention ; pourriture_grise/description ; pourriture_grise/biologie
+q47,darija,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.125, 'dense': 0.825}",oeil_de_paon/symptomes ; mouche_olive/description ; oeil_de_paon/prevention
+q48,darija,sujet,hybrid:e5-small,True,True,True,True,"{'bm25': 1.138, 'dense': 0.85}",rouille_brune_ble/prevention ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q49,darija,sujet,hybrid:e5-small,False,False,False,False,"{'bm25': 1.455, 'dense': 0.793}",ceratite/repartition ; ceratite/biologie ; ceratite/description
+q50,darija,sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 0.613, 'dense': 0.833}",gale_agrumes/biologie ; black_spot_agrumes/biologie ; pou_rouge_agrumes/biologie
+h01,fr,hors_sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 1.258, 'dense': 0.82}",mouche_olive/lutte ; mouche_olive/description ; mouche_olive/biologie
+h02,fr,hors_sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 1.442, 'dense': 0.803}",tuta_absoluta/repartition ; tuta_absoluta/biologie ; tuta_absoluta/description
+h03,fr,hors_sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 1.557, 'dense': 0.804}",cercosporiose_mais/symptomes ; black_rot_vigne/lutte ; mildiou_vigne/symptomes
+h04,ar,hors_sujet,hybrid:e5-small,False,False,False,False,"{'bm25': 0.0, 'dense': 0.783}",black_rot_pommier/lutte ; pourriture_grise/lutte ; black_rot_pommier/prevention
+h05,ar,hors_sujet,hybrid:e5-small,False,False,False,False,"{'bm25': 0.0, 'dense': 0.727}",bemisia/description ; bemisia/lutte ; cladosporiose_tomate/description
+h06,darija,hors_sujet,hybrid:e5-small,False,False,False,True,"{'bm25': 1.164, 'dense': 0.803}",ceratite/repartition ; ceratite/description ; ceratite/biologie
+h07,darija,hors_sujet,hybrid:e5-small,False,False,False,False,"{'bm25': 0.0, 'dense': 0.786}",pyrale_dattes/description ; bacteriose_pecher/symptomes ; bacteriose_pecher/description
+h08,darija,hors_sujet,hybrid:e5-small,False,False,False,False,"{'bm25': 1.191, 'dense': 0.769}",thrips_californie/repartition ; thrips_californie/description ; thrips_californie/biologie
+q01,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 2.0, 'dense': 0.803}",alternariose_solanacees/prevention ; alternariose_solanacees/description ; alternariose_solanacees/lutte
+q02,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.697, 'dense': 0.716}",cladosporiose_tomate/symptomes ; cladosporiose_tomate/description ; alternariose_solanacees/symptomes
+q03,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 2.021, 'dense': 0.66}",mildiou_tomate_pdt/biologie ; mildiou_tomate_pdt/description ; mildiou_vigne/biologie
+q04,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 2.258, 'dense': 0.685}",pourriture_grise/symptomes ; pourriture_grise/biologie ; pourriture_grise/description
+q05,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 2.513, 'dense': 0.69}",pourriture_grise/prevention ; pourriture_grise/lutte ; pourriture_grise/biologie
+q06,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.515, 'dense': 0.603}",black_rot_vigne/biologie ; black_rot_vigne/symptomes ; rouille_brune_ble/biologie
+q07,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 2.719, 'dense': 0.683}",esca_vigne/lutte ; esca_vigne/prevention ; esca_vigne/biologie
+q08,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.927, 'dense': 0.68}",tuberculose_olivier/symptomes ; tuberculose_olivier/biologie ; tuberculose_olivier/description
+q09,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.913, 'dense': 0.718}",rouille_brune_ble/symptomes ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q10,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 2.057, 'dense': 0.717}",rouille_brune_ble/prevention ; rouille_brune_ble/biologie ; rouille_brune_ble/description
+q11,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 2.527, 'dense': 0.759}",tuta_absoluta/biologie ; tuta_absoluta/description ; tuta_absoluta/repartition
+q12,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 2.455, 'dense': 0.613}",bemisia/lutte ; bemisia/biologie ; bemisia/description
+q13,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.907, 'dense': 0.736}",mouche_olive/lutte ; mouche_olive/description ; mouche_olive/biologie
+q14,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.769, 'dense': 0.683}",charancon_rouge/prevention ; charancon_rouge/biologie ; charancon_rouge/description
+q15,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.651, 'dense': 0.716}",carpocapse/lutte ; carpocapse/description ; carpocapse/biologie
+q16,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.507, 'dense': 0.592}",thrips_californie/symptomes ; thrips_californie/repartition ; thrips_californie/prevention
+q17,fr,sujet,hybrid:bge-m3,False,True,False,True,"{'bm25': 1.23, 'dense': 0.563}",carence_Mn/symptomes ; carence_Mn/description ; carence_Mg/lutte
+q18,fr,sujet,hybrid:bge-m3,False,False,False,True,"{'bm25': 1.674, 'dense': 0.54}",carence_Mn/symptomes ; carence_Mn/description ; mildiou_vigne/symptomes
+q19,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.222, 'dense': 0.621}",necrose_apicale/prevention ; tuta_absoluta/biologie ; necrose_apicale/symptomes
+q20,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 2.972, 'dense': 0.777}",ceratite/biologie ; ceratite/description ; ceratite/repartition
+q21,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.599, 'dense': 0.631}",tetranyque/biologie ; tetranyque/description ; tetranyque/symptomes
+q22,fr,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.868, 'dense': 0.71}",greening/symptomes ; greening/repartition ; greening/description
+q23,ar,sujet,hybrid:bge-m3,False,False,False,True,"{'bm25': 0.354, 'dense': 0.628}",cladosporiose_tomate/symptomes ; tylcv/symptomes ; necrose_apicale/symptomes
+q24,ar,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 0.823, 'dense': 0.568}",pourriture_grise/prevention ; pourriture_grise/lutte ; pourriture_grise/description
+q25,ar,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.555, 'dense': 0.656}",mouche_olive/lutte ; mouche_olive/description ; mouche_olive/prevention
+q26,ar,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.419, 'dense': 0.564}",charancon_rouge/biologie ; charancon_rouge/description ; charancon_rouge/repartition
+q27,ar,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 0.0, 'dense': 0.699}",carence_K/symptomes ; carence_Ca/symptomes ; necrose_apicale/symptomes
+q28,ar,sujet,hybrid:bge-m3,True,True,False,True,"{'bm25': 0.0, 'dense': 0.628}",carence_Ca/lutte ; carence_Fe/lutte ; necrose_apicale/lutte
+q29,ar,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.3, 'dense': 0.631}",rouille_brune_ble/symptomes ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q30,ar,sujet,hybrid:bge-m3,False,False,False,True,"{'bm25': 0.0, 'dense': 0.478}",rouille_pommier/biologie ; black_spot_agrumes/biologie ; black_rot_vigne/biologie
+q31,ar,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 0.69, 'dense': 0.668}",black_rot_vigne/symptomes ; mildiou_vigne/symptomes ; pourriture_grise/symptomes
+q32,ar,sujet,hybrid:bge-m3,True,True,False,True,"{'bm25': 0.686, 'dense': 0.602}",black_rot_pommier/prevention ; rouille_pommier/prevention ; carpocapse/prevention
+q33,ar,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.58, 'dense': 0.654}",oeil_de_paon/symptomes ; oeil_de_paon/prevention ; oeil_de_paon/biologie
+q34,ar,sujet,hybrid:bge-m3,False,False,False,True,"{'bm25': 0.805, 'dense': 0.599}",pourriture_grise/lutte ; pourriture_grise/description ; pourriture_grise/biologie
+q35,ar,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 0.0, 'dense': 0.459}",criquet_pelerin/repartition ; criquet_pelerin/biologie ; ceratite/repartition
+q36,ar,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 0.456, 'dense': 0.717}",necrose_apicale/symptomes ; cladosporiose_tomate/symptomes ; tylcv/symptomes
+q37,darija,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 0.918, 'dense': 0.52}",mildiou_tomate_pdt/biologie ; mildiou_tomate_pdt/description ; tuta_absoluta/biologie
+q38,darija,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.447, 'dense': 0.488}",mouche_olive/lutte ; oeil_de_paon/lutte ; oeil_de_paon/biologie
+q39,darija,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.138, 'dense': 0.465}",rouille_brune_ble/symptomes ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q40,darija,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.301, 'dense': 0.559}",charancon_rouge/prevention ; charancon_rouge/biologie ; charancon_rouge/lutte
+q41,darija,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.927, 'dense': 0.557}",bemisia/lutte ; bemisia/biologie ; bemisia/description
+q42,darija,sujet,hybrid:bge-m3,True,True,False,True,"{'bm25': 1.326, 'dense': 0.616}",black_rot_pommier/lutte ; black_rot_vigne/lutte ; black_scorch/lutte
+q43,darija,sujet,hybrid:bge-m3,False,False,False,False,"{'bm25': 1.186, 'dense': 0.435}",bacteriose_xanthomonas/symptomes ; bacteriose_xanthomonas/lutte ; bacteriose_xanthomonas/biologie
+q44,darija,sujet,hybrid:bge-m3,False,False,False,True,"{'bm25': 0.532, 'dense': 0.504}",tuta_absoluta/description ; tuta_absoluta/biologie ; tuta_absoluta/repartition
+q45,darija,sujet,hybrid:bge-m3,False,False,False,True,"{'bm25': 1.866, 'dense': 0.588}",tuta_absoluta/description ; tuta_absoluta/biologie ; tuta_absoluta/repartition
+q46,darija,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.298, 'dense': 0.473}",pourriture_grise/prevention ; pourriture_grise/description ; pourriture_grise/biologie
+q47,darija,sujet,hybrid:bge-m3,True,True,True,False,"{'bm25': 1.125, 'dense': 0.429}",oeil_de_paon/symptomes ; oeil_de_paon/biologie ; oeil_de_paon/prevention
+q48,darija,sujet,hybrid:bge-m3,True,True,True,True,"{'bm25': 1.138, 'dense': 0.582}",rouille_brune_ble/prevention ; rouille_brune_ble/description ; rouille_brune_ble/biologie
+q49,darija,sujet,hybrid:bge-m3,False,False,False,False,"{'bm25': 1.455, 'dense': 0.34}",ceratite/repartition ; ceratite/biologie ; tetranyque/biologie
+q50,darija,sujet,hybrid:bge-m3,False,False,False,True,"{'bm25': 0.613, 'dense': 0.521}",black_spot_agrumes/biologie ; gale_agrumes/biologie ; pou_rouge_agrumes/biologie
+h01,fr,hors_sujet,hybrid:bge-m3,False,False,False,False,"{'bm25': 1.258, 'dense': 0.362}",mouche_olive/lutte ; mouche_olive/biologie ; mouche_olive/description
+h02,fr,hors_sujet,hybrid:bge-m3,False,False,False,False,"{'bm25': 1.442, 'dense': 0.379}",tuta_absoluta/repartition ; tuta_absoluta/biologie ; tuta_absoluta/description
+h03,fr,hors_sujet,hybrid:bge-m3,False,False,False,False,"{'bm25': 1.557, 'dense': 0.394}",criquet_pelerin/biologie ; cercosporiose_mais/symptomes ; criquet_pelerin/lutte
+h04,ar,hors_sujet,hybrid:bge-m3,False,False,False,True,"{'bm25': 0.0, 'dense': 0.487}",necrose_apicale/lutte ; necrose_apicale/prevention ; carence_Ca/lutte
+h05,ar,hors_sujet,hybrid:bge-m3,False,False,False,False,"{'bm25': 0.0, 'dense': 0.349}",mineuse_agrumes/repartition ; helicoverpa/description ; greening/repartition
+h06,darija,hors_sujet,hybrid:bge-m3,False,False,False,False,"{'bm25': 1.164, 'dense': 0.343}",ceratite/repartition ; ceratite/biologie ; ceratite/description
+h07,darija,hors_sujet,hybrid:bge-m3,False,False,False,False,"{'bm25': 0.0, 'dense': 0.328}",charancon_rouge/biologie ; charancon_rouge/repartition ; charancon_rouge/prevention
+h08,darija,hors_sujet,hybrid:bge-m3,False,False,False,False,"{'bm25': 1.191, 'dense': 0.36}",thrips_californie/repartition ; thrips_californie/biologie ; thrips_californie/symptomes

@@ -10,7 +10,8 @@ Tables
   pesticides_produits, pesticides_usages, pesticides_agrishop, substances
   carence_engrais, engrais_catalogue, engrais_usages, semences
   besoins_eau, climat_mensuel, gouvernorats, sols, kc
-  lexique, fiches, varietes, culture_mapping, regles_carences (one JSON row per deficiency)
+  lexique, fiches, fiche_sections (phyto step 11), varietes, culture_mapping, regles_carences (one JSON row per
+                     deficiency)
   meta               build date and source file of every table
 The CSV files are never changed.
 """
@@ -102,6 +103,11 @@ def build():
         tables["shop_products"] = (pd.read_csv(shop), str(shop.relative_to(ROOT)))
     fiches = pd.read_json(KNOW / "fiches.jsonl", lines=True)
     tables["fiches"] = (fiches.astype(str).replace({"nan": None, "None": None}), "knowledge/fiches.jsonl")
+    sections = KNOW / "sections.jsonl"  # phyto step 11 (src/preparation/build_sections.py): sections of the sheets
+    if sections.exists():
+        sec = pd.read_json(sections, lines=True)
+        sec["classes"] = sec["classes"].apply(json.dumps)
+        tables["fiche_sections"] = (sec.astype(str).replace({"nan": None, "None": None}), "knowledge/sections.jsonl")
     rules = json.load(open(KNOW / "regles_carences.json", encoding="utf-8"))
     tables["regles_carences"] = (pd.DataFrame([{"unified_class": k, "regle": json.dumps(v, ensure_ascii=False)}
                                                for k, v in rules.items()]), "knowledge/regles_carences.json")

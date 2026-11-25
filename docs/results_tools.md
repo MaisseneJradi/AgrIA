@@ -27,9 +27,9 @@ from src.tools import get_treatments, get_fertilizers, get_water_need, search_kn
 | `get_treatments(classe, culture=None)` | [treatments.py](../src/tools/treatments.py) | Usages homologués pour une classe du modèle | Une liste vide veut dire « aucun produit homologué ». Avec une culture, seuls les usages homologués sur cette culture, ou sur un groupe qui la contient, sont gardés. Ordre : `direct`, `vecteur`, `groupe`, `proche`. |
 | `get_fertilizers(carence, culture=None, gouvernorat=None)` | [fertilizers.py](../src/tools/fertilizers.py) | Engrais correcteurs, fiabilité du diagnostic, sol | Carence jamais vue sur cette culture → `fiabilite = "hypothese"`. Règle de sol du gouvernorat (pH, sable, carbone). Fe sur sol calcaire → chélates EDDHA d'abord. Produits à traces (< 1 %) en dernier. |
 | `get_water_need(gouvernorat, culture, mois, forecast=False)` | [water.py](../src/tools/water.py) | Besoin en eau FAO-56 : ET0 × Kc − pluie | Hors saison : pas de besoin calculé. Prévision Open-Meteo sur 7 jours en option, avec le Kc du mois en cours. Sans réseau, la réponse mensuelle reste donnée. |
-| `search_knowledge(question, k=3, classe=None)` | [rag.py](../src/tools/rag.py) | Passages des 76 fiches, avec leur source et leur licence | Question enrichie par le lexique (darija → français). Priorité à la section demandée (lutte, symptômes, biologie). Liste vide si rien ne répond. |
+| `search_knowledge(question, k=3, classe=None, method=None)` | [rag.py](../src/tools/rag.py) | Passages des sections des 76 fiches (description, symptômes, biologie, lutte, prévention, répartition), avec fiche, section, source et licence | Question enrichie par le lexique (darija → français). Recherche hybride BM25 + vecteurs bge-m3 locaux (plan phyto, étape 11 ; `method="tfidf"` garde l'ancienne). Priorité à la section demandée. Liste vide si rien ne répond (cosinus sous le seuil). |
 | `normalize_terms(texte)` | [lexicon.py](../src/tools/lexicon.py) | Cultures, maladies, ravageurs, symptômes et organes reconnus, langue, classes possibles | Français, arabe, darija, arabizi. Pluriels et préfixes arabes acceptés. `a_valider` signale une graphie darija pas encore validée. |
-| `check_answer(reponse)` | [safety.py](../src/tools/safety.py) | Contrôle final : `valide`, `raisons` (bloquantes), `avertissements` (à dire au fermier) | Les 26 règles bloquantes de la section 4 |
+| `check_answer(reponse)` | [safety.py](../src/tools/safety.py) | Contrôle final : `valide`, `raisons` (bloquantes), `avertissements` (à dire au fermier) | Les 27 règles bloquantes de la section 4 |
 
 Les noms de culture et de gouvernorat sont acceptés sous toutes leurs formes : « tomate », « tomates », « طماطم », « tmatem », « TOMATE SOUS SERRE » ; « Gabès », « gabes », « قابس », « le kef ».
 
@@ -72,6 +72,7 @@ Les noms de culture et de gouvernorat sont acceptés sous toutes leurs formes : 
 24. Offre de pesticide dont les substances ou les concentrations diffèrent de celles du produit homologué auquel elle est rattachée (la correspondance validée est recalculée).
 25. Dose écrite sur une ligne de boutique (une dose de pesticide vient de la liste officielle seulement), ou ligne de boutique qui ne nomme pas un produit homologué de la réponse avant les deux-points.
 26. « Dose indiquée par le fabricant » d'un engrais qui n'est pas exactement celle de l'étiquette acceptée par sa fourchette `validated` (`docs/fertiliser_dose_ranges.csv`) (règles 22 à 26 : plan phyto, étape 10).
+27. Citation « Source : fiche « X », section Y : lien » dont la fiche, la section ou le lien n'est pas une ligne de la table `fiche_sections` (plan phyto, étape 11).
 
 **Avertissements (à dire dans la réponse) :**
 - DAR non précisé ;
@@ -101,7 +102,7 @@ python -m unittest discover -s tests -t . -v
 
 ## 6. Choix et limites
 
-- **Recherche sans Chroma.** Avec 76 fiches (404 passages), un TF-IDF local, sur les mots et sur des morceaux de 3 à 5 lettres, suffit. Il est hors ligne, sans modèle à télécharger, et l'index se construit en 0,3 s. Une base vectorielle pourra le remplacer derrière la même fonction si le corpus grandit. `chromadb`, jamais utilisé, est retiré de `requirements.txt`.
+- **Recherche sans Chroma.** Avec 76 fiches (412 passages), les vecteurs tiennent dans un fichier `.npz` local (`build_rag_index.py`) : aucune base vectorielle. Étape 11 du plan phyto : BM25 + `BAAI/bge-m3` (hybride, rappel@3 80 % contre 68 % pour TF-IDF sur `tests/rag_gold/queries.csv`, 84 ms par question sur CPU, gardée en cache pour la question fixe de l'agent). `intfloat/multilingual-e5-small` (`AGRIA_RAG_MODEL=e5-small`) est plus léger (20 ms) mais moins bon (76 %) et sépare mal les questions hors sujet.
 - **Recherche sans classe.** Une autre fiche du même sujet peut passer devant : pour « lutter contre le mildiou de la vigne », la fiche de l'eudémis sort en premier, car la fiche du mildiou de la vigne n'a pas de section « lutte ». L'agent doit donc appeler `search_knowledge` avec la classe donnée par le modèle.
 - **24 fiches sur 76 sont en anglais** (Wikipédia anglais, faute d'article français). Le champ `langue` le signale : l'agent devra traduire.
 - **88 graphies darija sont encore marquées `a_valider`.** L'agent peut s'en servir pour comprendre le message, jamais pour rédiger sa réponse, tant qu'un locuteur tunisien ne les a pas relues.

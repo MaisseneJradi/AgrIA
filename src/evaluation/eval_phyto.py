@@ -70,7 +70,10 @@ LOG_COLUMNS = ["date", "step", "branch", "change", "n_cases", "safety_pct", "hor
                "rotation", "rotation_cas", "ligne_rotation_pct", "dose_pratique_pct", "dose_pratique_exacte_pct",
                "questions_moy", "bio_debut_pct", "pourquoi_pct", "epi_pct", "classe_oms_pct", "abeilles_pct",
                "date_liste_pct", "lmr_pct", "dar_inconnu_pct", "offres_pct", "a_demander_pct", "liens_montres",
-               "engrais_offre_pct", "besoin_dit_pct",
+               "engrais_offre_pct", "besoin_dit_pct", "fiche_citee_pct",
+               # phyto step 11 (src/evaluation/eval_rag.py): retrieval of the knowledge sheets
+               "rag_n_requetes", "rag_recall3_tfidf_pct", "rag_recall3_hybride_pct", "rag_methode",
+               "rag_rejet_hors_sujet_pct", "rag_latence_ms",
                "latence_med_ms", "latence_p95_ms", "notes"]
 FRUIT_CLASSES = {"citrus__black_spot", "citrus__canker", "citrus__scab", "orange__citrus_greening",
                  "pomegranate__alternaria_spot", "pomegranate__anthracnose", "pomegranate__bacterial_blight",
@@ -367,6 +370,10 @@ def score(case, out, ms):
         "n_liens": len(links),
         "engrais_offre": kind == "deficiency" and bool(fert),
         "besoin_dit": kind == "deficiency" and ("Besoin : un apport" in text),
+        # step 11: the answer used sheet passages and cites each sheet and section
+        "fiches_utilisees": bool(out["reponse"].get("sources")),
+        "fiche_citee": bool(out["reponse"].get("sources")) and all(
+            f"fiche « {s['fiche']} », section " in text for s in out["reponse"]["sources"]),
     }
 
 
@@ -424,6 +431,7 @@ def summarize(rows):
         "liens_montres": sum(r["n_liens"] for r in rows),
         "engrais_offre_pct": pct(sum(r["engrais_offre"] for r in rows), sum(r["kind"] == "deficiency" for r in rows)),
         "besoin_dit_pct": pct(sum(r["besoin_dit"] for r in rows), sum(r["kind"] == "deficiency" for r in rows)),
+        "fiche_citee_pct": pct(sum(r["fiche_citee"] for r in rows), sum(r["fiches_utilisees"] for r in rows)),
         "latence_med_ms": round(statistics.median(ms)), "latence_p95_ms": ms[min(n - 1, int(0.95 * n))],
     }
 
@@ -501,6 +509,7 @@ TABLE = [("Sécurité : réponses avec un pesticide non homologué ou interdit (
          ("Produits montrés avec « non trouvé : demandez un produit à base de… »", "a_demander_pct", " %"),
          ("Liens de pages produits écrits", "liens_montres", ""),
          ("Carences : besoin écrit (élément, chélate)", "besoin_dit_pct", " %"),
+         ("Réponses avec extraits de fiches qui citent fiche et section", "fiche_citee_pct", " %"),
          ("Carences : au moins un engrais de boutique validé", "engrais_offre_pct", " %"),
          ("Latence médiane / p95 (ms, sans la vision)", ("latence_med_ms", "latence_p95_ms"), "")]
 
