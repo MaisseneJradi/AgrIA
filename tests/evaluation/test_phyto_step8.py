@@ -2,6 +2,7 @@
 the products that claim a protection effect without a registered product (docs/shop_unapproved_claims.csv) and
 Vérificateur rule 21."""
 import csv
+import re
 import unittest
 
 from src.agent import paths  # noqa: F401
@@ -30,10 +31,15 @@ class TestTable(unittest.TestCase):
         agrishop = [r for r in rows if r["id"].startswith("agrishop:")]
         agriclic = [r for r in rows if r["id"].startswith("agriclic:")]
         self.assertEqual((len(agrishop), len(agriclic)), (383, 231))
-        # agrishop: no page address in the data, so none is written (never guessed)
-        self.assertTrue(all(not r["product_url"] and not r["image_url"] for r in agrishop))
+        # agrishop: the export has no page address; since phyto step 12 it comes from the sitemap of the site, the page
+        # whose last part is EXACTLY the slug (never built from a pattern); no image address
+        self.assertTrue(all(not r["image_url"] for r in agrishop))
+        for r in agrishop:
+            if r["product_url"]:
+                self.assertRegex(r["product_url"], r"^https://www\.agrishop\.tn/store/category/[^/]+/[^/]+/"
+                                 + re.escape(r["slug"]) + "/$")
         self.assertTrue(all(str(r["product_url"]).startswith("https://www.agriclic.tn/") for r in agriclic))
-        self.assertTrue({r["stock_status"] for r in rows} <= {"en_stock", "rupture", "inactif", "inconnu"})
+        self.assertTrue({r["stock_status"] for r in rows} <= {"en_stock", "rupture", "inactif", "inconnu", "retire"})
 
 
 class TestClasses(unittest.TestCase):

@@ -3,8 +3,9 @@ build_db.py into the SQLite table shop_products. Nothing is downloaded: the data
 
   agrishop.tn  data/raw/scrapper/mon_fichier.csv, PostgreSQL export of the products table (build_agrishop.read_export):
                all 383 rows, machinery (category 34) and irrigation (18) included. The export holds a slug and a relative
-               photo path but NO page address and NO image address: product_url and image_url stay empty until the
-               pattern is confirmed by the shop owner (never guessed). Technical sheets are PDF links in the description
+               photo path but no page address: product_url comes from the sitemap of the site
+               (data/raw/agrishop/sitemap.xml, refresh_shops.py --agrishop-sitemap), matched by the exact slug;
+               empty when the slug is not in it (never guessed). No image address. Technical sheets are PDF links in the description
                (fiches_pdf), their text is not read here.
   agriclic.tn  data/raw/agriclic/products.jsonl (scrape_agriclic.py: fertilisers and seeds, robots.txt obeyed) and the
                cached product pages data/raw/agriclic/html/p_<id>.html for the availability and the cover image.
@@ -27,6 +28,10 @@ import build_agrishop as A  # noqa: E402
 
 OUT = ROOT / "data" / "processed" / "shop" / "shop_products.csv"
 AGRICLIC = ROOT / "data" / "raw" / "agriclic"
+# sitemap of agrishop.tn (refresh_shops.py --agrishop-sitemap): the real address of every product page, matched to the
+# export by the EXACT slug (/store/category/<category>/<sub-category>/<slug>/); never built from a pattern
+SITEMAP = ROOT / "data" / "raw" / "agrishop" / "sitemap.xml"
+PRODUCT_PAGE = r"https://www\.agrishop\.tn/store/category/[^/<]+/[^/<]+/([^/<]+)/"
 # category ids of the agrishop export -> name (4-15 read from the products by build_agrishop.py; 18 and 34 likewise)
 CATEGORIES = {**{k: f"{a} > {b}" for k, (a, b) in A.CATEGORIES.items()},
               18: "irrigation > tuyaux_raccords", 34: "materiel > machines_outils"}
@@ -42,9 +47,18 @@ def raw_records(export=None):
     return {pid: raw[a:b] for (a, pid), (b, _) in zip(starts, starts[1:] + [(len(raw), None)])}
 
 
-def agrishop(export=None):
+def sitemap_urls(path=SITEMAP):
+    """slug -> product page address listed in the sitemap of agrishop.tn ({} when the sitemap was never fetched)."""
+    if not Path(path).exists():
+        return {}
+    locs = re.findall(r"<loc>([^<]+)</loc>", Path(path).read_text(encoding="utf-8"))
+    return {m.group(1): loc for loc in locs for m in [re.fullmatch(PRODUCT_PAGE, loc)] if m}
+
+
+def agrishop(export=None, sitemap=SITEMAP):
     """export: a newer PostgreSQL export of the products table (refresh_shops.py), same format; default the one of
-    the repository."""
+    the repository. sitemap: the sitemap of the site, for the page addresses."""
+    pages = sitemap_urls(sitemap)
     df = A.read_export(str(export or ROOT / A.SRC))
     df["category_id"] = pd.to_numeric(df["category_id"], errors="coerce")
     records = raw_records(export)
@@ -56,7 +70,7 @@ def agrishop(export=None):
         pdfs = sorted(set(re.findall(r"https?://[^\s\"'<>]+\.pdf", records.get(r.id, ""))))
         rows.append({"id": f"agrishop:{r.id}", "name": r.nom, "shop_category": CATEGORIES.get(r.category_id, "inconnue"),
                      "description": r.description, "technical_sheet": "", "price": pd.to_numeric(r.prix, errors="coerce"),
-                     "stock_status": status, "stock_quantity": qty, "image_url": "", "product_url": "",
+                     "stock_status": status, "stock_quantity": qty, "image_url": "", "product_url": pages.get(r.slug, ""),
                      "source": "agrishop.tn (export PostgreSQL de la table products)", "last_updated": r.maj_le,
                      "slug": r.slug, "fiches_pdf": " | ".join(pdfs)})
     return rows
@@ -93,8 +107,8 @@ def agriclic(raw=AGRICLIC):
     return rows
 
 
-def build(export=None, raw=AGRICLIC):
-    return pd.DataFrame(agrishop(export) + agriclic(raw), columns=COLUMNS)
+def build(export=None, raw=AGRICLIC, sitemap=SITEMAP):
+    return pd.DataFrame(agrishop(export, sitemap) + agriclic(raw), columns=COLUMNS)
 
 
 def main():

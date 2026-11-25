@@ -165,7 +165,7 @@ class TestApply(unittest.TestCase):
 
             with mock.patch.object(R, "SHOP", shop_csv), mock.patch.object(R, "REPORTS", d), \
                     mock.patch.object(R, "REVIEWED", {"mapping": mapping}), mock.patch.object(R, "OTHER_DOCS", []), \
-                    mock.patch.object(R.B, "build", lambda export=None, raw=None: new[R.B.COLUMNS]), \
+                    mock.patch.object(R.B, "build", lambda export=None, raw=None, sitemap=None: new[R.B.COLUMNS]), \
                     mock.patch.object(R, "rerun_rules", rules), mock.patch.object(R.subprocess, "run") as run, \
                     redirect_stdout(io.StringIO()):
                 self.assertEqual(R.main(["--apply"]), 0)
@@ -173,6 +173,26 @@ class TestApply(unittest.TestCase):
             self.assertEqual(cat.at["agriclic:2", "stock_status"], "retire")
             self.assertEqual(pd.read_csv(mapping).at[0, "status"], "validated")
             self.assertTrue(run.called)  # build_db.py
+
+
+class TestSitemap(unittest.TestCase):
+    def test_product_pages_by_exact_slug(self):
+        xml = ("<urlset><url><loc>https://www.agrishop.tn/store/category/engrais/</loc></url>"
+               "<url><loc>https://www.agrishop.tn/store/category/Pesticides/Fongicides/</loc></url>"
+               "<url><loc>https://www.agrishop.tn/store/category/engrais/Fertilisants-NPK/black-power-20-20-20/"
+               "</loc></url></urlset>")
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "sitemap.xml"
+            p.write_text(xml, encoding="utf-8")
+            urls = R.B.sitemap_urls(p)
+        self.assertEqual(urls, {"black-power-20-20-20": "https://www.agrishop.tn/store/category/engrais/"
+                                                        "Fertilisants-NPK/black-power-20-20-20/"})
+        self.assertEqual(R.B.sitemap_urls(Path("absent.xml")), {})
+
+    def test_sitemap_named_by_robots(self):
+        http = FakeHTTP(robots="User-agent: *\nAllow: /\nSitemap: https://www.agrishop.tn/sitemap.xml\n")
+        polite = R.Polite(delay=0.0, opener=http)
+        self.assertEqual(polite.sitemaps("https://www.agrishop.tn/"), ["https://www.agrishop.tn/sitemap.xml"])
 
 
 class TestRemovedProducts(unittest.TestCase):
