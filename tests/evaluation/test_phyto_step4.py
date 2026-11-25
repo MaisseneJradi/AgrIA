@@ -12,6 +12,8 @@ from src.agent.redaction import P, compose
 from src.evaluation import eval_phyto as E
 import ranking as R  # noqa: E402  (src/tools)
 from safety import chemical_terms, check_answer  # noqa: E402
+from unittest import mock
+from tests.review_state import proposed_copy
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -64,10 +66,18 @@ class TestTable(unittest.TestCase):
             self.assertIn(grp, g.get(s, set()), s)
 
     def test_proposed_rows_change_nothing(self):
-        self.assertEqual(R.moa_groups({"substances": "Tebuconazole"}), set())
-        out, _ = E.run_case({"crop": "tomato", "disease_or_deficiency": "tomato__late_blight", "governorate": "Nabeul",
-                             "last_treatment_group": "FRAC 27"})
-        self.assertNotIn("Alternez", out["reponse"]["texte"])
+        # the table with its rows back to 'proposed' (the review has validated them since)
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(R, "MOA", proposed_copy(R.MOA, d)):
+            R._moa.cache_clear()
+            R._last_groups.cache_clear()
+            try:
+                self.assertEqual(R.moa_groups({"substances": "Tebuconazole"}), set())
+                out, _ = E.run_case({"crop": "tomato", "disease_or_deficiency": "tomato__late_blight",
+                                     "governorate": "Nabeul", "last_treatment_group": "FRAC 27"})
+                self.assertNotIn("Alternez", out["reponse"]["texte"])
+            finally:
+                R._moa.cache_clear()
+                R._last_groups.cache_clear()
 
 
 class TestLastTreatment(WithValidated):
@@ -101,7 +111,10 @@ class TestRanking(WithValidated):
         self.assertIn(("rotation", "FRAC 40", "FRAC 27"), r["retenus"][0]["raisons"])
 
     def test_no_alternative_keeps_the_product_and_says_so(self):
-        r = R.rank([self.use("A", "Cymoxanil"), self.use("U", "Unknown substance")], {"last_treatment_group": "FRAC 27"})
+        # rotation alone: toxicity (ranked before it since step 6) is left out of this test
+        with mock.patch.object(R, "_hazard", lambda: {}):
+            r = R.rank([self.use("A", "Cymoxanil"), self.use("U", "Unknown substance")],
+                       {"last_treatment_group": "FRAC 27"})
         self.assertEqual([u["produit"] for u in r["retenus"]], ["U", "A"])  # unknown group first, same group last
         self.assertTrue(r["rotation_impossible"])
 
@@ -123,6 +136,7 @@ class TestRule13AndAnswer(WithValidated):
     BASE = {"task": "diseases", "classe": "tomato__late_blight", "culture": "tomate", "fiable": True}
     GOOD = {"nom": "CIMOXATE C WG", "dose": "3 kg/ha (300 g/hl)", "dar_jours": 3}  # cymoxanil (27) + copper (M01)
     TEXT = ("- CIMOXATE C WG (Cymoxanil + Copper oxychloride) : dose 3 kg/ha (300 g/hl) ; délai avant récolte : 3 jours"
+            " ; classe de toxicité OMS II (modérément dangereux)"  # rule 15, since the WHO table is validated
             "\nProtection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes\nListe DGSVCIA du 22/05/2024")
 
     def test_repeating_the_last_group_is_blocked(self):

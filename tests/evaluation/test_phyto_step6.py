@@ -16,6 +16,7 @@ import hazard  # noqa: E402  (src/tools)
 import ranking  # noqa: E402
 import weather  # noqa: E402
 from safety import chemical_terms, check_answer  # noqa: E402
+from tests.review_state import proposed_copy
 
 
 def read(path):
@@ -51,8 +52,18 @@ class TestTables(unittest.TestCase):
             self.assertNotIn(s, rows)
 
     def test_proposed_rows_are_not_used(self):
-        self.assertIsNone(hazard.who_class({"substances": "Imidacloprid"}))
-        self.assertEqual(hazard.bee_toxic({"substances": "Imidacloprid"}), [])
+        # the tables with their rows back to 'proposed' (the review has validated them since)
+        import ranking
+        with tempfile.TemporaryDirectory() as d,                 mock.patch.object(ranking, "HAZARD", proposed_copy(ranking.HAZARD, d)),                 mock.patch.object(hazard, "BEES", proposed_copy(hazard.BEES, d)):
+            ranking._hazard.cache_clear()
+            hazard._bees.cache_clear()
+            try:
+                self.assertIsNone(hazard.who_class({"substances": "Imidacloprid"}))
+                self.assertEqual(hazard.bee_toxic({"substances": "Imidacloprid"}), [])
+            finally:
+                ranking._hazard.cache_clear()
+                hazard._bees.cache_clear()
+        self.assertEqual(hazard.who_class({"substances": "Imidacloprid"}), "II")  # validated: used
 
 
 class TestWeather(unittest.TestCase):

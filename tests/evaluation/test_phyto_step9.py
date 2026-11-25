@@ -11,6 +11,7 @@ from src.agent import paths  # noqa: F401
 from src.preparation import extract_composition as X
 from src.preparation import match_shop_products as M
 import fertiliser_dose as F  # noqa: E402  (src/tools)
+from tests.review_state import proposed_copy
 
 
 def read(path):
@@ -91,7 +92,16 @@ class TestMatching(unittest.TestCase):
 
 class TestDoseRanges(unittest.TestCase):
     def test_proposed_ranges_show_nothing(self):
-        self.assertFalse(F.label_dose("10-20 kg/ha", "Fe")["montrer"])
+        tmp = tempfile.mkdtemp()
+        saved = F.RANGES
+        try:
+            F.RANGES = proposed_copy(saved, tmp)  # the ranges back to 'proposed' (reviewed since)
+            F._ranges.cache_clear()
+            self.assertFalse(F.label_dose("10-20 kg/ha", "Fe")["montrer"])
+        finally:
+            F.RANGES = saved
+            F._ranges.cache_clear()
+            shutil.rmtree(tmp)
 
     def test_validated_ranges(self):
         tmp = tempfile.mkdtemp()

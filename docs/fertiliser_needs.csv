@@ -1,10 +1,10 @@
 carence,nutriment,teneur_min_pct,chelates_sol_calcaire,source,status,note
-N_deficiency,N,10,,proposé par AgrIA (à confirmer : INRAT / CRDA),proposed,engrais azoté ; teneur minimale proposée
-P_deficiency,P2O5,10,,proposé par AgrIA (à confirmer : INRAT / CRDA),proposed,engrais phosphaté
-K_deficiency,K2O,10,,proposé par AgrIA (à confirmer : INRAT / CRDA),proposed,engrais potassique
-Ca_deficiency,CaO,8,,proposé par AgrIA (à confirmer : INRAT / CRDA),proposed,correcteur de calcium
-Mg_deficiency,MgO,5,,proposé par AgrIA (à confirmer : INRAT / CRDA),proposed,correcteur de magnésium
-Fe_deficiency,Fe,3,EDDHA|EDDHSA|HBED,proposé par AgrIA (à confirmer : INRAT / CRDA),proposed,"sol calcaire (pH >= 7,8) : seuls ces chélates restent disponibles"
-Zn_deficiency,Zn,3,,proposé par AgrIA (à confirmer : INRAT / CRDA),proposed,correcteur de zinc
-Mn_deficiency,Mn,3,,proposé par AgrIA (à confirmer : INRAT / CRDA),proposed,correcteur de manganèse
-B_deficiency,B,5,,proposé par AgrIA (à confirmer : INRAT / CRDA),proposed,correcteur de bore
+N_deficiency,N,10,,proposé par AgrIA (à confirmer : INRAT / CRDA),validated,engrais azoté ; teneur minimale proposée | relecture 2026-11-25 : Cohérent : les engrais azotés simples dépassent 15 % N (Règl. CE 2003/2003)
+P_deficiency,P2O5,10,,proposé par AgrIA (à confirmer : INRAT / CRDA),validated,engrais phosphaté | relecture 2026-11-25 : Cohérent ; exclure les phosphites (P2O5 non assimilable comme nutriment)
+K_deficiency,K2O,10,,proposé par AgrIA (à confirmer : INRAT / CRDA),validated,engrais potassique | relecture 2026-11-25 : Cohérent avec les engrais potassiques usuels
+Ca_deficiency,CaO,8,,proposé par AgrIA (à confirmer : INRAT / CRDA),validated,correcteur de calcium | relecture 2026-11-25 : Cohérent (solution de chlorure de calcium ≥ 12 % CaO ; correcteurs foliaires 8–15 %) ; exclure les films de carbonate anti-coup de soleil
+Mg_deficiency,MgO,5,,proposé par AgrIA (à confirmer : INRAT / CRDA),validated,correcteur de magnésium | relecture 2026-11-25 : Cohérent (solution de sulfate de magnésium ≥ 5 % MgO)
+Fe_deficiency,Fe,3,EDDHA|EDDHSA|HBED,proposé par AgrIA (à confirmer : INRAT / CRDA),validated,"sol calcaire (pH >= 7,8) : seuls ces chélates restent disponibles | relecture 2026-11-25 : Cohérent (solution 2 %, chélate 5 %) ; EDDHA o,o / EDDHSA / HBED seuls stables en sol calcaire"
+Zn_deficiency,Zn,3,,proposé par AgrIA (à confirmer : INRAT / CRDA),validated,"correcteur de zinc | relecture 2026-11-25 : Cohérent (solution 2 %, chélate 5 %)"
+Mn_deficiency,Mn,3,,proposé par AgrIA (à confirmer : INRAT / CRDA),validated,"correcteur de manganèse | relecture 2026-11-25 : Cohérent (solution 2 %, chélate 5 %)"
+B_deficiency,B,5,,proposé par AgrIA (à confirmer : INRAT / CRDA),rejected,correcteur de bore | relecture 2026-11-25 : Trop élevé : les solutions boratées liquides courantes titrent 2–4 % B (Règl. CE 2003/2003 : 2 %) ; proposer 2 %

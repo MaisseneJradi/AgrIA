@@ -17,7 +17,8 @@ class TestSafety(unittest.TestCase):
         self.assertTrue(any(word in x for x in r["raisons"]), r["raisons"])
 
     def test_registered_answer_passes(self):
-        r = check_answer(dict(BASE, produits=[GOOD], texte="Traitez avec CIMOXATE C WG, dose 3 kg/ha (300 g/hl).\n"
+        r = check_answer(dict(BASE, produits=[GOOD], texte="Traitez avec CIMOXATE C WG, dose 3 kg/ha (300 g/hl), "
+                                                           "classe de toxicité OMS II (modérément dangereux).\n"
                                                            + PPE))
         self.assertTrue(r["valide"], r["raisons"])
         self.assertEqual(r["produits_verifies"][0]["product_id"], "homo-fon-092")
@@ -75,8 +76,10 @@ class TestSafety(unittest.TestCase):
 
     def test_vector_and_provisional_warnings(self):
         r = check_answer({"task": "diseases", "classe": "tomato__yellow_leaf_curl_virus", "culture": "tomate",
-                          "fiable": True, "produits": [{"nom": "LYNO EC"}]})
-        self.assertTrue(r["valide"])
+                          "fiable": True, "produits": [{"nom": "LYNO EC"}],
+                          # rule 15 since the WHO table is validated: the class is written on the product line
+                          "texte": "LYNO EC : classe de toxicité OMS U (danger aigu peu probable)\n" + PPE})
+        self.assertTrue(r["valide"], r["raisons"])
         self.assertTrue(any("insecte" in w for w in r["avertissements"]))
         r = check_answer({"task": "diseases", "classe": "tomato__spider_mites", "culture": "tomate", "fiable": True,
                           "produits": [{"nom": "VALMEC EC"}]})
