@@ -23,3 +23,6 @@ export const handlers = [
 ];
 
 export const server = setupServer(...handlers);
+
+/** The forms the app sent (path of the route, FormData), in order: see src/test/setup.ts. */
+export const sentForms: Array<{ path: string; form: FormData }> = [];

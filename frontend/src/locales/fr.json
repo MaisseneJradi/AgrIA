@@ -6,8 +6,19 @@
     "comingSoon": "L'application arrive bientôt ici. En attendant, utilisez la version actuelle.",
     "footer": "AgrIA ne remplace pas un technicien : en cas de doute, contactez le CRDA. Seuls des produits homologués en Tunisie sont proposés."
   },
-  "language": { "label": "Langue", "fr": "Français", "ar": "العربية", "frShort": "FR", "arShort": "ع" },
-  "theme": { "label": "Thème", "light": "Clair", "dark": "Sombre", "system": "Comme le téléphone" },
+  "language": {
+    "label": "Langue",
+    "fr": "Français",
+    "ar": "العربية",
+    "frShort": "FR",
+    "arShort": "ع"
+  },
+  "theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Comme le téléphone"
+  },
   "common": {
     "close": "Fermer",
     "loading": "Chargement…",
@@ -26,7 +37,12 @@
     "done": "terminée",
     "current": "en cours"
   },
-  "steps": { "photo": "Photo", "crop": "Culture", "context": "Précisions", "answer": "Réponse" },
+  "steps": {
+    "photo": "Photo",
+    "crop": "Culture",
+    "context": "Précisions",
+    "answer": "Réponse"
+  },
   "styleguide": {
     "title": "Guide des composants",
     "intro": "Chaque composant, en français et en arabe, en thème clair et sombre (page visible seulement en développement).",
@@ -65,5 +81,102 @@
     "showToast": "Afficher une notification",
     "toastText": "Copié dans le presse-papiers",
     "doseExample": "Dose : 0,5 l/ha ; 48 g pour un pulvérisateur de 16 L"
+  },
+  "nav": {
+    "back": "Retour",
+    "continue": "Continuer",
+    "newDiagnosis": "Nouvelle analyse",
+    "analyse": "Analyser la photo"
+  },
+  "net": {
+    "offline": "Pas de connexion. Vérifiez le réseau : l'analyse a besoin d'internet."
+  },
+  "photo": {
+    "title": "Prenez une photo de la plante",
+    "take": "Prendre une photo",
+    "gallery": "Choisir dans la galerie",
+    "tipsTitle": "Pour une bonne photo",
+    "tipLeaf": "Une seule feuille ou un fruit malade, bien au centre",
+    "tipClose": "De près : la feuille remplit la photo",
+    "tipLight": "À la lumière du jour, sans contre-jour",
+    "tipNoScreen": "Une vraie photo, pas une capture d'écran",
+    "preview": "Votre photo",
+    "change": "Changer de photo",
+    "preparing": "Préparation de la photo…",
+    "errNotImage": "Ce fichier n'est pas une photo. Choisissez une image JPEG ou PNG.",
+    "errUnsupported": "Ce format de photo n'est pas lu par votre téléphone. Prenez la photo avec l'appareil photo."
+  },
+  "crop": {
+    "title": "Quelle est la culture ?",
+    "identifying": "AgrIA reconnaît la plante sur la photo…",
+    "suggestions": "Ce que la photo montre le plus probablement",
+    "suggested": "proposé",
+    "chooseHint": "Touchez la bonne culture pour confirmer.",
+    "other": "Autre culture",
+    "search": "Rechercher une culture",
+    "noResult": "Aucune culture ne correspond.",
+    "chosen": "Culture choisie : {{name}}",
+    "notPlantTitle": "Ce n'est pas une plante",
+    "notPlant": "La photo ne ressemble pas à une feuille ou à un fruit. Reprenez une photo de près.",
+    "notLeaf": "Pas de feuille reconnue sur la photo : choisissez la culture dans la liste.",
+    "notCovered": "Cette plante ne semble pas faire partie des cultures suivies par AgrIA. Si c'en est une, choisissez-la.",
+    "retake": "Reprendre une photo"
+  },
+  "context": {
+    "title": "Précisions (facultatif)",
+    "intro": "Ces réponses aident les agents à choisir un produit adapté. Vous pouvez les laisser vides.",
+    "message": "Décrivez le problème",
+    "messagePh": "Ex. : taches noires sur les feuilles depuis la pluie",
+    "dictate": "Dicter",
+    "stopDictate": "Arrêter la dictée",
+    "listening": "Je vous écoute…",
+    "gov": "Gouvernorat",
+    "govChoose": "Choisir le gouvernorat",
+    "govSearch": "Rechercher un gouvernorat",
+    "more": "Précisions sur la parcelle",
+    "days": "Récolte prévue dans combien de jours ?",
+    "daysValue": "{{n}} jours",
+    "daysOther": "Autre nombre de jours",
+    "market": "Pour quel marché ?",
+    "local": "Marché local",
+    "export": "Export (Union européenne)",
+    "organic": "Agriculture biologique ?",
+    "greenhouse": "Sous serre ?",
+    "stage": "Stade de l'attaque",
+    "early": "Début (premières taches)",
+    "spread": "Déjà étendue",
+    "last": "Dernier produit utilisé",
+    "lastPh": "Nom du produit",
+    "area": "Surface à traiter (hectares)",
+    "yes": "Oui",
+    "no": "Non",
+    "clear": "Effacer"
+  },
+  "answer": {
+    "title": "Réponse d'AgrIA",
+    "loading": "Les agents analysent votre photo…",
+    "loadingHint": "Cela peut prendre jusqu'à une minute.",
+    "issue": {
+      "conseil": "Diagnostic",
+      "question": "À confirmer",
+      "autre_photo": "Autre photo nécessaire",
+      "crda": "Voir le CRDA"
+    },
+    "crop": "Culture",
+    "refineTitle": "Répondez pour affiner",
+    "refineIntro": "Les agents ont besoin de ces précisions pour choisir le produit le mieux adapté.",
+    "refine": "Relancer l'analyse avec ces réponses",
+    "otherLang": "Cette réponse est en arabe.",
+    "inLang": "Afficher la réponse en français",
+    "retakePhoto": "Prendre une autre photo"
+  },
+  "error": {
+    "title": "Analyse impossible",
+    "network": "Pas de réponse du serveur. Vérifiez votre connexion puis réessayez.",
+    "timeout": "Le serveur met trop de temps à répondre. Réessayez dans un moment.",
+    "server": "Le serveur a rencontré une erreur. Réessayez.",
+    "photoTooBig": "La photo est trop lourde. Reprenez-la avec l'appareil photo.",
+    "photoUnreadable": "La photo n'a pas pu être lue. Prenez une autre photo.",
+    "invalid": "Une donnée n'a pas été acceptée : {{detail}}"
   }
 }

@@ -30,12 +30,27 @@ export class NetworkError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+/** The server did not answer in time (weak network, models busy): treated like a network error, with its own text. */
+export class TimeoutError extends Error {
+  constructor() {
+    super("timeout");
+    this.name = "TimeoutError";
+  }
+}
+
+// one analysis at a time on the server (4 GB GPU) and the VLM: a diagnosis can take a minute on a busy server
+export const TIMEOUT_MS = { lists: 20_000, identify: 60_000, diagnose: 120_000 };
+
+async function request<T>(path: string, init: RequestInit = {}, timeoutMs = TIMEOUT_MS.lists): Promise<T> {
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), timeoutMs);
   let res: Response;
   try {
-    res = await fetch(path, init);
+    res = await fetch(path, { ...init, signal: abort.signal });
   } catch {
-    throw new NetworkError();
+    throw abort.signal.aborted ? new TimeoutError() : new NetworkError();
+  } finally {
+    clearTimeout(timer);
   }
   if (!res.ok) {
     let detail: string | null = null;
@@ -57,8 +72,9 @@ export const api = {
   identify: (photo: Blob) => {
     const form = new FormData();
     form.append("photo", photo, "photo.jpg");
-    return request<IdentifyAnswer>("/identify", { method: "POST", body: form });
+    return request<IdentifyAnswer>("/identify", { method: "POST", body: form }, TIMEOUT_MS.identify);
   },
-  diagnose: (form: FormData) => request<DiagnoseAnswer>("/diagnose", { method: "POST", body: form }),
+  diagnose: (form: FormData) =>
+    request<DiagnoseAnswer>("/diagnose", { method: "POST", body: form }, TIMEOUT_MS.diagnose),
   feedback: (form: FormData) => request<FeedbackSaved>("/feedback", { method: "POST", body: form }),
 };

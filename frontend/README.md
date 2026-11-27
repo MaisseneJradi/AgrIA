@@ -61,6 +61,21 @@ Le test `tests/api/test_api.py` échoue si `openapi.json` n'est plus à jour, ou
 | `npm run build` | build de production et taille du bundle (`stats.html` : détail par module) |
 | `npm run typecheck` | TypeScript seul |
 
+## Parcours de l'agriculteur (étape 2)
+| Adresse | Étape | Route de l'API |
+|---|---|---|
+| `/` | photo (appareil photo ou galerie) | — |
+| `/culture` | culture à confirmer | `POST /identify` |
+| `/precisions` | message, gouvernorat, précisions sur la parcelle | `GET /gouvernorats` |
+| `/reponse` | réponse | `POST /diagnose` |
+
+- **Bouton Retour du téléphone :** il ramène à l'étape précédente.
+- **Accès direct à une étape :** une étape ouverte sans ce qu'elle demande renvoie à la première étape qui manque.
+- **Photo :** elle est redressée selon l'orientation EXIF, réduite à 1 280 px sur son plus grand côté, puis enregistrée en JPEG 0,8 dans le téléphone (`src/lib/image.ts`). Une photo de 4 Mo devient environ 200 Ko.
+- **Rechargement de la page :** les saisies sont gardées dans l'onglet (sessionStorage). La réponse, elle, n'est pas gardée : elle est redemandée, pour qu'une ancienne réponse ne soit jamais présentée comme nouvelle.
+- **Gouvernorat :** il est gardé sur l'appareil (localStorage).
+- **Réponse :** le `texte` de l'API est affiché tel quel. En arabe, les passages en caractères latins sont seulement isolés à l'affichage (`<bdi>`) ; un test vérifie que le texte affiché est identique, caractère pour caractère.
+
 ## Organisation
 ```
 src/api/            client typé (client.ts), requêtes TanStack Query (queries.ts), schéma généré

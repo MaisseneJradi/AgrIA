@@ -1,11 +1,13 @@
 import { Leaf } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LanguageSwitch, ThemeSwitch } from "@/components/ui";
+import { Alert, LanguageSwitch, ThemeSwitch } from "@/components/ui";
+import { useOnline } from "@/lib/useOnline";
 
 /** Header (name, language always visible, theme), the page, the reminder about the CRDA. */
 export function Layout() {
   const { t } = useTranslation();
+  const online = useOnline();
   return (
     <div className="flex min-h-dvh flex-col">
       <a
@@ -29,9 +31,14 @@ export function Layout() {
         </div>
       </header>
       <main id="main" className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
+        {!online && (
+          <Alert tone="danger" className="mb-4">
+            {t("net.offline")}
+          </Alert>
+        )}
         <Outlet />
       </main>
-      <footer className="mx-auto w-full max-w-3xl space-y-3 px-4 pb-8 text-center text-sm text-muted">
+      <footer className="mx-auto w-full max-w-3xl space-y-3 px-4 pb-32 text-center text-sm text-muted">
         <p>{t("app.footer")}</p>
         <ThemeSwitch />
       </footer>
