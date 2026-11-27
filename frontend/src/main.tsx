@@ -11,6 +11,11 @@ import { createRoot } from "react-dom/client";
 import { App } from "./app/App";
 import { applyTheme, savedTheme } from "./lib/theme";
 
+// the service worker of the installable app (production build only): app shell, fonts and lists offline
+if (import.meta.env.PROD) {
+  void import("virtual:pwa-register").then(({ registerSW }) => registerSW({ immediate: true }));
+}
+
 applyTheme(savedTheme());
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => applyTheme(savedTheme()));
 

@@ -10,6 +10,12 @@ export type Culture = S["Culture"];
 export type IdentifyAnswer = S["Identify"];
 export type DiagnoseAnswer = S["Diagnose"];
 export type FeedbackSaved = S["FeedbackSaved"];
+export type AnswerCard = S["Card"];
+export type CardProduct = S["CardProduct"];
+export type CardLine = S["CardLine"];
+export type ConfidenceLevelApi = NonNullable<S["Diagnostic"]["niveau"]>;
+export type AdminJournal = S["AdminJournal"];
+export type JournalRow = S["JournalRow"];
 
 /** An answer of the API other than 2xx: its HTTP status and the message of FastAPI ("detail"), if any. */
 export class ApiError extends Error {
@@ -77,4 +83,17 @@ export const api = {
   diagnose: (form: FormData) =>
     request<DiagnoseAnswer>("/diagnose", { method: "POST", body: form }, TIMEOUT_MS.diagnose),
   feedback: (form: FormData) => request<FeedbackSaved>("/feedback", { method: "POST", body: form }),
+  /** test journal (admin page): the token is checked by the server */
+  adminJournal: (token: string) =>
+    request<AdminJournal>("/admin/journal", { headers: { Authorization: `Bearer ${token}` } }),
+  adminCsv: async (token: string): Promise<Blob> => {
+    let res: Response;
+    try {
+      res = await fetch("/admin/journal.csv", { headers: { Authorization: `Bearer ${token}` } });
+    } catch {
+      throw new NetworkError();
+    }
+    if (!res.ok) throw new ApiError(res.status, null);
+    return res.blob();
+  },
 };

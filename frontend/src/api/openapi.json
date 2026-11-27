@@ -1,6 +1,32 @@
 {
   "components": {
     "schemas": {
+      "AdminJournal": {
+        "additionalProperties": false,
+        "description": "GET /admin/journal: the analyses of the test journal (newest first) and the accuracy per crop.",
+        "properties": {
+          "analyses": {
+            "items": {
+              "$ref": "#/components/schemas/JournalRow"
+            },
+            "title": "Analyses",
+            "type": "array"
+          },
+          "par_culture": {
+            "items": {
+              "$ref": "#/components/schemas/CropStats"
+            },
+            "title": "Par Culture",
+            "type": "array"
+          }
+        },
+        "required": [
+          "analyses",
+          "par_culture"
+        ],
+        "title": "AdminJournal",
+        "type": "object"
+      },
       "Body_diagnose_endpoint_diagnose_post": {
         "properties": {
           "area": {
@@ -63,6 +89,11 @@
       },
       "Body_feedback_feedback_post": {
         "properties": {
+          "commentaire": {
+            "default": "",
+            "title": "Commentaire",
+            "type": "string"
+          },
           "correct": {
             "title": "Correct",
             "type": "string"
@@ -76,6 +107,20 @@
             "title": "Journal Id",
             "type": "string"
           },
+          "verdict": {
+            "title": "Verdict",
+            "type": "string"
+          },
+          "vrai_probleme": {
+            "default": "",
+            "title": "Vrai Probleme",
+            "type": "string"
+          },
+          "vraie_culture": {
+            "default": "",
+            "title": "Vraie Culture",
+            "type": "string"
+          },
           "vraie_reponse": {
             "default": "",
             "title": "Vraie Reponse",
@@ -83,8 +128,7 @@
           }
         },
         "required": [
-          "journal_id",
-          "correct"
+          "journal_id"
         ],
         "title": "Body_feedback_feedback_post",
         "type": "object"
@@ -101,6 +145,192 @@
           "photo"
         ],
         "title": "Body_identify_identify_post",
+        "type": "object"
+      },
+      "Card": {
+        "additionalProperties": false,
+        "description": "A section of the answer. Joined by a blank line, the \"texte\" of the cards ARE the answer text (checked by the\nVérificateur): the app shows them as cards without changing a character.",
+        "properties": {
+          "champs": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Champs"
+          },
+          "citations": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Citations"
+          },
+          "elements": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elements"
+          },
+          "produits": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CardProduct"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Produits"
+          },
+          "sources": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sources"
+          },
+          "texte": {
+            "title": "Texte",
+            "type": "string"
+          },
+          "titre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Titre"
+          },
+          "type": {
+            "enum": [
+              "autre_photo",
+              "doute",
+              "pistes",
+              "questions",
+              "crda",
+              "sain",
+              "hypothese",
+              "diagnostic",
+              "traitements",
+              "ecartes",
+              "rotation",
+              "securite",
+              "a_savoir",
+              "aucun_produit",
+              "affiner",
+              "prevention",
+              "conseils",
+              "sources",
+              "engrais",
+              "eau",
+              "fin",
+              "texte"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "texte"
+        ],
+        "title": "Card",
+        "type": "object"
+      },
+      "CardLine": {
+        "additionalProperties": false,
+        "description": "A line of a registered product, exactly as in the text; url: the page of a validated shop offer.",
+        "properties": {
+          "role": {
+            "enum": [
+              "produit",
+              "dose_pratique",
+              "lmr",
+              "boutique",
+              "boutique_absente",
+              "pourquoi"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "texte": {
+            "title": "Texte",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "role",
+          "texte"
+        ],
+        "title": "CardLine",
+        "type": "object"
+      },
+      "CardProduct": {
+        "additionalProperties": false,
+        "properties": {
+          "lignes": {
+            "items": {
+              "$ref": "#/components/schemas/CardLine"
+            },
+            "title": "Lignes",
+            "type": "array"
+          },
+          "nom": {
+            "title": "Nom",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nom",
+          "lignes"
+        ],
+        "title": "CardProduct",
         "type": "object"
       },
       "CropChoice": {
@@ -312,6 +542,56 @@
         "title": "CropInfo",
         "type": "object"
       },
+      "CropStats": {
+        "additionalProperties": false,
+        "properties": {
+          "analyses": {
+            "title": "Analyses",
+            "type": "integer"
+          },
+          "avec_avis": {
+            "title": "Avec Avis",
+            "type": "integer"
+          },
+          "correct": {
+            "title": "Correct",
+            "type": "integer"
+          },
+          "culture": {
+            "title": "Culture",
+            "type": "string"
+          },
+          "faux": {
+            "title": "Faux",
+            "type": "integer"
+          },
+          "partiel": {
+            "title": "Partiel",
+            "type": "integer"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision"
+          }
+        },
+        "required": [
+          "culture",
+          "analyses",
+          "avec_avis",
+          "correct",
+          "partiel",
+          "faux"
+        ],
+        "title": "CropStats",
+        "type": "object"
+      },
       "Culture": {
         "additionalProperties": false,
         "properties": {
@@ -345,6 +625,13 @@
               "type": "string"
             },
             "title": "Avertissements",
+            "type": "array"
+          },
+          "cartes": {
+            "items": {
+              "$ref": "#/components/schemas/Card"
+            },
+            "title": "Cartes",
             "type": "array"
           },
           "contexte": {
@@ -459,6 +746,7 @@
           "issue",
           "texte",
           "langue",
+          "cartes",
           "produits",
           "engrais",
           "avertissements",
@@ -529,6 +817,22 @@
               }
             ],
             "title": "Fiable"
+          },
+          "niveau": {
+            "anyOf": [
+              {
+                "enum": [
+                  "sur",
+                  "probable",
+                  "incertain"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Niveau"
           },
           "nom": {
             "anyOf": [
@@ -668,9 +972,19 @@
       "Health": {
         "additionalProperties": false,
         "properties": {
+          "admin": {
+            "default": false,
+            "title": "Admin",
+            "type": "boolean"
+          },
           "device": {
             "title": "Device",
             "type": "string"
+          },
+          "mode_test": {
+            "default": false,
+            "title": "Mode Test",
+            "type": "boolean"
           },
           "modeles": {
             "items": {
@@ -870,6 +1184,194 @@
           "routage"
         ],
         "title": "Identify",
+        "type": "object"
+      },
+      "JournalRow": {
+        "additionalProperties": false,
+        "properties": {
+          "classe": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classe"
+          },
+          "commentaire": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commentaire"
+          },
+          "confiance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confiance"
+          },
+          "culture": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Culture"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "fiable": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiable"
+          },
+          "garder_photo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Garder Photo"
+          },
+          "gouvernorat": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "issue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issue"
+          },
+          "langue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Langue"
+          },
+          "maladie": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maladie"
+          },
+          "photo": {
+            "default": false,
+            "title": "Photo",
+            "type": "boolean"
+          },
+          "produits": {
+            "default": "",
+            "title": "Produits",
+            "type": "string"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "enum": [
+                  "correct",
+                  "partiel",
+                  "faux"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          },
+          "vrai_probleme": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vrai Probleme"
+          },
+          "vraie_culture": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vraie Culture"
+          },
+          "vraie_reponse": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vraie Reponse"
+          }
+        },
+        "required": [
+          "id",
+          "date"
+        ],
+        "title": "JournalRow",
         "type": "object"
       },
       "OtherModel": {
@@ -1170,6 +1672,82 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/admin/journal": {
+      "get": {
+        "operationId": "admin_journal_admin_journal_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "title": "Authorization",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminJournal"
+                }
+              }
+            },
+            "description": "Réponse"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Journal"
+      }
+    },
+    "/admin/journal.csv": {
+      "get": {
+        "operationId": "admin_journal_csv_admin_journal_csv_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "title": "Authorization",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Journal Csv"
+      }
+    },
     "/cultures": {
       "get": {
         "operationId": "cultures_cultures_get",
@@ -1231,6 +1809,7 @@
     },
     "/feedback": {
       "post": {
+        "description": "The tester's opinion on an analysis of the journal. `verdict` (correct | partiel | faux) or, for the first\napp, `correct` (oui | non). garder_photo = oui: consent to keep the photo for the Tunisian test set.",
         "operationId": "feedback_feedback_post",
         "requestBody": {
           "content": {

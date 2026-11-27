@@ -46,6 +46,8 @@ interface DiagnosisState {
   /** increased each time the farmer asks for an analysis: the answer screen sends one request per submission */
   submission: number;
   answer: DiagnoseAnswer | null;
+  /** date the photo of this analysis was put aside without network (queue), null otherwise */
+  queuedFrom: string | null;
   setPhoto: (photo: PreparedPhoto) => void;
   setIdentify: (r: IdentifyAnswer | null) => void;
   setCrop: (code: string) => void;
@@ -57,7 +59,15 @@ interface DiagnosisState {
   reset: () => void;
 }
 
-const empty = { photo: null, identify: null, crop: null, message: "", context: {}, answer: null };
+const empty = {
+  photo: null,
+  identify: null,
+  crop: null,
+  message: "",
+  context: {},
+  answer: null,
+  queuedFrom: null,
+};
 
 // sessionStorage can be full or blocked (private mode): the app keeps working, only without surviving a reload
 const safeSession: StateStorage = {
@@ -91,7 +101,7 @@ export const useDiagnosis = create<DiagnosisState>()(
       gouvernorat: savedGov(),
       submission: 0,
       // a new photo: everything that depended on the old one is forgotten
-      setPhoto: (photo) => set({ photo, identify: null, crop: null, answer: null }),
+      setPhoto: (photo) => set({ photo, identify: null, crop: null, answer: null, queuedFrom: null }),
       setIdentify: (identify) => set({ identify }),
       setCrop: (crop) => set({ crop, answer: null }),
       setMessage: (message) => set({ message }),
@@ -118,7 +128,8 @@ export const useDiagnosis = create<DiagnosisState>()(
     {
       name: "agria-diagnostic",
       storage: createJSONStorage(() => safeSession),
-      partialize: ({ photo, identify, crop, message, context, submission }) => ({
+      partialize: ({ photo, identify, crop, message, context, submission, queuedFrom }) => ({
+        queuedFrom,
         photo,
         identify,
         crop,

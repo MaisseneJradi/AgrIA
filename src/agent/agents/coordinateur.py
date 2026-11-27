@@ -8,7 +8,7 @@ import time
 
 from src.agent import paths  # noqa: F401
 from src.agent.agents.aides import class_name, step
-from src.agent.redaction import compose
+from src.agent.redaction import answer_cards, compose
 
 MAX_REWRITES = 2
 
@@ -109,14 +109,28 @@ def secours(d):
             "trace": step("Coordinateur", "message CRDA bloqué lui aussi : texte de secours fixe", t0)}
 
 
+def confidence_level(issue, diag, hypothesis):
+    """The confidence in words for the app (never a probability): "sur" = a trusted diagnosis that leads to advice;
+    "probable" = trusted by the model but an hypothesis to confirm (deficiency on a crop it never saw); "incertain" =
+    not trusted (below the threshold of the agent, doubts) or the agents ask questions or refer to the CRDA. The
+    thresholds are those of the Diagnostic agent (AGENT_THRESHOLDS): none is added here."""
+    if issue != "conseil" or not diag.get("fiable"):
+        return "incertain"
+    return "probable" if hypothesis else "sur"
+
+
 def finaliser(d):
     t0 = time.time()
     b, diag = d["brouillon"], d.get("diagnostic") or {}
+    langue = b.get("langue", "fr")
     reponse = {
-        "issue": d.get("issue"), "texte": b["texte"], "langue": b.get("langue", "fr"),
-        "diagnostic": {k: diag.get(k) for k in ("routing", "task", "classe", "nom", "confiance", "fiable",
-                                                 "raisons_doute", "top3", "autre_modele", "choix_du_modele")}
+        "issue": d.get("issue"), "texte": b["texte"], "langue": langue,
+        "diagnostic": {**{k: diag.get(k) for k in ("routing", "task", "classe", "nom", "confiance", "fiable",
+                                                    "raisons_doute", "top3", "autre_modele", "choix_du_modele")},
+                       "niveau": confidence_level(d.get("issue"), diag, b.get("hypothese"))}
         if diag.get("classe") else None,
+        # the answer cut into cards for the app: the same text as "texte", character for character (answer_cards)
+        "cartes": answer_cards(b.get("faits"), langue, b["texte"]),
         "culture": {"code": d.get("culture_code"), **(d.get("culture_info") or {})} if d.get("photo") else None,
         "produits": b["produits"], "engrais": b["engrais"], "avertissements": b.get("avertissements", []),
         "questions": d.get("questions", []) if d.get("issue") == "question" else [],

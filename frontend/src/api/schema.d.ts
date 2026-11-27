@@ -4,6 +4,40 @@
  */
 
 export interface paths {
+    "/admin/journal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Journal */
+        get: operations["admin_journal_admin_journal_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/journal.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Journal Csv */
+        get: operations["admin_journal_csv_admin_journal_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/cultures": {
         parameters: {
             query?: never;
@@ -47,7 +81,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Feedback */
+        /**
+         * Feedback
+         * @description The tester's opinion on an analysis of the journal. `verdict` (correct | partiel | faux) or, for the first
+         *     app, `correct` (oui | non). garder_photo = oui: consent to keep the photo for the Tunisian test set.
+         */
         post: operations["feedback_feedback_post"];
         delete?: never;
         options?: never;
@@ -110,6 +148,16 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AdminJournal
+         * @description GET /admin/journal: the analyses of the test journal (newest first) and the accuracy per crop.
+         */
+        AdminJournal: {
+            /** Analyses */
+            analyses: components["schemas"]["JournalRow"][];
+            /** Par Culture */
+            par_culture: components["schemas"]["CropStats"][];
+        };
         /** Body_diagnose_endpoint_diagnose_post */
         Body_diagnose_endpoint_diagnose_post: {
             /** Area */
@@ -147,8 +195,13 @@ export interface components {
         };
         /** Body_feedback_feedback_post */
         Body_feedback_feedback_post: {
+            /**
+             * Commentaire
+             * @default
+             */
+            commentaire: string;
             /** Correct */
-            correct: string;
+            correct?: string;
             /**
              * Garder Photo
              * @default non
@@ -156,6 +209,18 @@ export interface components {
             garder_photo: string;
             /** Journal Id */
             journal_id: string;
+            /** Verdict */
+            verdict?: string;
+            /**
+             * Vrai Probleme
+             * @default
+             */
+            vrai_probleme: string;
+            /**
+             * Vraie Culture
+             * @default
+             */
+            vraie_culture: string;
             /**
              * Vraie Reponse
              * @default
@@ -169,6 +234,54 @@ export interface components {
              * Format: binary
              */
             photo: string;
+        };
+        /**
+         * Card
+         * @description A section of the answer. Joined by a blank line, the "texte" of the cards ARE the answer text (checked by the
+         *     Vérificateur): the app shows them as cards without changing a character.
+         */
+        Card: {
+            /** Champs */
+            champs?: string[] | null;
+            /** Citations */
+            citations?: string[] | null;
+            /** Elements */
+            elements?: string[] | null;
+            /** Produits */
+            produits?: components["schemas"]["CardProduct"][] | null;
+            /** Sources */
+            sources?: string[] | null;
+            /** Texte */
+            texte: string;
+            /** Titre */
+            titre?: string | null;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "autre_photo" | "doute" | "pistes" | "questions" | "crda" | "sain" | "hypothese" | "diagnostic" | "traitements" | "ecartes" | "rotation" | "securite" | "a_savoir" | "aucun_produit" | "affiner" | "prevention" | "conseils" | "sources" | "engrais" | "eau" | "fin" | "texte";
+        };
+        /**
+         * CardLine
+         * @description A line of a registered product, exactly as in the text; url: the page of a validated shop offer.
+         */
+        CardLine: {
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "produit" | "dose_pratique" | "lmr" | "boutique" | "boutique_absente" | "pourquoi";
+            /** Texte */
+            texte: string;
+            /** Url */
+            url?: string | null;
+        };
+        /** CardProduct */
+        CardProduct: {
+            /** Lignes */
+            lignes: components["schemas"]["CardLine"][];
+            /** Nom */
+            nom: string;
         };
         /** CropChoice */
         CropChoice: {
@@ -218,6 +331,23 @@ export interface components {
                 number
             ][] | null;
         };
+        /** CropStats */
+        CropStats: {
+            /** Analyses */
+            analyses: number;
+            /** Avec Avis */
+            avec_avis: number;
+            /** Correct */
+            correct: number;
+            /** Culture */
+            culture: string;
+            /** Faux */
+            faux: number;
+            /** Partiel */
+            partiel: number;
+            /** Precision */
+            precision?: number | null;
+        };
         /** Culture */
         Culture: {
             /** Ar */
@@ -234,6 +364,8 @@ export interface components {
         Diagnose: {
             /** Avertissements */
             avertissements: string[];
+            /** Cartes */
+            cartes: components["schemas"]["Card"][];
             /** Contexte */
             contexte: {
                 [key: string]: unknown;
@@ -281,6 +413,8 @@ export interface components {
             confiance?: number | null;
             /** Fiable */
             fiable?: boolean | null;
+            /** Niveau */
+            niveau?: ("sur" | "probable" | "incertain") | null;
             /** Nom */
             nom?: string | null;
             /** Raisons Doute */
@@ -319,8 +453,18 @@ export interface components {
         };
         /** Health */
         Health: {
+            /**
+             * Admin
+             * @default false
+             */
+            admin: boolean;
             /** Device */
             device: string;
+            /**
+             * Mode Test
+             * @default false
+             */
+            mode_test: boolean;
             /** Modeles */
             modeles: string[];
             /** Statut */
@@ -364,6 +508,51 @@ export interface components {
             /** Top3 */
             top3?: components["schemas"]["CropChoice"][] | null;
             vlm?: components["schemas"]["VlmOpinion"] | null;
+        };
+        /** JournalRow */
+        JournalRow: {
+            /** Classe */
+            classe?: string | null;
+            /** Commentaire */
+            commentaire?: string | null;
+            /** Confiance */
+            confiance?: number | null;
+            /** Culture */
+            culture?: string | null;
+            /** Date */
+            date: string;
+            /** Fiable */
+            fiable?: boolean | null;
+            /** Garder Photo */
+            garder_photo?: boolean | null;
+            /** Gouvernorat */
+            gouvernorat?: string | null;
+            /** Id */
+            id: string;
+            /** Issue */
+            issue?: string | null;
+            /** Langue */
+            langue?: string | null;
+            /** Maladie */
+            maladie?: string | null;
+            /**
+             * Photo
+             * @default false
+             */
+            photo: boolean;
+            /**
+             * Produits
+             * @default
+             */
+            produits: string;
+            /** Verdict */
+            verdict?: ("correct" | "partiel" | "faux") | null;
+            /** Vrai Probleme */
+            vrai_probleme?: string | null;
+            /** Vraie Culture */
+            vraie_culture?: string | null;
+            /** Vraie Reponse */
+            vraie_reponse?: string | null;
         };
         /** OtherModel */
         OtherModel: {
@@ -453,6 +642,68 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    admin_journal_admin_journal_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Réponse */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminJournal"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_journal_csv_admin_journal_csv_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     cultures_cultures_get: {
         parameters: {
             query?: never;

@@ -157,5 +157,76 @@ class TestReactServing(unittest.TestCase):
             self.assertIsNone(spa_file("../secret.txt", dist))  # never outside the build
 
 
+
+class TestReactApi(unittest.TestCase):
+    """Additions for the React app (A2 cards, A3 level, A6 feedback, A7 admin, test mode in /health)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.client = TestClient(app)
+        cls.client.__enter__()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.__exit__(None, None, None)
+
+    def diagnose(self, **form):
+        with open(LATE_BLIGHT, "rb") as f:
+            return self.client.post("/diagnose", data=form, files={"photo": ("f.jpg", f, "image/jpeg")}).json()
+
+    def test_cards_are_the_checked_text(self):
+        for lang in ("fr", "ar"):
+            body = self.diagnose(culture="tomato", gouvernorat="Nabeul", langue=lang, mois="5")
+            self.assertEqual("\n\n".join(c["texte"] for c in body["cartes"]), body["texte"])
+            self.assertIn(body["diagnostic"]["niveau"], ("sur", "probable", "incertain"))
+            for card in body["cartes"]:
+                for p in card.get("produits") or []:
+                    for line in p["lignes"]:
+                        self.assertIn(line["texte"], body["texte"])
+                        if line.get("url"):
+                            self.assertIn(line["url"], line["texte"])
+        no_photo = self.client.post("/diagnose", data={"message": "taches"}).json()
+        self.assertEqual(no_photo["cartes"][0]["type"], "autre_photo")
+        self.assertIsNone(no_photo["diagnostic"])
+
+    def test_health_says_test_mode(self):
+        from unittest import mock
+        self.assertFalse(self.client.get("/health").json()["mode_test"])
+        with mock.patch.dict(os.environ, {"AGRIA_JOURNAL": "1", "AGRIA_ADMIN_TOKEN": "t"}):
+            h = self.client.get("/health").json()
+        self.assertTrue(h["mode_test"] and h["admin"])
+
+    def test_feedback_verdict_and_admin(self):
+        import json
+        import tempfile
+        from unittest import mock
+        import src.api.main as api
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {"AGRIA_JOURNAL": "1"}), \
+                mock.patch.object(api, "JOURNAL_DIR", api.Path(tmp)):
+            jid = self.diagnose(culture="tomato", langue="fr")["journal_id"]
+            r = self.client.post("/feedback", data={"journal_id": jid, "verdict": "partiel", "vraie_culture": "tomato",
+                                                     "vrai_probleme": "mildiou", "commentaire": "bonne culture"})
+            self.assertEqual(r.status_code, 200)
+            avis = json.loads((api.Path(tmp) / f"{jid}.json").read_text(encoding="utf-8"))["avis"]
+            self.assertEqual((avis["verdict"], avis["correct"], avis["vrai_probleme"]), ("partiel", False, "mildiou"))
+            self.assertFalse(avis["garder_photo"])
+            self.assertEqual(self.client.post("/feedback", data={"journal_id": jid, "verdict": "bof"}).status_code, 422)
+            self.assertEqual(self.client.post("/feedback", data={"journal_id": jid}).status_code, 422)
+            # admin: off without a token, refused with a wrong one
+            self.assertEqual(self.client.get("/admin/journal").status_code, 404)
+            with mock.patch.dict(os.environ, {"AGRIA_ADMIN_TOKEN": "secret"}):
+                self.assertEqual(self.client.get("/admin/journal", headers={"Authorization": "Bearer x"}).status_code,
+                                 401)
+                body = self.client.get("/admin/journal", headers={"Authorization": "Bearer secret"}).json()
+                from src.api import schemas as S
+                S.AdminJournal.model_validate(body)
+                self.assertEqual(body["analyses"][0]["verdict"], "partiel")
+                self.assertEqual(body["par_culture"][0]["culture"], "tomato")
+                csv = self.client.get("/admin/journal.csv", headers={"Authorization": "Bearer secret"})
+                self.assertEqual(csv.status_code, 200)
+                self.assertIn("verdict", csv.text.splitlines()[0])
+                self.assertIn(jid, csv.text)
+
+
 if __name__ == "__main__":
     unittest.main()

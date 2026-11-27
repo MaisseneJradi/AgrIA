@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom/vitest";
+import "fake-indexeddb/auto"; // IndexedDB of the history and the queue
 import { cleanup } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll } from "vitest";
 import "@/lib/i18n";
