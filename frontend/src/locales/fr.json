@@ -1,0 +1,69 @@
+{
+  "app": {
+    "name": "AgrIA",
+    "tagline": "Le médecin des plantes",
+    "skip": "Aller au contenu",
+    "comingSoon": "L'application arrive bientôt ici. En attendant, utilisez la version actuelle.",
+    "footer": "AgrIA ne remplace pas un technicien : en cas de doute, contactez le CRDA. Seuls des produits homologués en Tunisie sont proposés."
+  },
+  "language": { "label": "Langue", "fr": "Français", "ar": "العربية", "frShort": "FR", "arShort": "ع" },
+  "theme": { "label": "Thème", "light": "Clair", "dark": "Sombre", "system": "Comme le téléphone" },
+  "common": {
+    "close": "Fermer",
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "dismiss": "Masquer le message"
+  },
+  "confidence": {
+    "label": "Fiabilité du diagnostic",
+    "sur": "Sûr",
+    "probable": "Probable",
+    "incertain": "Pas sûr"
+  },
+  "stepper": {
+    "label": "Étapes",
+    "step": "Étape {{current}} sur {{total}}",
+    "done": "terminée",
+    "current": "en cours"
+  },
+  "steps": { "photo": "Photo", "crop": "Culture", "context": "Précisions", "answer": "Réponse" },
+  "styleguide": {
+    "title": "Guide des composants",
+    "intro": "Chaque composant, en français et en arabe, en thème clair et sombre (page visible seulement en développement).",
+    "buttons": "Boutons",
+    "chips": "Puces",
+    "cards": "Cartes",
+    "alerts": "Alertes",
+    "stepper": "Étapes",
+    "sheet": "Panneau du bas",
+    "toast": "Notification",
+    "skeleton": "Chargement",
+    "confidence": "Fiabilité",
+    "takePhoto": "Prendre une photo",
+    "gallery": "Choisir dans la galerie",
+    "next": "Suivant",
+    "back": "Retour",
+    "send": "Envoyer",
+    "delete": "Supprimer",
+    "disabled": "Indisponible",
+    "tomato": "Tomate",
+    "olive": "Olivier",
+    "citrus": "Agrumes",
+    "cardTitle": "Diagnostic",
+    "cardBody": "Exemple de contenu d'une carte : le texte vient toujours de l'API.",
+    "infoTitle": "Bon à savoir",
+    "infoBody": "Une feuille, de près, à la lumière du jour.",
+    "successTitle": "Enregistré",
+    "successBody": "Merci, votre avis est enregistré.",
+    "warningTitle": "Diagnostic incertain",
+    "warningBody": "Répondez aux questions pour que les agents puissent conclure.",
+    "dangerTitle": "Pas de connexion",
+    "dangerBody": "Vérifiez le réseau puis réessayez.",
+    "openSheet": "Ouvrir le panneau",
+    "sheetTitle": "Autre culture",
+    "sheetBody": "Ici viendra la liste des cultures avec une recherche.",
+    "showToast": "Afficher une notification",
+    "toastText": "Copié dans le presse-papiers",
+    "doseExample": "Dose : 0,5 l/ha ; 48 g pour un pulvérisateur de 16 L"
+  }
+}

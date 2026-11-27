@@ -105,5 +105,57 @@ class TestApi(unittest.TestCase):
         self.assertEqual(self.client.get("/docs").status_code, 200)
 
 
+    def test_answers_match_the_documented_schemas(self):
+        # src/api/schemas.py describes the JSON (extra fields forbidden): the frontend types stay in sync
+        from src.api import schemas as S
+        S.Health.model_validate(self.client.get("/health").json())
+        for g in self.client.get("/gouvernorats").json():
+            S.Gouvernorat.model_validate(g)
+        for c in self.client.get("/cultures").json():
+            S.Culture.model_validate(c)
+        with open(LATE_BLIGHT, "rb") as f:
+            S.Identify.model_validate(self.client.post("/identify", files={"photo": ("f.jpg", f, "image/jpeg")}).json())
+        S.Identify.model_validate(self.client.post(
+            "/identify", files={"photo": ("i.png", io.BytesIO(_png()), "image/png")}).json())
+        for body in (self.post(message="taches", gouvernorat="Nabeul", langue="fr", mois="5", culture="tomato").json(),
+                     self.post(photo=None, message="ma tomate a des taches", langue="ar").json()):
+            S.Diagnose.model_validate(body)
+
+    def test_openapi_file_of_the_frontend_is_up_to_date(self):
+        from src.api.export_openapi import OUT, schema_text
+        self.assertTrue(OUT.exists(), "python -m src.api.export_openapi")
+        self.assertEqual(OUT.read_text(encoding="utf-8"), schema_text(),
+                         "schéma de l'API modifié : python -m src.api.export_openapi puis npm run api:types")
+
+
+def _png():
+    from PIL import Image
+    buf = io.BytesIO()
+    Image.new("RGB", (64, 64), (120, 120, 120)).save(buf, "PNG")  # a grey square: not a plant
+    return buf.getvalue()
+
+
+class TestReactServing(unittest.TestCase):
+    def test_spa_file(self):
+        import tempfile
+        from pathlib import Path
+        from src.api.main import IMMUTABLE, NO_CACHE, spa_file
+        with tempfile.TemporaryDirectory() as d:
+            dist = Path(d) / "dist"
+            (dist / "assets").mkdir(parents=True)
+            (dist / "index.html").write_text("<html></html>", encoding="utf-8")
+            (dist / "assets" / "app-abc.js").write_text("x", encoding="utf-8")
+            (dist / "sw.js").write_text("x", encoding="utf-8")
+            (Path(d) / "secret.txt").write_text("x", encoding="utf-8")
+            self.assertEqual(spa_file("assets/app-abc.js", dist), ((dist / "assets" / "app-abc.js").resolve(),
+                                                                   IMMUTABLE))
+            self.assertEqual(spa_file("sw.js", dist)[1], NO_CACHE)
+            for route in ("", "historique", "a-propos", "admin/test"):  # routes of the app -> index.html
+                self.assertEqual(spa_file(route, dist)[0], (dist / "index.html").resolve(), route)
+            self.assertIsNone(spa_file("assets/missing.js", dist))
+            self.assertIsNone(spa_file("missing.png", dist))
+            self.assertIsNone(spa_file("../secret.txt", dist))  # never outside the build
+
+
 if __name__ == "__main__":
     unittest.main()
