@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (RGB channels, used by tailwind.config.ts). Contrast checked for text on bg / surface:
+   >= 4.5:1 for every *-fg on its *-bg, >= 7:1 for text on bg (sunlight). Amber and terracotta are too light for text
+   on cream: they are used as borders and icons ("strong"), the text uses the darker *-fg. */
+@layer base {
+  /* .light: a light block inside a dark page (style guide) */
+  :root,
+  .light {
+    --bg: 243 239 226; /* cream */
+    --surface: 255 253 247;
+    --surface-2: 233 228 211;
+    --text: 18 38 27; /* deep green */
+    --muted: 74 92 80;
+    --border: 196 189 166;
+    --primary: 18 38 27;
+    --on-primary: 243 239 226;
+    --accent: 168 214 114; /* leaf green */
+    --on-accent: 18 38 27;
+    --focus: 233 162 59; /* amber */
+    --amber: 233 162 59;
+    --terracotta: 224 122 95;
+    --info-bg: 225 233 226;
+    --info-fg: 18 38 27;
+    --success-bg: 221 238 199;
+    --success-fg: 36 80 28;
+    --warning-bg: 250 232 198;
+    --warning-fg: 117 70 4;
+    --danger-bg: 249 222 212;
+    --danger-fg: 145 48 27;
+    color-scheme: light;
+  }
+
+  .dark {
+    --bg: 18 38 27;
+    --surface: 26 51 37;
+    --surface-2: 36 66 49;
+    --text: 243 239 226;
+    --muted: 200 207 190;
+    --border: 66 98 77;
+    --primary: 168 214 114;
+    --on-primary: 18 38 27;
+    --accent: 168 214 114;
+    --on-accent: 18 38 27;
+    --info-bg: 33 62 46;
+    --info-fg: 232 238 224;
+    --success-bg: 39 74 42;
+    --success-fg: 204 236 165;
+    --warning-bg: 72 55 20;
+    --warning-fg: 246 205 140;
+    --danger-bg: 82 39 31;
+    --danger-fg: 247 182 162;
+    color-scheme: dark;
+  }
+
+  html {
+    @apply bg-bg font-sans text-base text-text antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Arabic: Noto Naskh Arabic everywhere (Fraunces and DM Sans have no Arabic letters), slightly larger on the page.
+     [lang] (not :lang) so that a block in another language (style guide) switches font without compounding sizes. */
+  [lang="ar"] {
+    @apply font-arabic;
+  }
+  html[lang="ar"] {
+    font-size: 112.5%;
+  }
+  [lang="ar"] .font-display,
+  [lang="ar"] h1,
+  [lang="ar"] h2,
+  [lang="ar"] h3 {
+    @apply font-arabic font-bold;
+  }
+  [lang="fr"] {
+    @apply font-sans;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+
+  /* one visible focus for keyboard users, amber, readable on both themes */
+  :focus-visible {
+    @apply outline-none ring-4 ring-focus ring-offset-2 ring-offset-bg;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

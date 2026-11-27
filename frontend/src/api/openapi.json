@@ -1,0 +1,1349 @@
+{
+  "components": {
+    "schemas": {
+      "Body_diagnose_endpoint_diagnose_post": {
+        "properties": {
+          "area": {
+            "title": "Area",
+            "type": "number"
+          },
+          "culture": {
+            "title": "Culture",
+            "type": "string"
+          },
+          "days_to_harvest": {
+            "title": "Days To Harvest",
+            "type": "integer"
+          },
+          "gouvernorat": {
+            "title": "Gouvernorat",
+            "type": "string"
+          },
+          "greenhouse": {
+            "title": "Greenhouse",
+            "type": "string"
+          },
+          "langue": {
+            "title": "Langue",
+            "type": "string"
+          },
+          "last_treatment_group": {
+            "title": "Last Treatment Group",
+            "type": "string"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "message": {
+            "default": "",
+            "title": "Message",
+            "type": "string"
+          },
+          "mois": {
+            "title": "Mois",
+            "type": "integer"
+          },
+          "organic": {
+            "title": "Organic",
+            "type": "string"
+          },
+          "photo": {
+            "format": "binary",
+            "title": "Photo",
+            "type": "string"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "string"
+          }
+        },
+        "title": "Body_diagnose_endpoint_diagnose_post",
+        "type": "object"
+      },
+      "Body_feedback_feedback_post": {
+        "properties": {
+          "correct": {
+            "title": "Correct",
+            "type": "string"
+          },
+          "garder_photo": {
+            "default": "non",
+            "title": "Garder Photo",
+            "type": "string"
+          },
+          "journal_id": {
+            "title": "Journal Id",
+            "type": "string"
+          },
+          "vraie_reponse": {
+            "default": "",
+            "title": "Vraie Reponse",
+            "type": "string"
+          }
+        },
+        "required": [
+          "journal_id",
+          "correct"
+        ],
+        "title": "Body_feedback_feedback_post",
+        "type": "object"
+      },
+      "Body_identify_identify_post": {
+        "properties": {
+          "photo": {
+            "format": "binary",
+            "title": "Photo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "photo"
+        ],
+        "title": "Body_identify_identify_post",
+        "type": "object"
+      },
+      "CropChoice": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "confiance": {
+            "title": "Confiance",
+            "type": "number"
+          },
+          "fr": {
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "fr",
+          "confiance"
+        ],
+        "title": "CropChoice",
+        "type": "object"
+      },
+      "CropInfo": {
+        "additionalProperties": false,
+        "description": "The crop of the answer: the code used and what the Identification agent saw on the photo.",
+        "properties": {
+          "accord": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accord"
+          },
+          "avis": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avis"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "confiance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confiance"
+          },
+          "contradiction": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contradiction"
+          },
+          "desaccord_vlm": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desaccord Vlm"
+          },
+          "inconnue": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inconnue"
+          },
+          "n_avis": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "N Avis"
+          },
+          "non_couverte": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Non Couverte"
+          },
+          "predite": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predite"
+          },
+          "proposee": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proposee"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "source_culture": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Culture"
+          },
+          "top3": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top3"
+          }
+        },
+        "title": "CropInfo",
+        "type": "object"
+      },
+      "Culture": {
+        "additionalProperties": false,
+        "properties": {
+          "ar": {
+            "title": "Ar",
+            "type": "string"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "fr": {
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "fr",
+          "ar"
+        ],
+        "title": "Culture",
+        "type": "object"
+      },
+      "Diagnose": {
+        "additionalProperties": false,
+        "description": "POST /diagnose. `texte` is the answer written by code and checked by the Vérificateur: the app shows it as is.",
+        "properties": {
+          "avertissements": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Avertissements",
+            "type": "array"
+          },
+          "contexte": {
+            "additionalProperties": true,
+            "title": "Contexte",
+            "type": "object"
+          },
+          "culture": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CropInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "diagnostic": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Diagnostic"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "duree_s": {
+            "title": "Duree S",
+            "type": "number"
+          },
+          "engrais": {
+            "items": {
+              "$ref": "#/components/schemas/Fertiliser"
+            },
+            "title": "Engrais",
+            "type": "array"
+          },
+          "issue": {
+            "enum": [
+              "conseil",
+              "question",
+              "autre_photo",
+              "crda"
+            ],
+            "title": "Issue",
+            "type": "string"
+          },
+          "journal_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Journal Id"
+          },
+          "langue": {
+            "enum": [
+              "fr",
+              "ar"
+            ],
+            "title": "Langue",
+            "type": "string"
+          },
+          "produits": {
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            },
+            "title": "Produits",
+            "type": "array"
+          },
+          "questions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Questions",
+            "type": "array"
+          },
+          "questions_contexte": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Questions Contexte",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "texte": {
+            "title": "Texte",
+            "type": "string"
+          },
+          "trace": {
+            "items": {
+              "$ref": "#/components/schemas/TraceStep"
+            },
+            "title": "Trace",
+            "type": "array"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/Verification"
+          }
+        },
+        "required": [
+          "issue",
+          "texte",
+          "langue",
+          "produits",
+          "engrais",
+          "avertissements",
+          "questions",
+          "sources",
+          "verification",
+          "contexte",
+          "questions_contexte",
+          "trace",
+          "duree_s"
+        ],
+        "title": "Diagnose",
+        "type": "object"
+      },
+      "Diagnostic": {
+        "additionalProperties": false,
+        "properties": {
+          "autre_modele": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OtherModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "choix_du_modele": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Choix Du Modele"
+          },
+          "classe": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classe"
+          },
+          "confiance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confiance"
+          },
+          "fiable": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiable"
+          },
+          "nom": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nom"
+          },
+          "raisons_doute": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Raisons Doute"
+          },
+          "routing": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Routing"
+          },
+          "task": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task"
+          },
+          "top3": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top3"
+          }
+        },
+        "title": "Diagnostic",
+        "type": "object"
+      },
+      "FeedbackSaved": {
+        "additionalProperties": false,
+        "properties": {
+          "statut": {
+            "title": "Statut",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statut"
+        ],
+        "title": "FeedbackSaved",
+        "type": "object"
+      },
+      "Fertiliser": {
+        "additionalProperties": false,
+        "properties": {
+          "nom": {
+            "title": "Nom",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nom"
+        ],
+        "title": "Fertiliser",
+        "type": "object"
+      },
+      "Gouvernorat": {
+        "additionalProperties": false,
+        "properties": {
+          "ar": {
+            "title": "Ar",
+            "type": "string"
+          },
+          "fr": {
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fr",
+          "ar"
+        ],
+        "title": "Gouvernorat",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "Health": {
+        "additionalProperties": false,
+        "properties": {
+          "device": {
+            "title": "Device",
+            "type": "string"
+          },
+          "modeles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Modeles",
+            "type": "array"
+          },
+          "statut": {
+            "title": "Statut",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statut",
+          "modeles",
+          "device"
+        ],
+        "title": "Health",
+        "type": "object"
+      },
+      "Identify": {
+        "additionalProperties": false,
+        "description": "POST /identify. Without a leaf (photo_plante false, or a fruit) only the first three fields are given.",
+        "properties": {
+          "accord": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accord"
+          },
+          "ar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ar"
+          },
+          "autre_plante": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autre Plante"
+          },
+          "avis": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avis"
+          },
+          "confiance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confiance"
+          },
+          "culture": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Culture"
+          },
+          "desaccord_vlm": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desaccord Vlm"
+          },
+          "feuille": {
+            "title": "Feuille",
+            "type": "boolean"
+          },
+          "fr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fr"
+          },
+          "n_avis": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "N Avis"
+          },
+          "photo_plante": {
+            "title": "Photo Plante",
+            "type": "boolean"
+          },
+          "routage": {
+            "title": "Routage",
+            "type": "string"
+          },
+          "source_culture": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Culture"
+          },
+          "sure": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sure"
+          },
+          "top3": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CropChoice"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top3"
+          },
+          "vlm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VlmOpinion"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "feuille",
+          "photo_plante",
+          "routage"
+        ],
+        "title": "Identify",
+        "type": "object"
+      },
+      "OtherModel": {
+        "additionalProperties": false,
+        "properties": {
+          "classe": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classe"
+          },
+          "confiance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confiance"
+          }
+        },
+        "title": "OtherModel",
+        "type": "object"
+      },
+      "Product": {
+        "additionalProperties": false,
+        "properties": {
+          "dar_jours": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dar Jours"
+          },
+          "dose": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dose"
+          },
+          "nom": {
+            "title": "Nom",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nom"
+        ],
+        "title": "Product",
+        "type": "object"
+      },
+      "Source": {
+        "additionalProperties": false,
+        "properties": {
+          "fiche": {
+            "title": "Fiche",
+            "type": "string"
+          },
+          "fiche_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiche Id"
+          },
+          "licence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence"
+          },
+          "lien": {
+            "title": "Lien",
+            "type": "string"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Section"
+          }
+        },
+        "required": [
+          "fiche",
+          "lien"
+        ],
+        "title": "Source",
+        "type": "object"
+      },
+      "TraceStep": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "agent": {
+            "title": "Agent",
+            "type": "string"
+          },
+          "duree_ms": {
+            "title": "Duree Ms",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "agent",
+          "action",
+          "duree_ms"
+        ],
+        "title": "TraceStep",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "Verification": {
+        "additionalProperties": false,
+        "properties": {
+          "avertissements": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Avertissements",
+            "type": "array"
+          },
+          "produits_verifies": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Produits Verifies",
+            "type": "array"
+          },
+          "raisons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Raisons",
+            "type": "array"
+          },
+          "secours": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secours"
+          },
+          "valide": {
+            "title": "Valide",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "valide",
+          "raisons",
+          "avertissements",
+          "produits_verifies"
+        ],
+        "title": "Verification",
+        "type": "object"
+      },
+      "VlmOpinion": {
+        "additionalProperties": false,
+        "properties": {
+          "conf_culture": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conf Culture"
+          },
+          "conf_probleme": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conf Probleme"
+          },
+          "culture": {
+            "title": "Culture",
+            "type": "string"
+          },
+          "probleme": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Probleme"
+          },
+          "symptomes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptomes"
+          }
+        },
+        "required": [
+          "culture"
+        ],
+        "title": "VlmOpinion",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Diagnostic des plantes pour les agriculteurs tunisiens : six agents, réponses en français ou en arabe, uniquement des produits homologués en Tunisie.",
+    "title": "AgrIA",
+    "version": "1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/cultures": {
+      "get": {
+        "operationId": "cultures_cultures_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Culture"
+                  },
+                  "title": "Response 200 Cultures Cultures Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Réponse"
+          }
+        },
+        "summary": "Cultures"
+      }
+    },
+    "/diagnose": {
+      "post": {
+        "operationId": "diagnose_endpoint_diagnose_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_diagnose_endpoint_diagnose_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Diagnose"
+                }
+              }
+            },
+            "description": "Réponse"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Diagnose Endpoint"
+      }
+    },
+    "/feedback": {
+      "post": {
+        "operationId": "feedback_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_feedback_feedback_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackSaved"
+                }
+              }
+            },
+            "description": "Réponse"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Feedback"
+      }
+    },
+    "/gouvernorats": {
+      "get": {
+        "operationId": "gouvernorats_gouvernorats_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Gouvernorat"
+                  },
+                  "title": "Response 200 Gouvernorats Gouvernorats Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Réponse"
+          }
+        },
+        "summary": "Gouvernorats"
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            },
+            "description": "Réponse"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/identify": {
+      "post": {
+        "operationId": "identify_identify_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_identify_identify_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identify"
+                }
+              }
+            },
+            "description": "Réponse"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Identify"
+      }
+    }
+  }
+}

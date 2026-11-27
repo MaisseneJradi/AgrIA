@@ -19,6 +19,9 @@ Open:  http://localhost:8000          the app (phone: http://<IP of the computer
   POST /feedback      form-data: journal_id, correct (oui | non), vraie_reponse, garder_photo (oui | non, default
                       non: the tester's consent to keep the photo for the Tunisian test set) -> stored with the analysis
 
+Web app: the first app (src/app) by default; AGRIA_UI=react serves the React build frontend/dist (frontend/README.md).
+Response schemas: src/api/schemas.py (documentation and TypeScript types of the frontend; the JSON is not filtered).
+
 Privacy: the photo is written to a temporary file for the models and deleted right after; nothing is stored.
 Test mode only (AGRIA_JOURNAL=1, never for real users without their consent): every analysis is kept in
 data/journal/<id>.jpg + <id>.json (inputs, what each model saw, top 3, answer) with the tester's feedback, to find
@@ -36,6 +39,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
+from typing import List
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
 
@@ -43,6 +47,7 @@ from src.agent import paths  # noqa: F401
 from src.agent.agents.identification import recognise
 from src.agent.graph import build, diagnose
 from src.agent.redaction import GOV_AR
+from src.api import schemas as S
 
 CROPS = [("tomato", "Tomate", "طماطم"), ("olive", "Olivier", "زيتون"), ("citrus", "Agrumes", "قوارص"),
          ("pepper", "Poivron / piment", "فلفل"), ("potato", "Pomme de terre", "بطاطا"), ("grape", "Vigne", "عنب"),
@@ -77,18 +82,18 @@ def warm_up():
     rag.search_knowledge("lutte prévention traitement", k=2, classe="tomato__late_blight")
 
 
-@app.get("/health")
+@app.get("/health", responses=S.doc(S.Health))
 def health():
     import predict
     return {"statut": "ok", "modeles": sorted(predict._CACHE), "device": str(predict._DEVICE)}
 
 
-@app.get("/gouvernorats")
+@app.get("/gouvernorats", responses=S.doc(List[S.Gouvernorat]))
 def gouvernorats():
     return [{"fr": fr, "ar": ar} for fr, ar in sorted(GOV_AR.items())]
 
 
-@app.get("/cultures")
+@app.get("/cultures", responses=S.doc(List[S.Culture]))
 def cultures():
     return [{"code": c, "fr": fr, "ar": ar} for c, fr, ar in CROPS]
 
@@ -115,7 +120,7 @@ def _save_photo(photo):
     return path
 
 
-@app.post("/identify")
+@app.post("/identify", responses=S.doc(S.Identify))
 def identify(photo: UploadFile = File(...)):
     path = _save_photo(photo)
     try:
@@ -155,7 +160,7 @@ def _context(days_to_harvest, market, organic, greenhouse, stage, last_treatment
     return {k: v for k, v in ctx.items() if v not in (None, "")}
 
 
-@app.post("/diagnose")
+@app.post("/diagnose", responses=S.doc(S.Diagnose))
 def diagnose_endpoint(photo: UploadFile = File(None), message: str = Form(""), gouvernorat: str = Form(None),
                       culture: str = Form(None), langue: str = Form(None), mois: int = Form(None),
                       days_to_harvest: int = Form(None), market: str = Form(None), organic: str = Form(None),
@@ -193,7 +198,7 @@ def keep_in_journal(path, answer, inputs):
     return jid
 
 
-@app.post("/feedback")
+@app.post("/feedback", responses=S.doc(S.FeedbackSaved))
 def feedback(journal_id: str = Form(...), correct: str = Form(...), vraie_reponse: str = Form(""),
              garder_photo: str = Form("non")):
     if not journal_on():
@@ -211,9 +216,41 @@ def feedback(journal_id: str = Form(...), correct: str = Form(...), vraie_repons
     return {"statut": "enregistré"}
 
 
-@app.get("/")
-def index():
-    return FileResponse(APP_DIR / "index.html")
+# ------------------------------------------------------------------ the web app
+# AGRIA_UI=react serves the React build (frontend/dist, `npm run build`); otherwise the first app (src/app), kept
+# working until the React app passes its step 7. Both call the same routes above.
+DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+NO_CACHE = {"Cache-Control": "no-cache"}
+IMMUTABLE = {"Cache-Control": "public, max-age=31536000, immutable"}
 
 
-app.mount("/", StaticFiles(directory=APP_DIR), name="app")
+def react_ui():
+    return os.environ.get("AGRIA_UI") == "react" and (DIST / "index.html").exists()
+
+
+def spa_file(path, dist=DIST):
+    """(file, cache headers) for a path of the React app: a file of the build if it exists (hashed assets cached one
+    year), else index.html (the React router handles /historique, /a-propos...). None: a missing file (404). A path
+    leaving the build folder is never served."""
+    root = dist.resolve()
+    f = (root / path).resolve()
+    if path and f.is_file() and f.is_relative_to(root):
+        return f, (IMMUTABLE if path.startswith("assets/") else NO_CACHE)
+    if path.startswith("assets/") or "." in path.rsplit("/", 1)[-1]:
+        return None
+    return root / "index.html", NO_CACHE
+
+
+if react_ui():
+    @app.get("/{path:path}", include_in_schema=False)
+    def spa(path: str):  # declared after the API routes: they are matched first
+        found = spa_file(path)
+        if found is None:
+            raise HTTPException(404, "fichier introuvable")
+        return FileResponse(found[0], headers=found[1])
+else:
+    @app.get("/", include_in_schema=False)
+    def index():
+        return FileResponse(APP_DIR / "index.html")
+
+    app.mount("/", StaticFiles(directory=APP_DIR), name="app")
