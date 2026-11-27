@@ -18,14 +18,15 @@ export function LanguageSwitch({ className }: { className?: string }) {
           type="button"
           lang={l}
           aria-pressed={current === l}
-          aria-label={t(`language.${l}`)}
           onClick={() => void setLang(l)}
           className={cn(
             "min-h-touch min-w-touch rounded-full px-3 text-base font-bold",
             current === l ? "bg-primary text-on-primary" : "text-text",
           )}
         >
+          {/* the accessible name holds the visible text (WCAG 2.5.3): "FR (Français)" */}
           {t(`language.${l}Short`)}
+          <span className="sr-only"> ({t(`language.${l}`)})</span>
         </button>
       ))}
     </div>

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { AnswerText } from "./AnswerStep";
+import { AnswerText } from "./AnswerText";
 
 // Real Arabic answer of the API (27/11/2026, shortened): French names and doses inside Arabic text.
 const AR =

@@ -76,9 +76,44 @@ Le test `tests/api/test_api.py` échoue si `openapi.json` n'est plus à jour, ou
 - **Gouvernorat :** il est gardé sur l'appareil (localStorage).
 - **Réponse :** le `texte` de l'API est affiché tel quel. En arabe, les passages en caractères latins sont seulement isolés à l'affichage (`<bdi>`) ; un test vérifie que le texte affiché est identique, caractère pour caractère.
 
+## L'écran de réponse en cartes (étape 3)
+- L'API renvoie `cartes` : la réponse découpée en sections (diagnostic, traitements par produit, sécurité, prévention, engrais, irrigation, à savoir…).
+- Ces sections sont construites par `src/agent/redaction.py` avec **les mêmes phrases** que `texte`. L'API ne les renvoie que si leur concaténation est identique, caractère pour caractère, au texte contrôlé par le Vérificateur ; sinon elle renvoie une seule carte avec le texte.
+- La confiance est donnée en mots par `diagnostic.niveau` (`sur`, `probable`, `incertain`), calculé par l'agent Diagnostic. L'application n'affiche jamais une probabilité seule.
+- Quand le diagnostic n'est pas fiable, l'application n'affiche que le doute, les questions et le CRDA (`src/features/answer/cards.ts`), même si l'API envoyait autre chose.
+- Actions disponibles : partager (WhatsApp ou copie), imprimer ou PDF (feuille de style d'impression), lire à voix haute (si le téléphone le permet), et « Comment AgrIA a décidé » (trace des agents).
+
+## Langues et accessibilité (étape 4)
+- Tous les textes sont dans `src/locales/fr.json` et `ar.json`. ESLint refuse le texte brut dans le JSX, et un test vérifie que les deux langues ont les mêmes clés.
+- Les textes arabes à faire relire par une personne de langue arabe sont dans `reports/frontend/textes_arabes_a_relire.csv`.
+- Accessibilité :
+  - à chaque étape, le titre reçoit le focus ;
+  - les chargements et les réponses sont annoncés (`aria-live`) ;
+  - chaque bouton a un nom accessible qui contient son texte visible ;
+  - axe-core est lancé à chaque écran dans les tests de bout en bout.
+- Page `/a-propos` : ce qu'AgrIA fait et ne fait pas, la confidentialité, l'étiquette, le CRDA.
+
+## Réseau faible et application installable (étape 5)
+- **Service worker** (vite-plugin-pwa), actif seulement dans le build de production : il garde l'application, les polices et les deux listes (`/cultures`, `/gouvernorats`). **Les réponses de l'API ne sont jamais gardées.** L'application s'ouvre sans réseau et le dit.
+- **Envoi différé :** sans réseau, et avec l'accord de l'agriculteur, une photo est mise en attente (IndexedDB) et envoyée au retour du réseau. La réponse indique alors la date de mise en attente.
+- **Historique :** `/historique` garde les 10 dernières réponses, sur l'appareil seulement et en texte seulement. Un bouton efface tout. Une ancienne réponse est toujours affichée avec sa date.
+
+## Mode test et administration (étape 6)
+- **Mode test :** avec `AGRIA_JOURNAL=1` sur le serveur, `/health` renvoie `mode_test: true`. L'application affiche alors un bandeau et, sous chaque réponse, le formulaire d'avis :
+  - juste / en partie / faux ;
+  - la vraie culture et le vrai problème ;
+  - un commentaire ;
+  - l'accord pour garder la photo, qui peut être donné quel que soit l'avis.
+- **Administration :** `/admin/test` (page chargée à part) demande le jeton `AGRIA_ADMIN_TOKEN`, vérifié par le serveur. La page affiche :
+  - la justesse par culture, calculée par le serveur ;
+  - les analyses, avec des filtres par culture, gouvernorat et avis ;
+  - un export CSV (`/admin/journal.csv`).
+
 ## Organisation
 ```
 src/api/            client typé (client.ts), requêtes TanStack Query (queries.ts), schéma généré
+src/features/       diagnosis (parcours), answer (cartes), history, queue (envoi différé), test-mode
+src/pages/          About, History, AdminTest (chargées à part), Styleguide (développement seulement)
 src/app/            routeur, mise en page (en-tête, langue, thème)
 src/components/ui/  Button, Chip, Card, Alert, Stepper, BottomSheet, Toast, Skeleton, LanguageSwitch,
                     ThemeSwitch, ConfidenceBadge (+ un test chacun, en LTR et RTL)

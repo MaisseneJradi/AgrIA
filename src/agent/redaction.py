@@ -490,92 +490,160 @@ def class_label(cls, french_name, lang):
 
 
 def compose(d, lang="fr"):
-    """Answer text, in French or Arabic, from the facts `d` gathered by the agents."""
+    """Answer text, in French or Arabic, from the facts `d` gathered by the agents: the sections of compose_sections,
+    joined by a blank line (the text the Vérificateur checks)."""
+    return join_sections(compose_sections(d, lang))
+
+
+def join_sections(sections):
+    return "\n\n".join(s["texte"] for s in sections)
+
+
+def _bullets(lines):
+    return "\n".join(f"- {x}" for x in lines if x)
+
+
+def _section(kind, texte=None, titre=None, elements=None, **extra):
+    """One section of the answer. A list section (titre + elements) is written "titre\n- a\n- b", exactly as the
+    text always was: the sections are only the text cut where it was already cut."""
+    if elements is not None:
+        elements = [x for x in elements if x]
+        texte = titre + "\n" + _bullets(elements)
+    out = {"type": kind, "texte": texte}
+    if titre is not None:
+        out["titre"] = titre
+    if elements is not None:
+        out["elements"] = elements
+    out.update(extra)
+    return out
+
+
+def product_lines(p, t, lang, ctx):
+    """The lines of one registered product, each with its role (the app shows each with its icon): the product line
+    with the registered dose and DAR, then the practical dose, the MRL, the shop offers or what to ask for, why."""
+    lines = [{"role": "produit", "texte": t["produit"].format(nom=p["nom"], substances=p["substances"],
+                                                                dose=p["dose"], dar=dar_text(p, t))}]
+    # the reasons go on their own line: the product line keeps exactly its registered dose (rule 8)
+    if p.get("dose_pratique"):
+        lines.append({"role": "dose_pratique", "texte": practical_line(p["dose_pratique"], t, lang)})
+    if p.get("lmr_marche"):
+        lines.append({"role": "lmr", "texte": mrl_line(p, t, ctx)})
+    offers = p.get("boutique") or []
+    for i, x in enumerate(shop_lines(p, t)):
+        o = offers[i] if i < len(offers) else None
+        lines.append({"role": "boutique" if o else "boutique_absente", "texte": x,
+                      "url": (o or {}).get("url") or None})
+    if p.get("raisons"):
+        lines.append({"role": "pourquoi",
+                      "texte": t["pourquoi"] + t["sep"].join(reason_text(r, t) for r in p["raisons"])})
+    return lines
+
+
+def compose_sections(d, lang="fr"):
+    """The answer cut into sections (diagnostic, questions, traitements, securite, prevention, engrais, eau...), for
+    the cards of the app. Their texts joined by a blank line are the answer text (compose)."""
     t = P[lang]
 
     def free(text):  # fixed sentence: its Arabic from FIXED_AR, else kept in French
         return text if lang == "fr" else fixed_ar(text) or text
 
-    def bullets(lines):
-        return "\n".join(f"- {x}" for x in lines if x)
-
     issue, parts = d["issue"], []
     if issue == "autre_photo":
-        parts.append((t["photo_absente"] if d.get("sans_photo") else t["photo_inutile"]) + " " + t["photo_conseil"])
+        parts.append(_section("autre_photo", (t["photo_absente"] if d.get("sans_photo") else t["photo_inutile"])
+                              + " " + t["photo_conseil"]))
     elif issue == "question":
-        parts.append(t["doute"].format(doute=d["doute"]) if d.get("doute") and lang == "fr" else t["doute_court"])
+        parts.append(_section("doute", t["doute"].format(doute=d["doute"]) if d.get("doute") and lang == "fr"
+                              else t["doute_court"]))
         if d.get("pistes"):
-            parts.append(t["pistes"].format(pistes="، ".join(class_label(c, n, lang) for c, n in d["pistes"])
-                                             if lang != "fr" else ", ".join(n for _, n in d["pistes"])))
-        parts.append(t["questions"] + "\n" + bullets(free(q) for q in d.get("questions", [])))
+            parts.append(_section("pistes", t["pistes"].format(
+                pistes="، ".join(class_label(c, n, lang) for c, n in d["pistes"])
+                if lang != "fr" else ", ".join(n for _, n in d["pistes"]))))
+        parts.append(_section("questions", titre=t["questions"],
+                              elements=[free(q) for q in d.get("questions", [])]))
     elif issue == "crda":
         gov = t["crda_gov"].format(gov=gov_label(d["gouvernorat"], lang)) if d.get("gouvernorat") else t["crda_sans_gov"]
-        parts.append(t["crda"].format(gov=gov))
+        parts.append(_section("crda", t["crda"].format(gov=gov)))
     else:
         diag = d["diagnostic"]
         nom = class_label(diag.get("classe"), diag["nom"], lang)
         if diag.get("sain"):
-            parts.append(t["sain"].format(nom=nom, c=diag["confiance"]))
+            parts.append(_section("sain", t["sain"].format(nom=nom, c=diag["confiance"])))
         elif d.get("hypothese"):
-            parts.append(t["hypothese"].format(nom=nom, c=diag["confiance"]))
+            parts.append(_section("hypothese", t["hypothese"].format(nom=nom, c=diag["confiance"])))
             if d.get("questions"):
-                parts.append(t["confirmer"] + "\n" + bullets(free(q) for q in d["questions"]))
+                parts.append(_section("questions", titre=t["confirmer"],
+                                      elements=[free(q) for q in d["questions"]]))
         else:
-            parts.append(t["diagnostic"].format(nom=nom, c=diag["confiance"]))
+            parts.append(_section("diagnostic", t["diagnostic"].format(nom=nom, c=diag["confiance"])))
         ctx = d.get("contexte") or {}
         if d.get("produits"):
-            parts.append(t["produits"].format(date=LIST_DATE) + "\n" + bullets(
-                t["produit"].format(nom=p["nom"], substances=p["substances"], dose=p["dose"],
-                                    dar=dar_text(p, t))
-                # the reasons go on their own line: the product line keeps exactly its registered dose (rule 8)
-                + (("\n  " + practical_line(p["dose_pratique"], t, lang)) if p.get("dose_pratique") else "")
-                + (("\n  " + mrl_line(p, t, ctx)) if p.get("lmr_marche") else "")
-                + "".join("\n  " + x for x in shop_lines(p, t))
-                + ("\n  " + t["pourquoi"] + t["sep"].join(reason_text(r, t) for r in p["raisons"])
-                   if p.get("raisons") else "")
-                for p in d["produits"]))
+            produits = [{"nom": p["nom"], "lignes": product_lines(p, t, lang, ctx)} for p in d["produits"]]
+            parts.append(_section("traitements", titre=t["produits"].format(date=LIST_DATE),
+                                  elements=["\n  ".join(x["texte"] for x in pr["lignes"]) for pr in produits],
+                                  produits=produits))
             last = " + ".join(d.get("dernier_groupe") or [])
             if d.get("ecartes"):
-                parts.append(t["ecartes"] + "\n" + bullets(set_aside_lines(d["ecartes"], ctx, t, last)))
+                parts.append(_section("ecartes", titre=t["ecartes"],
+                                      elements=set_aside_lines(d["ecartes"], ctx, t, last)))
             if d.get("rotation_impossible"):
-                parts.append(t["rotation_impossible"].format(last=last))
+                parts.append(_section("rotation", t["rotation_impossible"].format(last=last)))
             if d.get("rotation_conseil"):
-                parts.append(t["rotation"])
-            parts.append(t["securite"] + "\n" + bullets(safety_lines(d, t, lang)))
+                parts.append(_section("rotation", t["rotation"]))
+            parts.append(_section("securite", titre=t["securite"], elements=safety_lines(d, t, lang)))
             if d.get("verifier_dar") is not None:
-                parts.append(t["verifier_dar"].format(dth=d["verifier_dar"]))
+                parts.append(_section("a_savoir", t["verifier_dar"].format(dth=d["verifier_dar"])))
             if ctx.get("organic") == "y":
-                parts.append(t["bio_etiquette"])
+                parts.append(_section("a_savoir", t["bio_etiquette"]))
         elif d.get("aucun_adapte"):
-            parts.append(t["aucun_adapte"].format(n=d.get("n_candidats", 0), date=LIST_DATE) + "\n"
-                         + bullets(set_aside_lines(d.get("ecartes", []), ctx, t,
-                                                   " + ".join(d.get("dernier_groupe") or []))))
+            parts.append(_section("aucun_produit", titre=t["aucun_adapte"].format(n=d.get("n_candidats", 0),
+                                                                                  date=LIST_DATE),
+                                  elements=set_aside_lines(d.get("ecartes", []), ctx, t,
+                                                           " + ".join(d.get("dernier_groupe") or []))))
         elif d.get("aucun_produit"):
-            parts.append(t["aucun_produit"].format(date=LIST_DATE))
+            parts.append(_section("aucun_produit", t["aucun_produit"].format(date=LIST_DATE)))
         if d.get("questions_contexte"):
-            parts.append(t["affiner"] + "\n" + bullets(t["q_" + q] for q in d["questions_contexte"]))
+            parts.append(_section("affiner", titre=t["affiner"],
+                                  elements=[t["q_" + q] for q in d["questions_contexte"]],
+                                  champs=list(d["questions_contexte"])))
         if d.get("prevention"):  # validated rows of docs/conseils_prevention.csv, in the language of the answer
-            parts.append(t["prevention"] + "\n" + bullets(p[lang] for p in d["prevention"]))
+            parts.append(_section("prevention", titre=t["prevention"], elements=[p[lang] for p in d["prevention"]]))
         if d.get("conseils") and lang == "fr":  # the quoted sentences, then the sheet and section they come from
-            parts.append(t["conseils"] + "\n" + bullets(d["conseils"]) + "\n" + "\n".join(source_lines(d, t, lang)))
+            src = source_lines(d, t, lang)
+            parts.append(_section("conseils", t["conseils"] + "\n" + _bullets(d["conseils"]) + "\n" + "\n".join(src),
+                                  titre=t["conseils"], citations=[x for x in d["conseils"] if x], sources=src))
         elif d.get("sources"):  # Arabic answer, or no French sentence to quote: the sheets and sections found
-            parts.append(t["sources"] + "\n" + bullets(source_lines(d, t, lang)))
+            parts.append(_section("sources", titre=t["sources"], elements=source_lines(d, t, lang)))
         if d.get("orientation_crda"):  # nothing registered: a technician, never a product
             gov = t["crda_gov"].format(gov=gov_label(d["gouvernorat"], lang)) if d.get("gouvernorat") \
                 else t["crda_sans_gov"]
-            parts.append(t["orientation"].format(gov=gov))
+            parts.append(_section("crda", t["orientation"].format(gov=gov)))
         if d.get("besoin"):  # step 10: the need first, then the validated shop offers, else what to ask for
-            parts.append(fertiliser_section(d, t, lang))
+            parts.append(_section("engrais", fertiliser_section(d, t, lang)))
         elif d.get("engrais"):
-            parts.append(t["engrais"] + "\n" + bullets(
+            parts.append(_section("engrais", titre=t["engrais"], elements=[
                 f"{e['nom']} ({e['nutriment']} {e['teneur_pct']} %)" if e.get("teneur_pct") else e["nom"]
-                for e in d["engrais"]))
+                for e in d["engrais"]]))
         w = d.get("eau")
         if w:
-            parts.append(t["eau"].format(mois=MONTHS[lang][w["mois"]], gov=gov_label(w["gouvernorat"], lang), mm=w["mm"], m3=w["m3"],
-                                         mmj=w["mmj"]))
+            parts.append(_section("eau", t["eau"].format(mois=MONTHS[lang][w["mois"]],
+                                                         gov=gov_label(w["gouvernorat"], lang), mm=w["mm"],
+                                                         m3=w["m3"], mmj=w["mmj"])))
         if d.get("avertissements"):
-            parts.append(t["a_savoir"] + "\n" + bullets(free(a) for a in d["avertissements"]))
+            parts.append(_section("a_savoir", titre=t["a_savoir"], elements=[free(a) for a in d["avertissements"]]))
         if not diag.get("sain") and not d.get("orientation_crda"):
-            parts.append(t["fin"])
-    return "\n\n".join(parts)
+            parts.append(_section("fin", t["fin"]))
+    return parts
+
+
+def answer_cards(facts, lang, text):
+    """The cards of the API answer (field "cartes"): the sections of the facts ONLY if, joined, they are exactly the
+    text the Vérificateur checked; otherwise (fixed fallback text) one card holding that text. What the app shows in
+    cards is therefore always the checked text, character for character."""
+    if facts:
+        try:
+            sections = compose_sections(facts, lang)
+        except (KeyError, TypeError, ValueError):
+            sections = None
+        if sections and join_sections(sections) == text:
+            return sections
+    return [{"type": "texte", "texte": text}]

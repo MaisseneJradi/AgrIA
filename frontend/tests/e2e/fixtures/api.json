@@ -1,0 +1,1112 @@
+{
+  "identify_tomate": {
+    "feuille": true,
+    "photo_plante": true,
+    "routage": "leaf",
+    "culture": "tomato",
+    "fr": "Tomate",
+    "ar": "طماطم",
+    "confiance": 0.9657,
+    "sure": true,
+    "autre_plante": false,
+    "avis": {
+      "crop": "tomato",
+      "leaf": "tomato",
+      "diseases": "tomato"
+    },
+    "accord": 3,
+    "n_avis": 3,
+    "vlm": null,
+    "source_culture": "vote",
+    "desaccord_vlm": false,
+    "top3": [
+      {
+        "code": "tomato",
+        "fr": "Tomate",
+        "confiance": 0.9657
+      },
+      {
+        "code": "apple",
+        "fr": "Pommier",
+        "confiance": 0.0053
+      },
+      {
+        "code": "datepalm",
+        "fr": "Palmier dattier",
+        "confiance": 0.0047
+      }
+    ]
+  },
+  "identify_olivier": {
+    "feuille": true,
+    "photo_plante": true,
+    "routage": "leaf",
+    "culture": "wheat",
+    "fr": "Blé",
+    "ar": "قمح",
+    "confiance": 0.6659,
+    "sure": false,
+    "autre_plante": false,
+    "avis": {
+      "crop": "wheat",
+      "leaf": "tomato",
+      "diseases": "tomato"
+    },
+    "accord": 1,
+    "n_avis": 3,
+    "vlm": null,
+    "source_culture": "vote",
+    "desaccord_vlm": false,
+    "top3": [
+      {
+        "code": "wheat",
+        "fr": "Blé",
+        "confiance": 0.6659
+      },
+      {
+        "code": "tomato",
+        "fr": "Tomate",
+        "confiance": 0.3193
+      },
+      {
+        "code": "corn",
+        "fr": "Maïs",
+        "confiance": 0.0043
+      }
+    ]
+  },
+  "conseil_fr": {
+    "issue": "conseil",
+    "texte": "Diagnostic : Alternariose (brûlure alternarienne) (confiance 98 %).\n\nProduits homologués en Tunisie pour ce cas (liste DGSVCIA du 22/05/2024) :\n- Score 250 EC (Difenoconazole) : dose 0.5 l/ha ; délai avant récolte : 3 jours\n  Dose pratique : pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir l'étiquette ; 250 ml pour vos 0,5 ha\n  En boutique pour Score 250 EC : Score 250 EC (Difenoconazole 250 g/l, EC) — en stock — https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/\n  Pourquoi : homologué contre ce problème sur votre culture ; classe de toxicité OMS II (modérément dangereux) ; délai avant récolte de 3 jours ; groupe FRAC 3\n- Cuproxat (Tribasic copper sulphate) : dose 300 cc/hl ; délai avant récolte : DAR non indiqué : vérifiez l'étiquette\n  Dose pratique : 48 ml pour un pulvérisateur de 16 L ; pour vos 0,5 ha, la quantité dépend du volume de mélange par hectare : voir l'étiquette\n  Pour Cuproxat : non trouvé sur agrishop.tn : demandez un produit à base de Tribasic copper sulphate 345 g/l (soit 190 g/l cuivre metal)\n  Pourquoi : homologué contre ce problème sur votre culture ; substances autorisées en agriculture biologique ; groupe FRAC M01\n- Miravis duo Sc (Pydiflumetofen + Difenoconazole) : dose 0.75 l/ha ; délai avant récolte : DAR non indiqué : vérifiez l'étiquette\n  Dose pratique : pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir l'étiquette ; 375 ml pour vos 0,5 ha\n  Pour Miravis duo Sc : non trouvé sur agrishop.tn : demandez un produit à base de Pydiflumetofen 75 g/l + Difenoconazole 125 g/l\n  Pourquoi : homologué contre ce problème sur votre culture ; groupe FRAC 3 + FRAC 7\n\nAlternez les groupes de mode d'action (code FRAC ou IRAC indiqué sur l'étiquette) d'un traitement à l'autre : répéter le même groupe favorise la résistance de la maladie ou du ravageur.\n\nSécurité :\n- Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes pendant la préparation et l'application ; ne mangez, ne buvez et ne fumez pas ; lavez-vous et lavez vos vêtements après.\n\nPour affiner ma réponse, dites-moi :\n- Dans combien de jours pensez-vous récolter ?\n- Votre récolte part-elle à l'export (Union européenne) ou sur le marché local ?\n- Votre parcelle est-elle en agriculture biologique ?\n\nExtraits des fiches :\n- Des mesures de préventions consistent principalement à observer une rotation de manière que les cultures de Solanées respectent un intervalle de trois ans sur la même parcelle, et à veiller à une bonne aération des plantations (intervalle entre les rangs).\n- Il est également possible de sélectionner des cultivars résistants à cette maladie.\nSource : fiche « Alternariose (brûlure alternarienne) », section prévention : https://fr.wikipedia.org/wiki/Alternaria_solani\n\nIrrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie.\n\nÀ savoir :\n- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette\n\nRespectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA.",
+    "langue": "fr",
+    "diagnostic": {
+      "routing": "leaf",
+      "task": "diseases",
+      "classe": "tomato__early_blight",
+      "nom": "Alternariose (brûlure alternarienne)",
+      "confiance": 98,
+      "fiable": true,
+      "raisons_doute": [],
+      "top3": [
+        ["tomato__early_blight", 0.9838],
+        ["tomato__yellow_leaf_curl_virus", 0.0026],
+        ["tomato__leaf_miner", 0.0024]
+      ],
+      "autre_modele": {
+        "classe": "part de carence (modèle feuille)",
+        "confiance": 0.0211
+      },
+      "choix_du_modele": "combinaison : maladie ou feuille saine (98%)",
+      "niveau": "sur"
+    },
+    "cartes": [
+      {
+        "type": "diagnostic",
+        "texte": "Diagnostic : Alternariose (brûlure alternarienne) (confiance 98 %)."
+      },
+      {
+        "type": "traitements",
+        "texte": "Produits homologués en Tunisie pour ce cas (liste DGSVCIA du 22/05/2024) :\n- Score 250 EC (Difenoconazole) : dose 0.5 l/ha ; délai avant récolte : 3 jours\n  Dose pratique : pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir l'étiquette ; 250 ml pour vos 0,5 ha\n  En boutique pour Score 250 EC : Score 250 EC (Difenoconazole 250 g/l, EC) — en stock — https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/\n  Pourquoi : homologué contre ce problème sur votre culture ; classe de toxicité OMS II (modérément dangereux) ; délai avant récolte de 3 jours ; groupe FRAC 3\n- Cuproxat (Tribasic copper sulphate) : dose 300 cc/hl ; délai avant récolte : DAR non indiqué : vérifiez l'étiquette\n  Dose pratique : 48 ml pour un pulvérisateur de 16 L ; pour vos 0,5 ha, la quantité dépend du volume de mélange par hectare : voir l'étiquette\n  Pour Cuproxat : non trouvé sur agrishop.tn : demandez un produit à base de Tribasic copper sulphate 345 g/l (soit 190 g/l cuivre metal)\n  Pourquoi : homologué contre ce problème sur votre culture ; substances autorisées en agriculture biologique ; groupe FRAC M01\n- Miravis duo Sc (Pydiflumetofen + Difenoconazole) : dose 0.75 l/ha ; délai avant récolte : DAR non indiqué : vérifiez l'étiquette\n  Dose pratique : pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir l'étiquette ; 375 ml pour vos 0,5 ha\n  Pour Miravis duo Sc : non trouvé sur agrishop.tn : demandez un produit à base de Pydiflumetofen 75 g/l + Difenoconazole 125 g/l\n  Pourquoi : homologué contre ce problème sur votre culture ; groupe FRAC 3 + FRAC 7",
+        "titre": "Produits homologués en Tunisie pour ce cas (liste DGSVCIA du 22/05/2024) :",
+        "elements": [
+          "Score 250 EC (Difenoconazole) : dose 0.5 l/ha ; délai avant récolte : 3 jours\n  Dose pratique : pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir l'étiquette ; 250 ml pour vos 0,5 ha\n  En boutique pour Score 250 EC : Score 250 EC (Difenoconazole 250 g/l, EC) — en stock — https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/\n  Pourquoi : homologué contre ce problème sur votre culture ; classe de toxicité OMS II (modérément dangereux) ; délai avant récolte de 3 jours ; groupe FRAC 3",
+          "Cuproxat (Tribasic copper sulphate) : dose 300 cc/hl ; délai avant récolte : DAR non indiqué : vérifiez l'étiquette\n  Dose pratique : 48 ml pour un pulvérisateur de 16 L ; pour vos 0,5 ha, la quantité dépend du volume de mélange par hectare : voir l'étiquette\n  Pour Cuproxat : non trouvé sur agrishop.tn : demandez un produit à base de Tribasic copper sulphate 345 g/l (soit 190 g/l cuivre metal)\n  Pourquoi : homologué contre ce problème sur votre culture ; substances autorisées en agriculture biologique ; groupe FRAC M01",
+          "Miravis duo Sc (Pydiflumetofen + Difenoconazole) : dose 0.75 l/ha ; délai avant récolte : DAR non indiqué : vérifiez l'étiquette\n  Dose pratique : pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir l'étiquette ; 375 ml pour vos 0,5 ha\n  Pour Miravis duo Sc : non trouvé sur agrishop.tn : demandez un produit à base de Pydiflumetofen 75 g/l + Difenoconazole 125 g/l\n  Pourquoi : homologué contre ce problème sur votre culture ; groupe FRAC 3 + FRAC 7"
+        ],
+        "produits": [
+          {
+            "nom": "Score 250 EC",
+            "lignes": [
+              {
+                "role": "produit",
+                "texte": "Score 250 EC (Difenoconazole) : dose 0.5 l/ha ; délai avant récolte : 3 jours"
+              },
+              {
+                "role": "dose_pratique",
+                "texte": "Dose pratique : pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir l'étiquette ; 250 ml pour vos 0,5 ha"
+              },
+              {
+                "role": "boutique",
+                "texte": "En boutique pour Score 250 EC : Score 250 EC (Difenoconazole 250 g/l, EC) — en stock — https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/",
+                "url": "https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/"
+              },
+              {
+                "role": "pourquoi",
+                "texte": "Pourquoi : homologué contre ce problème sur votre culture ; classe de toxicité OMS II (modérément dangereux) ; délai avant récolte de 3 jours ; groupe FRAC 3"
+              }
+            ]
+          },
+          {
+            "nom": "Cuproxat",
+            "lignes": [
+              {
+                "role": "produit",
+                "texte": "Cuproxat (Tribasic copper sulphate) : dose 300 cc/hl ; délai avant récolte : DAR non indiqué : vérifiez l'étiquette"
+              },
+              {
+                "role": "dose_pratique",
+                "texte": "Dose pratique : 48 ml pour un pulvérisateur de 16 L ; pour vos 0,5 ha, la quantité dépend du volume de mélange par hectare : voir l'étiquette"
+              },
+              {
+                "role": "boutique_absente",
+                "texte": "Pour Cuproxat : non trouvé sur agrishop.tn : demandez un produit à base de Tribasic copper sulphate 345 g/l (soit 190 g/l cuivre metal)",
+                "url": null
+              },
+              {
+                "role": "pourquoi",
+                "texte": "Pourquoi : homologué contre ce problème sur votre culture ; substances autorisées en agriculture biologique ; groupe FRAC M01"
+              }
+            ]
+          },
+          {
+            "nom": "Miravis duo Sc",
+            "lignes": [
+              {
+                "role": "produit",
+                "texte": "Miravis duo Sc (Pydiflumetofen + Difenoconazole) : dose 0.75 l/ha ; délai avant récolte : DAR non indiqué : vérifiez l'étiquette"
+              },
+              {
+                "role": "dose_pratique",
+                "texte": "Dose pratique : pour le pulvérisateur, la quantité dépend du volume de mélange par hectare : voir l'étiquette ; 375 ml pour vos 0,5 ha"
+              },
+              {
+                "role": "boutique_absente",
+                "texte": "Pour Miravis duo Sc : non trouvé sur agrishop.tn : demandez un produit à base de Pydiflumetofen 75 g/l + Difenoconazole 125 g/l",
+                "url": null
+              },
+              {
+                "role": "pourquoi",
+                "texte": "Pourquoi : homologué contre ce problème sur votre culture ; groupe FRAC 3 + FRAC 7"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "rotation",
+        "texte": "Alternez les groupes de mode d'action (code FRAC ou IRAC indiqué sur l'étiquette) d'un traitement à l'autre : répéter le même groupe favorise la résistance de la maladie ou du ravageur."
+      },
+      {
+        "type": "securite",
+        "texte": "Sécurité :\n- Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes pendant la préparation et l'application ; ne mangez, ne buvez et ne fumez pas ; lavez-vous et lavez vos vêtements après.",
+        "titre": "Sécurité :",
+        "elements": [
+          "Protection : gants, bottes, lunettes, masque et vêtements qui couvrent bras et jambes pendant la préparation et l'application ; ne mangez, ne buvez et ne fumez pas ; lavez-vous et lavez vos vêtements après."
+        ]
+      },
+      {
+        "type": "affiner",
+        "texte": "Pour affiner ma réponse, dites-moi :\n- Dans combien de jours pensez-vous récolter ?\n- Votre récolte part-elle à l'export (Union européenne) ou sur le marché local ?\n- Votre parcelle est-elle en agriculture biologique ?",
+        "titre": "Pour affiner ma réponse, dites-moi :",
+        "elements": [
+          "Dans combien de jours pensez-vous récolter ?",
+          "Votre récolte part-elle à l'export (Union européenne) ou sur le marché local ?",
+          "Votre parcelle est-elle en agriculture biologique ?"
+        ],
+        "champs": ["days_to_harvest", "market", "organic"]
+      },
+      {
+        "type": "conseils",
+        "texte": "Extraits des fiches :\n- Des mesures de préventions consistent principalement à observer une rotation de manière que les cultures de Solanées respectent un intervalle de trois ans sur la même parcelle, et à veiller à une bonne aération des plantations (intervalle entre les rangs).\n- Il est également possible de sélectionner des cultivars résistants à cette maladie.\nSource : fiche « Alternariose (brûlure alternarienne) », section prévention : https://fr.wikipedia.org/wiki/Alternaria_solani",
+        "titre": "Extraits des fiches :",
+        "citations": [
+          "Des mesures de préventions consistent principalement à observer une rotation de manière que les cultures de Solanées respectent un intervalle de trois ans sur la même parcelle, et à veiller à une bonne aération des plantations (intervalle entre les rangs).",
+          "Il est également possible de sélectionner des cultivars résistants à cette maladie."
+        ],
+        "sources": [
+          "Source : fiche « Alternariose (brûlure alternarienne) », section prévention : https://fr.wikipedia.org/wiki/Alternaria_solani"
+        ]
+      },
+      {
+        "type": "eau",
+        "texte": "Irrigation en mai à Nabeul : besoin moyen d'environ 147.9 mm (1479 m³/ha), soit 4.77 mm par jour après la pluie."
+      },
+      {
+        "type": "a_savoir",
+        "texte": "À savoir :\n- délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette",
+        "titre": "À savoir :",
+        "elements": [
+          "délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette"
+        ]
+      },
+      {
+        "type": "fin",
+        "texte": "Respectez la dose et le délai avant récolte indiqués sur l'étiquette. En cas de doute, contactez le CRDA."
+      }
+    ],
+    "culture": {
+      "code": "tomato",
+      "predite": "tomato",
+      "confiance": 0.9657,
+      "top3": [
+        ["tomato", 0.9657],
+        ["apple", 0.0053],
+        ["datepalm", 0.0047]
+      ],
+      "avis": {
+        "crop": "tomato",
+        "leaf": "tomato",
+        "diseases": "tomato"
+      },
+      "accord": 3,
+      "n_avis": 3,
+      "source_culture": "vote",
+      "desaccord_vlm": false,
+      "source": "agriculteur"
+    },
+    "produits": [
+      {
+        "nom": "Score 250 EC",
+        "dose": "0.5 l/ha",
+        "dar_jours": 3
+      },
+      {
+        "nom": "Cuproxat",
+        "dose": "300 cc/hl",
+        "dar_jours": null
+      },
+      {
+        "nom": "Miravis duo Sc",
+        "dose": "0.75 l/ha",
+        "dar_jours": null
+      }
+    ],
+    "engrais": [],
+    "avertissements": [
+      "délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette"
+    ],
+    "questions": [],
+    "sources": [
+      {
+        "fiche": "Alternariose (brûlure alternarienne)",
+        "fiche_id": "alternariose_solanacees",
+        "section": "prevention",
+        "lien": "https://fr.wikipedia.org/wiki/Alternaria_solani",
+        "licence": "CC BY-SA 4.0 (Wikipédia)"
+      }
+    ],
+    "verification": {
+      "valide": true,
+      "raisons": [],
+      "avertissements": [
+        "« Cuproxat » : DAR non indiqué : vérifiez l'étiquette",
+        "« Miravis duo Sc » : DAR non indiqué : vérifiez l'étiquette"
+      ],
+      "produits_verifies": [
+        {
+          "nom": "Score 250 EC",
+          "product_id": "homo-fon-107",
+          "relation": "direct"
+        },
+        {
+          "nom": "Cuproxat",
+          "product_id": "homo-fon-326",
+          "relation": "direct"
+        },
+        {
+          "nom": "Miravis duo Sc",
+          "product_id": "homo-fon-001",
+          "relation": "direct"
+        }
+      ]
+    },
+    "contexte": {
+      "area": 0.5
+    },
+    "questions_contexte": ["days_to_harvest", "market", "organic"],
+    "trace": [
+      {
+        "agent": "Coordinateur",
+        "action": "plan : Linguistique -> Identification de la culture -> Diagnostic -> (Phytosanitaire + Agronome) -> rédaction -> Linguistique -> Vérificateur",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Linguistique",
+        "action": "message compris (vide) : aucun terme agricole ; contexte : area=0.5",
+        "duree_ms": 160
+      },
+      {
+        "agent": "Identification",
+        "action": "culture confirmée : tomate ; photo : tomate (97%, 3/3 avis d'accord)",
+        "duree_ms": 220
+      },
+      {
+        "agent": "Diagnostic",
+        "action": "leaf -> diseases : tomato__early_blight (0.98, culture tomato), fiable",
+        "duree_ms": 2
+      },
+      {
+        "agent": "Agronome",
+        "action": "besoin en eau calculé",
+        "duree_ms": 2
+      },
+      {
+        "agent": "Phytosanitaire",
+        "action": "3 usages homologués, 3 retenus ; à demander : days_to_harvest, market, organic",
+        "duree_ms": 4424
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse rédigée",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Linguistique",
+        "action": "réponse en français",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Vérificateur",
+        "action": "réponse validée",
+        "duree_ms": 192
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse envoyée (conseil)",
+        "duree_ms": 0
+      }
+    ],
+    "duree_s": 5.05
+  },
+  "conseil_ar": {
+    "issue": "conseil",
+    "texte": "التشخيص: لفحة مبكرة (Alternariose (brûlure alternarienne)) (نسبة الثقة 98 %).\n\nالمبيدات المصادق عليها في تونس لهذه الحالة (قائمة DGSVCIA بتاريخ 22/05/2024):\n- Score 250 EC (Difenoconazole): الجرعة 0.5 l/ha؛ المدة قبل الجني: 3 أيام\n  الكمية العملية: بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق؛ 250 ml لمساحة 0,5 هكتار\n  في المتجر لـScore 250 EC: Score 250 EC (Difenoconazole 250 g/l, EC) — متوفر — https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/\n  لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ صنف السمية II حسب منظمة الصحة العالمية (متوسط الخطورة)؛ مدة قبل الجني 3 أيام؛ مجموعة FRAC 3\n- Cuproxat (Tribasic copper sulphate): الجرعة 300 cc/hl؛ المدة قبل الجني: غير مذكورة في القائمة: تحقق من الملصق\n  الكمية العملية: 48 ml لمرشّة ظهرية سعتها 16 L؛ بالنسبة لمساحة 0,5 هكتار، الكمية حسب حجم المحلول في الهكتار: راجع الملصق\n  بالنسبة لـCuproxat: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على Tribasic copper sulphate 345 g/l (soit 190 g/l cuivre metal)\n  لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ مواد فعالة مسموح بها في الفلاحة البيولوجية؛ مجموعة FRAC M01\n- Miravis duo Sc (Pydiflumetofen + Difenoconazole): الجرعة 0.75 l/ha؛ المدة قبل الجني: غير مذكورة في القائمة: تحقق من الملصق\n  الكمية العملية: بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق؛ 375 ml لمساحة 0,5 هكتار\n  بالنسبة لـMiravis duo Sc: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على Pydiflumetofen 75 g/l + Difenoconazole 125 g/l\n  لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ مجموعة FRAC 3 + FRAC 7\n\nغيّر مجموعة طريقة التأثير (رمز FRAC أو IRAC المكتوب على الملصق) من مداواة إلى أخرى: تكرار نفس المجموعة يساعد المرض أو الحشرة على اكتساب المقاومة.\n\nالسلامة:\n- الوقاية: قفازات وأحذية طويلة ونظارات وكمامة وملابس تغطي الذراعين والساقين أثناء التحضير والاستعمال؛ لا تأكل ولا تشرب ولا تدخّن؛ اغتسل واغسل ملابسك بعد ذلك.\n\nلأدقّق إجابتي، أخبرني:\n- بعد كم يوم تنوي الجني؟\n- هل محصولك موجّه للتصدير (الاتحاد الأوروبي) أم للسوق المحلية؟\n- هل قطعتك في الفلاحة البيولوجية؟\n\nمزيد من المعلومات (بالفرنسية أو بالإنجليزية):\n- المصدر: بطاقة «Alternariose (brûlure alternarienne)»، قسم الوقاية: https://fr.wikipedia.org/wiki/Alternaria_solani\n\nالري في ماي بـنابل: حاجة متوسطة تقارب 147.9 مم (1479 م³/هكتار)، أي 4.77 مم في اليوم بعد احتساب الأمطار.\n\nمعلومات مهمة:\n- المدة قبل الجني غير محددة في القائمة الرسمية لبعض المنتجات: راجع الملصق\n\nاحترم الجرعة والمدة قبل الجني المذكورتين على الملصق. في حالة الشك، اتصل بالـCRDA.",
+    "langue": "ar",
+    "diagnostic": {
+      "routing": "leaf",
+      "task": "diseases",
+      "classe": "tomato__early_blight",
+      "nom": "Alternariose (brûlure alternarienne)",
+      "confiance": 98,
+      "fiable": true,
+      "raisons_doute": [],
+      "top3": [
+        ["tomato__early_blight", 0.9838],
+        ["tomato__yellow_leaf_curl_virus", 0.0026],
+        ["tomato__leaf_miner", 0.0024]
+      ],
+      "autre_modele": {
+        "classe": "part de carence (modèle feuille)",
+        "confiance": 0.0211
+      },
+      "choix_du_modele": "combinaison : maladie ou feuille saine (98%)",
+      "niveau": "sur"
+    },
+    "cartes": [
+      {
+        "type": "diagnostic",
+        "texte": "التشخيص: لفحة مبكرة (Alternariose (brûlure alternarienne)) (نسبة الثقة 98 %)."
+      },
+      {
+        "type": "traitements",
+        "texte": "المبيدات المصادق عليها في تونس لهذه الحالة (قائمة DGSVCIA بتاريخ 22/05/2024):\n- Score 250 EC (Difenoconazole): الجرعة 0.5 l/ha؛ المدة قبل الجني: 3 أيام\n  الكمية العملية: بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق؛ 250 ml لمساحة 0,5 هكتار\n  في المتجر لـScore 250 EC: Score 250 EC (Difenoconazole 250 g/l, EC) — متوفر — https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/\n  لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ صنف السمية II حسب منظمة الصحة العالمية (متوسط الخطورة)؛ مدة قبل الجني 3 أيام؛ مجموعة FRAC 3\n- Cuproxat (Tribasic copper sulphate): الجرعة 300 cc/hl؛ المدة قبل الجني: غير مذكورة في القائمة: تحقق من الملصق\n  الكمية العملية: 48 ml لمرشّة ظهرية سعتها 16 L؛ بالنسبة لمساحة 0,5 هكتار، الكمية حسب حجم المحلول في الهكتار: راجع الملصق\n  بالنسبة لـCuproxat: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على Tribasic copper sulphate 345 g/l (soit 190 g/l cuivre metal)\n  لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ مواد فعالة مسموح بها في الفلاحة البيولوجية؛ مجموعة FRAC M01\n- Miravis duo Sc (Pydiflumetofen + Difenoconazole): الجرعة 0.75 l/ha؛ المدة قبل الجني: غير مذكورة في القائمة: تحقق من الملصق\n  الكمية العملية: بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق؛ 375 ml لمساحة 0,5 هكتار\n  بالنسبة لـMiravis duo Sc: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على Pydiflumetofen 75 g/l + Difenoconazole 125 g/l\n  لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ مجموعة FRAC 3 + FRAC 7",
+        "titre": "المبيدات المصادق عليها في تونس لهذه الحالة (قائمة DGSVCIA بتاريخ 22/05/2024):",
+        "elements": [
+          "Score 250 EC (Difenoconazole): الجرعة 0.5 l/ha؛ المدة قبل الجني: 3 أيام\n  الكمية العملية: بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق؛ 250 ml لمساحة 0,5 هكتار\n  في المتجر لـScore 250 EC: Score 250 EC (Difenoconazole 250 g/l, EC) — متوفر — https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/\n  لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ صنف السمية II حسب منظمة الصحة العالمية (متوسط الخطورة)؛ مدة قبل الجني 3 أيام؛ مجموعة FRAC 3",
+          "Cuproxat (Tribasic copper sulphate): الجرعة 300 cc/hl؛ المدة قبل الجني: غير مذكورة في القائمة: تحقق من الملصق\n  الكمية العملية: 48 ml لمرشّة ظهرية سعتها 16 L؛ بالنسبة لمساحة 0,5 هكتار، الكمية حسب حجم المحلول في الهكتار: راجع الملصق\n  بالنسبة لـCuproxat: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على Tribasic copper sulphate 345 g/l (soit 190 g/l cuivre metal)\n  لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ مواد فعالة مسموح بها في الفلاحة البيولوجية؛ مجموعة FRAC M01",
+          "Miravis duo Sc (Pydiflumetofen + Difenoconazole): الجرعة 0.75 l/ha؛ المدة قبل الجني: غير مذكورة في القائمة: تحقق من الملصق\n  الكمية العملية: بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق؛ 375 ml لمساحة 0,5 هكتار\n  بالنسبة لـMiravis duo Sc: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على Pydiflumetofen 75 g/l + Difenoconazole 125 g/l\n  لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ مجموعة FRAC 3 + FRAC 7"
+        ],
+        "produits": [
+          {
+            "nom": "Score 250 EC",
+            "lignes": [
+              {
+                "role": "produit",
+                "texte": "Score 250 EC (Difenoconazole): الجرعة 0.5 l/ha؛ المدة قبل الجني: 3 أيام"
+              },
+              {
+                "role": "dose_pratique",
+                "texte": "الكمية العملية: بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق؛ 250 ml لمساحة 0,5 هكتار"
+              },
+              {
+                "role": "boutique",
+                "texte": "في المتجر لـScore 250 EC: Score 250 EC (Difenoconazole 250 g/l, EC) — متوفر — https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/",
+                "url": "https://www.agrishop.tn/store/category/Pesticides/Fongicides/score-250-ec/"
+              },
+              {
+                "role": "pourquoi",
+                "texte": "لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ صنف السمية II حسب منظمة الصحة العالمية (متوسط الخطورة)؛ مدة قبل الجني 3 أيام؛ مجموعة FRAC 3"
+              }
+            ]
+          },
+          {
+            "nom": "Cuproxat",
+            "lignes": [
+              {
+                "role": "produit",
+                "texte": "Cuproxat (Tribasic copper sulphate): الجرعة 300 cc/hl؛ المدة قبل الجني: غير مذكورة في القائمة: تحقق من الملصق"
+              },
+              {
+                "role": "dose_pratique",
+                "texte": "الكمية العملية: 48 ml لمرشّة ظهرية سعتها 16 L؛ بالنسبة لمساحة 0,5 هكتار، الكمية حسب حجم المحلول في الهكتار: راجع الملصق"
+              },
+              {
+                "role": "boutique_absente",
+                "texte": "بالنسبة لـCuproxat: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على Tribasic copper sulphate 345 g/l (soit 190 g/l cuivre metal)",
+                "url": null
+              },
+              {
+                "role": "pourquoi",
+                "texte": "لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ مواد فعالة مسموح بها في الفلاحة البيولوجية؛ مجموعة FRAC M01"
+              }
+            ]
+          },
+          {
+            "nom": "Miravis duo Sc",
+            "lignes": [
+              {
+                "role": "produit",
+                "texte": "Miravis duo Sc (Pydiflumetofen + Difenoconazole): الجرعة 0.75 l/ha؛ المدة قبل الجني: غير مذكورة في القائمة: تحقق من الملصق"
+              },
+              {
+                "role": "dose_pratique",
+                "texte": "الكمية العملية: بالنسبة للمرشّة، الكمية حسب حجم المحلول في الهكتار: راجع الملصق؛ 375 ml لمساحة 0,5 هكتار"
+              },
+              {
+                "role": "boutique_absente",
+                "texte": "بالنسبة لـMiravis duo Sc: غير موجود في agrishop.tn: اطلب منتجًا يحتوي على Pydiflumetofen 75 g/l + Difenoconazole 125 g/l",
+                "url": null
+              },
+              {
+                "role": "pourquoi",
+                "texte": "لماذا: مصادق عليه ضد هذه المشكلة على زراعتك؛ مجموعة FRAC 3 + FRAC 7"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "rotation",
+        "texte": "غيّر مجموعة طريقة التأثير (رمز FRAC أو IRAC المكتوب على الملصق) من مداواة إلى أخرى: تكرار نفس المجموعة يساعد المرض أو الحشرة على اكتساب المقاومة."
+      },
+      {
+        "type": "securite",
+        "texte": "السلامة:\n- الوقاية: قفازات وأحذية طويلة ونظارات وكمامة وملابس تغطي الذراعين والساقين أثناء التحضير والاستعمال؛ لا تأكل ولا تشرب ولا تدخّن؛ اغتسل واغسل ملابسك بعد ذلك.",
+        "titre": "السلامة:",
+        "elements": [
+          "الوقاية: قفازات وأحذية طويلة ونظارات وكمامة وملابس تغطي الذراعين والساقين أثناء التحضير والاستعمال؛ لا تأكل ولا تشرب ولا تدخّن؛ اغتسل واغسل ملابسك بعد ذلك."
+        ]
+      },
+      {
+        "type": "affiner",
+        "texte": "لأدقّق إجابتي، أخبرني:\n- بعد كم يوم تنوي الجني؟\n- هل محصولك موجّه للتصدير (الاتحاد الأوروبي) أم للسوق المحلية؟\n- هل قطعتك في الفلاحة البيولوجية؟",
+        "titre": "لأدقّق إجابتي، أخبرني:",
+        "elements": [
+          "بعد كم يوم تنوي الجني؟",
+          "هل محصولك موجّه للتصدير (الاتحاد الأوروبي) أم للسوق المحلية؟",
+          "هل قطعتك في الفلاحة البيولوجية؟"
+        ],
+        "champs": ["days_to_harvest", "market", "organic"]
+      },
+      {
+        "type": "sources",
+        "texte": "مزيد من المعلومات (بالفرنسية أو بالإنجليزية):\n- المصدر: بطاقة «Alternariose (brûlure alternarienne)»، قسم الوقاية: https://fr.wikipedia.org/wiki/Alternaria_solani",
+        "titre": "مزيد من المعلومات (بالفرنسية أو بالإنجليزية):",
+        "elements": [
+          "المصدر: بطاقة «Alternariose (brûlure alternarienne)»، قسم الوقاية: https://fr.wikipedia.org/wiki/Alternaria_solani"
+        ]
+      },
+      {
+        "type": "eau",
+        "texte": "الري في ماي بـنابل: حاجة متوسطة تقارب 147.9 مم (1479 م³/هكتار)، أي 4.77 مم في اليوم بعد احتساب الأمطار."
+      },
+      {
+        "type": "a_savoir",
+        "texte": "معلومات مهمة:\n- المدة قبل الجني غير محددة في القائمة الرسمية لبعض المنتجات: راجع الملصق",
+        "titre": "معلومات مهمة:",
+        "elements": ["المدة قبل الجني غير محددة في القائمة الرسمية لبعض المنتجات: راجع الملصق"]
+      },
+      {
+        "type": "fin",
+        "texte": "احترم الجرعة والمدة قبل الجني المذكورتين على الملصق. في حالة الشك، اتصل بالـCRDA."
+      }
+    ],
+    "culture": {
+      "code": "tomato",
+      "predite": "tomato",
+      "confiance": 0.9657,
+      "top3": [
+        ["tomato", 0.9657],
+        ["apple", 0.0053],
+        ["datepalm", 0.0047]
+      ],
+      "avis": {
+        "crop": "tomato",
+        "leaf": "tomato",
+        "diseases": "tomato"
+      },
+      "accord": 3,
+      "n_avis": 3,
+      "source_culture": "vote",
+      "desaccord_vlm": false,
+      "source": "agriculteur"
+    },
+    "produits": [
+      {
+        "nom": "Score 250 EC",
+        "dose": "0.5 l/ha",
+        "dar_jours": 3
+      },
+      {
+        "nom": "Cuproxat",
+        "dose": "300 cc/hl",
+        "dar_jours": null
+      },
+      {
+        "nom": "Miravis duo Sc",
+        "dose": "0.75 l/ha",
+        "dar_jours": null
+      }
+    ],
+    "engrais": [],
+    "avertissements": [
+      "délai avant récolte non précisé dans la liste officielle pour certains produits : voir l'étiquette"
+    ],
+    "questions": [],
+    "sources": [
+      {
+        "fiche": "Alternariose (brûlure alternarienne)",
+        "fiche_id": "alternariose_solanacees",
+        "section": "prevention",
+        "lien": "https://fr.wikipedia.org/wiki/Alternaria_solani",
+        "licence": "CC BY-SA 4.0 (Wikipédia)"
+      }
+    ],
+    "verification": {
+      "valide": true,
+      "raisons": [],
+      "avertissements": [
+        "« Cuproxat » : DAR non indiqué : vérifiez l'étiquette",
+        "« Miravis duo Sc » : DAR non indiqué : vérifiez l'étiquette"
+      ],
+      "produits_verifies": [
+        {
+          "nom": "Score 250 EC",
+          "product_id": "homo-fon-107",
+          "relation": "direct"
+        },
+        {
+          "nom": "Cuproxat",
+          "product_id": "homo-fon-326",
+          "relation": "direct"
+        },
+        {
+          "nom": "Miravis duo Sc",
+          "product_id": "homo-fon-001",
+          "relation": "direct"
+        }
+      ]
+    },
+    "contexte": {
+      "area": 0.5
+    },
+    "questions_contexte": ["days_to_harvest", "market", "organic"],
+    "trace": [
+      {
+        "agent": "Coordinateur",
+        "action": "plan : Linguistique -> Identification de la culture -> Diagnostic -> (Phytosanitaire + Agronome) -> rédaction -> Linguistique -> Vérificateur",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Linguistique",
+        "action": "message compris (vide) : aucun terme agricole ; contexte : area=0.5",
+        "duree_ms": 2
+      },
+      {
+        "agent": "Identification",
+        "action": "culture confirmée : tomate ; photo : tomate (97%, 3/3 avis d'accord)",
+        "duree_ms": 253
+      },
+      {
+        "agent": "Diagnostic",
+        "action": "leaf -> diseases : tomato__early_blight (0.98, culture tomato), fiable",
+        "duree_ms": 1
+      },
+      {
+        "agent": "Agronome",
+        "action": "besoin en eau calculé",
+        "duree_ms": 2
+      },
+      {
+        "agent": "Phytosanitaire",
+        "action": "3 usages homologués, 3 retenus ; à demander : days_to_harvest, market, organic",
+        "duree_ms": 25
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse rédigée",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Linguistique",
+        "action": "réponse en arabe, écrite par le code ; 3 question(s) de contexte",
+        "duree_ms": 2
+      },
+      {
+        "agent": "Vérificateur",
+        "action": "réponse validée",
+        "duree_ms": 166
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse envoyée (conseil)",
+        "duree_ms": 0
+      }
+    ],
+    "duree_s": 0.45
+  },
+  "question_fr": {
+    "issue": "question",
+    "texte": "Je ne suis pas encore sûr du diagnostic (confiance 16% sous le seuil de 70%).\n\nPistes possibles : carence en potassium (K), carence en magnésium (Mg).\n\nPour vous répondre sans risque, dites-moi :\n- Les symptômes sont-ils surtout sur les vieilles feuilles ?\n- Voyez-vous : bords des feuilles qui jaunissent puis brûlent (nécrose marginale) ?\n- Pouvez-vous envoyer une autre photo, de près, d'une feuille ou d'un fruit atteint, à la lumière du jour ?\n- Depuis quand voyez-vous ces symptômes, et sur combien de plantes ?",
+    "langue": "fr",
+    "diagnostic": {
+      "routing": "leaf",
+      "task": "deficiency",
+      "classe": "K_deficiency",
+      "nom": "carence en potassium (K)",
+      "confiance": 16,
+      "fiable": false,
+      "raisons_doute": ["confiance 16% sous le seuil de 70%"],
+      "top3": [
+        ["K_deficiency", 0.278],
+        ["Mg_deficiency", 0.2465],
+        ["Zn_deficiency", 0.124]
+      ],
+      "autre_modele": {
+        "classe": "part de carence (modèle feuille)",
+        "confiance": 0.5667
+      },
+      "choix_du_modele": "combinaison : carence (57%)",
+      "niveau": "incertain"
+    },
+    "cartes": [
+      {
+        "type": "doute",
+        "texte": "Je ne suis pas encore sûr du diagnostic (confiance 16% sous le seuil de 70%)."
+      },
+      {
+        "type": "pistes",
+        "texte": "Pistes possibles : carence en potassium (K), carence en magnésium (Mg)."
+      },
+      {
+        "type": "questions",
+        "texte": "Pour vous répondre sans risque, dites-moi :\n- Les symptômes sont-ils surtout sur les vieilles feuilles ?\n- Voyez-vous : bords des feuilles qui jaunissent puis brûlent (nécrose marginale) ?\n- Pouvez-vous envoyer une autre photo, de près, d'une feuille ou d'un fruit atteint, à la lumière du jour ?\n- Depuis quand voyez-vous ces symptômes, et sur combien de plantes ?",
+        "titre": "Pour vous répondre sans risque, dites-moi :",
+        "elements": [
+          "Les symptômes sont-ils surtout sur les vieilles feuilles ?",
+          "Voyez-vous : bords des feuilles qui jaunissent puis brûlent (nécrose marginale) ?",
+          "Pouvez-vous envoyer une autre photo, de près, d'une feuille ou d'un fruit atteint, à la lumière du jour ?",
+          "Depuis quand voyez-vous ces symptômes, et sur combien de plantes ?"
+        ]
+      }
+    ],
+    "culture": {
+      "code": "olive",
+      "predite": "wheat",
+      "confiance": 0.6659,
+      "top3": [
+        ["wheat", 0.6659],
+        ["tomato", 0.3193],
+        ["corn", 0.0043]
+      ],
+      "avis": {
+        "crop": "wheat",
+        "leaf": "tomato",
+        "diseases": "tomato"
+      },
+      "accord": 1,
+      "n_avis": 3,
+      "source_culture": "vote",
+      "desaccord_vlm": false,
+      "source": "agriculteur"
+    },
+    "produits": [],
+    "engrais": [],
+    "avertissements": [],
+    "questions": [
+      "Les symptômes sont-ils surtout sur les vieilles feuilles ?",
+      "Voyez-vous : bords des feuilles qui jaunissent puis brûlent (nécrose marginale) ?",
+      "Pouvez-vous envoyer une autre photo, de près, d'une feuille ou d'un fruit atteint, à la lumière du jour ?",
+      "Depuis quand voyez-vous ces symptômes, et sur combien de plantes ?"
+    ],
+    "sources": [],
+    "verification": {
+      "valide": true,
+      "raisons": [],
+      "avertissements": [],
+      "produits_verifies": []
+    },
+    "contexte": {},
+    "questions_contexte": [],
+    "trace": [
+      {
+        "agent": "Coordinateur",
+        "action": "plan : Linguistique -> Identification de la culture -> Diagnostic -> (Phytosanitaire + Agronome) -> rédaction -> Linguistique -> Vérificateur",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Linguistique",
+        "action": "message compris (vide) : aucun terme agricole ; contexte : aucun",
+        "duree_ms": 3
+      },
+      {
+        "agent": "Identification",
+        "action": "culture confirmée : olivier ; photo : ble (67%, 1/3 avis d'accord)",
+        "duree_ms": 238
+      },
+      {
+        "agent": "Diagnostic",
+        "action": "leaf -> deficiency : K_deficiency (0.16), doute : confiance 16% sous le seuil de 70%",
+        "duree_ms": 8
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse rédigée",
+        "duree_ms": 1
+      },
+      {
+        "agent": "Linguistique",
+        "action": "réponse en français",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Vérificateur",
+        "action": "réponse bloquée : K_deficiency n'a jamais été vue sur cette culture : la présenter comme hypothèse à confirmer",
+        "duree_ms": 42
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse réécrite (essai 2) sans : K_deficiency n'a jamais été vue sur cette culture : la présenter comme hypothèse à confirmer",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Linguistique",
+        "action": "réponse en français",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Vérificateur",
+        "action": "réponse validée",
+        "duree_ms": 36
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse envoyée (question)",
+        "duree_ms": 0
+      }
+    ],
+    "duree_s": 0.33
+  },
+  "question_ar": {
+    "issue": "question",
+    "texte": "لست متأكدًا بعد من التشخيص.\n\nاحتمالات ممكنة: نقص البوتاسيوم (K)، نقص المغنيزيوم (Mg).\n\nلأجيبك دون مخاطرة، أخبرني:\n- هل تظهر الأعراض خاصة على الأوراق القديمة؟\n- هل تلاحظ اصفرار حواف الأوراق ثم احتراقها (موت الحواف)؟\n- هل يمكنك إرسال صورة أخرى عن قرب لورقة أو ثمرة مصابة، في ضوء النهار؟\n- منذ متى تلاحظ هذه الأعراض، وعلى كم نبتة؟",
+    "langue": "ar",
+    "diagnostic": {
+      "routing": "leaf",
+      "task": "deficiency",
+      "classe": "K_deficiency",
+      "nom": "carence en potassium (K)",
+      "confiance": 16,
+      "fiable": false,
+      "raisons_doute": ["confiance 16% sous le seuil de 70%"],
+      "top3": [
+        ["K_deficiency", 0.278],
+        ["Mg_deficiency", 0.2465],
+        ["Zn_deficiency", 0.124]
+      ],
+      "autre_modele": {
+        "classe": "part de carence (modèle feuille)",
+        "confiance": 0.5667
+      },
+      "choix_du_modele": "combinaison : carence (57%)",
+      "niveau": "incertain"
+    },
+    "cartes": [
+      {
+        "type": "doute",
+        "texte": "لست متأكدًا بعد من التشخيص."
+      },
+      {
+        "type": "pistes",
+        "texte": "احتمالات ممكنة: نقص البوتاسيوم (K)، نقص المغنيزيوم (Mg)."
+      },
+      {
+        "type": "questions",
+        "texte": "لأجيبك دون مخاطرة، أخبرني:\n- هل تظهر الأعراض خاصة على الأوراق القديمة؟\n- هل تلاحظ اصفرار حواف الأوراق ثم احتراقها (موت الحواف)؟\n- هل يمكنك إرسال صورة أخرى عن قرب لورقة أو ثمرة مصابة، في ضوء النهار؟\n- منذ متى تلاحظ هذه الأعراض، وعلى كم نبتة؟",
+        "titre": "لأجيبك دون مخاطرة، أخبرني:",
+        "elements": [
+          "هل تظهر الأعراض خاصة على الأوراق القديمة؟",
+          "هل تلاحظ اصفرار حواف الأوراق ثم احتراقها (موت الحواف)؟",
+          "هل يمكنك إرسال صورة أخرى عن قرب لورقة أو ثمرة مصابة، في ضوء النهار؟",
+          "منذ متى تلاحظ هذه الأعراض، وعلى كم نبتة؟"
+        ]
+      }
+    ],
+    "culture": {
+      "code": "olive",
+      "predite": "wheat",
+      "confiance": 0.6659,
+      "top3": [
+        ["wheat", 0.6659],
+        ["tomato", 0.3193],
+        ["corn", 0.0043]
+      ],
+      "avis": {
+        "crop": "wheat",
+        "leaf": "tomato",
+        "diseases": "tomato"
+      },
+      "accord": 1,
+      "n_avis": 3,
+      "source_culture": "vote",
+      "desaccord_vlm": false,
+      "source": "agriculteur"
+    },
+    "produits": [],
+    "engrais": [],
+    "avertissements": [],
+    "questions": [
+      "Les symptômes sont-ils surtout sur les vieilles feuilles ?",
+      "Voyez-vous : bords des feuilles qui jaunissent puis brûlent (nécrose marginale) ?",
+      "Pouvez-vous envoyer une autre photo, de près, d'une feuille ou d'un fruit atteint, à la lumière du jour ?",
+      "Depuis quand voyez-vous ces symptômes, et sur combien de plantes ?"
+    ],
+    "sources": [],
+    "verification": {
+      "valide": true,
+      "raisons": [],
+      "avertissements": [],
+      "produits_verifies": []
+    },
+    "contexte": {},
+    "questions_contexte": [],
+    "trace": [
+      {
+        "agent": "Coordinateur",
+        "action": "plan : Linguistique -> Identification de la culture -> Diagnostic -> (Phytosanitaire + Agronome) -> rédaction -> Linguistique -> Vérificateur",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Linguistique",
+        "action": "message compris (vide) : aucun terme agricole ; contexte : aucun",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Identification",
+        "action": "culture confirmée : olivier ; photo : ble (67%, 1/3 avis d'accord)",
+        "duree_ms": 221
+      },
+      {
+        "agent": "Diagnostic",
+        "action": "leaf -> deficiency : K_deficiency (0.16), doute : confiance 16% sous le seuil de 70%",
+        "duree_ms": 8
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse rédigée",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Linguistique",
+        "action": "réponse en arabe, écrite par le code",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Vérificateur",
+        "action": "réponse bloquée : K_deficiency n'a jamais été vue sur cette culture : la présenter comme hypothèse à confirmer",
+        "duree_ms": 33
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse réécrite (essai 2) sans : K_deficiency n'a jamais été vue sur cette culture : la présenter comme hypothèse à confirmer",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Linguistique",
+        "action": "réponse en arabe, écrite par le code",
+        "duree_ms": 0
+      },
+      {
+        "agent": "Vérificateur",
+        "action": "réponse validée",
+        "duree_ms": 22
+      },
+      {
+        "agent": "Coordinateur",
+        "action": "réponse envoyée (question)",
+        "duree_ms": 0
+      }
+    ],
+    "duree_s": 0.29
+  },
+  "cultures": [
+    {
+      "code": "tomato",
+      "fr": "Tomate",
+      "ar": "طماطم"
+    },
+    {
+      "code": "olive",
+      "fr": "Olivier",
+      "ar": "زيتون"
+    },
+    {
+      "code": "citrus",
+      "fr": "Agrumes",
+      "ar": "قوارص"
+    },
+    {
+      "code": "pepper",
+      "fr": "Poivron / piment",
+      "ar": "فلفل"
+    },
+    {
+      "code": "potato",
+      "fr": "Pomme de terre",
+      "ar": "بطاطا"
+    },
+    {
+      "code": "grape",
+      "fr": "Vigne",
+      "ar": "عنب"
+    },
+    {
+      "code": "datepalm",
+      "fr": "Palmier dattier",
+      "ar": "نخيل التمر"
+    },
+    {
+      "code": "wheat",
+      "fr": "Blé",
+      "ar": "قمح"
+    },
+    {
+      "code": "corn",
+      "fr": "Maïs",
+      "ar": "ذرة"
+    },
+    {
+      "code": "apple",
+      "fr": "Pommier",
+      "ar": "تفاح"
+    },
+    {
+      "code": "peach",
+      "fr": "Pêcher",
+      "ar": "خوخ"
+    },
+    {
+      "code": "cherry",
+      "fr": "Cerisier",
+      "ar": "كرز"
+    },
+    {
+      "code": "strawberry",
+      "fr": "Fraisier",
+      "ar": "فراولة"
+    },
+    {
+      "code": "squash",
+      "fr": "Courge",
+      "ar": "قرع"
+    }
+  ],
+  "gouvernorats": [
+    {
+      "fr": "Ariana",
+      "ar": "أريانة"
+    },
+    {
+      "fr": "Ben Arous",
+      "ar": "بن عروس"
+    },
+    {
+      "fr": "Bizerte",
+      "ar": "بنزرت"
+    },
+    {
+      "fr": "Béja",
+      "ar": "باجة"
+    },
+    {
+      "fr": "Gabès",
+      "ar": "قابس"
+    },
+    {
+      "fr": "Gafsa",
+      "ar": "قفصة"
+    },
+    {
+      "fr": "Jendouba",
+      "ar": "جندوبة"
+    },
+    {
+      "fr": "Kairouan",
+      "ar": "القيروان"
+    },
+    {
+      "fr": "Kasserine",
+      "ar": "القصرين"
+    },
+    {
+      "fr": "Kébili",
+      "ar": "قبلي"
+    },
+    {
+      "fr": "Le Kef",
+      "ar": "الكاف"
+    },
+    {
+      "fr": "Mahdia",
+      "ar": "المهدية"
+    },
+    {
+      "fr": "Manouba",
+      "ar": "منوبة"
+    },
+    {
+      "fr": "Monastir",
+      "ar": "المنستير"
+    },
+    {
+      "fr": "Médenine",
+      "ar": "مدنين"
+    },
+    {
+      "fr": "Nabeul",
+      "ar": "نابل"
+    },
+    {
+      "fr": "Sfax",
+      "ar": "صفاقس"
+    },
+    {
+      "fr": "Sidi Bouzid",
+      "ar": "سيدي بوزيد"
+    },
+    {
+      "fr": "Siliana",
+      "ar": "سليانة"
+    },
+    {
+      "fr": "Sousse",
+      "ar": "سوسة"
+    },
+    {
+      "fr": "Tataouine",
+      "ar": "تطاوين"
+    },
+    {
+      "fr": "Tozeur",
+      "ar": "توزر"
+    },
+    {
+      "fr": "Tunis",
+      "ar": "تونس"
+    },
+    {
+      "fr": "Zaghouan",
+      "ar": "زغوان"
+    }
+  ]
+}

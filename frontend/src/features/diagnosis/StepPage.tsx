@@ -23,8 +23,8 @@ export function StepPage({
   }, [step]);
   const steps = STEP_IDS.map((id) => ({ id, label: t(`steps.${id}`) }));
   return (
-    <div className="space-y-5 pb-28">
-      <Stepper steps={steps} current={STEP_IDS.indexOf(step)} />
+    <div className="space-y-5 pb-28 print:pb-0">
+      <Stepper steps={steps} current={STEP_IDS.indexOf(step)} className="print:hidden" />
       <h1
         ref={heading}
         tabIndex={-1}
@@ -34,7 +34,7 @@ export function StepPage({
       </h1>
       {children}
       {actions && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-bg/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+        <div className="fixed inset-x-0 bottom-0 z-20 print:hidden border-t border-border bg-bg/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
           <div className="mx-auto flex max-w-3xl gap-3">{actions}</div>
         </div>
       )}

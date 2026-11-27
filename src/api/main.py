@@ -16,8 +16,11 @@ Open:  http://localhost:8000          the app (phone: http://<IP of the computer
   GET  /gouvernorats  the 24 governorates (French and Arabic names) for the app
   GET  /health        models loaded, device
 
-  POST /feedback      form-data: journal_id, correct (oui | non), vraie_reponse, garder_photo (oui | non, default
-                      non: the tester's consent to keep the photo for the Tunisian test set) -> stored with the analysis
+  POST /feedback      form-data: journal_id, verdict (correct | partiel | faux) or correct (oui | non), vraie_culture,
+                      vrai_probleme, vraie_reponse, commentaire, garder_photo (oui | non, default non: the tester's
+                      consent to keep the photo for the Tunisian test set) -> stored with the analysis
+  GET  /admin/journal, /admin/journal.csv   the test journal and the accuracy per crop (AGRIA_ADMIN_TOKEN, header
+                      "Authorization: Bearer <token>"; 404 when no token is set)
 
 Web app: the first app (src/app) by default; AGRIA_UI=react serves the React build frontend/dist (frontend/README.md).
 Response schemas: src/api/schemas.py (documentation and TypeScript types of the frontend; the JSON is not filtered).
@@ -37,7 +40,8 @@ import threading
 import uuid
 from pathlib import Path
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
 from typing import List
 from fastapi.staticfiles import StaticFiles
@@ -68,6 +72,8 @@ _lock = threading.Lock()
 app = FastAPI(title="AgrIA", version="1.0",
               description="Diagnostic des plantes pour les agriculteurs tunisiens : six agents, réponses en français "
                           "ou en arabe, uniquement des produits homologués en Tunisie.")
+# compressed answers (JSON, the app's scripts and styles): 3 to 5 times smaller on a weak 3G network
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 
 @app.on_event("startup")
@@ -85,7 +91,9 @@ def warm_up():
 @app.get("/health", responses=S.doc(S.Health))
 def health():
     import predict
-    return {"statut": "ok", "modeles": sorted(predict._CACHE), "device": str(predict._DEVICE)}
+    return {"statut": "ok", "modeles": sorted(predict._CACHE), "device": str(predict._DEVICE),
+            # the app shows the test-mode banner and the feedback form only when the journal is on
+            "mode_test": journal_on(), "admin": bool(admin_token())}
 
 
 @app.get("/gouvernorats", responses=S.doc(List[S.Gouvernorat]))
@@ -198,22 +206,110 @@ def keep_in_journal(path, answer, inputs):
     return jid
 
 
+VERDICTS = ("correct", "partiel", "faux")
+
+
 @app.post("/feedback", responses=S.doc(S.FeedbackSaved))
-def feedback(journal_id: str = Form(...), correct: str = Form(...), vraie_reponse: str = Form(""),
-             garder_photo: str = Form("non")):
+def feedback(journal_id: str = Form(...), correct: str = Form(None), verdict: str = Form(None),
+             vraie_reponse: str = Form(""), vraie_culture: str = Form(""), vrai_probleme: str = Form(""),
+             commentaire: str = Form(""), garder_photo: str = Form("non")):
+    """The tester's opinion on an analysis of the journal. `verdict` (correct | partiel | faux) or, for the first
+    app, `correct` (oui | non). garder_photo = oui: consent to keep the photo for the Tunisian test set."""
     if not journal_on():
         raise HTTPException(404, "journal désactivé")
     if not re.fullmatch(r"[0-9]{8}-[0-9]{6}-[0-9a-f]{6}", journal_id):
         raise HTTPException(422, "journal_id invalide")
+    if verdict is None and correct is None:
+        raise HTTPException(422, "verdict (correct | partiel | faux) ou correct (oui | non)")
+    if verdict is not None and verdict not in VERDICTS:
+        raise HTTPException(422, "verdict : correct, partiel ou faux")
     f = JOURNAL_DIR / f"{journal_id}.json"
     if not f.exists():
         raise HTTPException(404, "analyse inconnue")
+    verdict = verdict or ("correct" if correct == "oui" else "faux")
+    clean = lambda x: x.strip()[:300] or None  # noqa: E731
     record = json.loads(f.read_text(encoding="utf-8"))
-    record["avis"] = {"correct": correct == "oui", "vraie_reponse": vraie_reponse.strip() or None,
-                      "garder_photo": garder_photo == "oui",
+    record["avis"] = {"correct": verdict == "correct", "verdict": verdict, "vraie_reponse": clean(vraie_reponse),
+                      "vraie_culture": clean(vraie_culture), "vrai_probleme": clean(vrai_probleme),
+                      "commentaire": clean(commentaire), "garder_photo": garder_photo == "oui",
                       "date": datetime.datetime.now().isoformat(timespec="seconds")}
     f.write_text(json.dumps(record, ensure_ascii=False, indent=1), encoding="utf-8")
     return {"statut": "enregistré"}
+
+
+# ------------------------------------------------------------------ test journal for the admin page
+# AGRIA_ADMIN_TOKEN set: GET /admin/journal (JSON) and /admin/journal.csv, with "Authorization: Bearer <token>".
+# Not set: the routes answer 404 (no admin at all).
+def admin_token():
+    return os.environ.get("AGRIA_ADMIN_TOKEN") or None
+
+
+def check_admin(authorization):
+    import secrets
+    token = admin_token()
+    if not token:
+        raise HTTPException(404, "administration désactivée")
+    given = (authorization or "").removeprefix("Bearer ").strip()
+    if not secrets.compare_digest(given.encode(), token.encode()):
+        raise HTTPException(401, "jeton d'administration invalide")
+
+
+def journal_rows():
+    """One row per analysis of the journal, its tester's opinion, and the statistics per crop (computed here: the
+    app only displays them)."""
+    rows = []
+    for f in sorted(JOURNAL_DIR.glob("*.json"), reverse=True) if JOURNAL_DIR.exists() else []:
+        try:
+            r = json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        e, d, a = r.get("entree") or {}, r.get("diagnostic") or {}, r.get("avis") or {}
+        verdict = a.get("verdict") or (None if not a else ("correct" if a.get("correct") else "faux"))
+        rows.append({"id": r["id"], "date": datetime.datetime.strptime(r["id"][:15], "%Y%m%d-%H%M%S").isoformat(),
+                     "culture": e.get("culture"), "gouvernorat": e.get("gouvernorat"), "langue": e.get("langue"),
+                     "issue": r.get("issue"), "classe": d.get("classe"), "maladie": d.get("nom"),
+                     "confiance": d.get("confiance"), "fiable": d.get("fiable"),
+                     "produits": " | ".join(r.get("produits") or []), "verdict": verdict,
+                     "vraie_culture": a.get("vraie_culture"), "vrai_probleme": a.get("vrai_probleme"),
+                     "vraie_reponse": a.get("vraie_reponse"), "commentaire": a.get("commentaire"),
+                     "garder_photo": a.get("garder_photo"), "photo": (JOURNAL_DIR / f"{r['id']}.jpg").exists()})
+    return rows
+
+
+def journal_stats(rows):
+    out = {}
+    for r in rows:
+        s = out.setdefault(r["culture"] or "?", {"culture": r["culture"] or "?", "analyses": 0, "avec_avis": 0,
+                                                 "correct": 0, "partiel": 0, "faux": 0})
+        s["analyses"] += 1
+        if r["verdict"]:
+            s["avec_avis"] += 1
+            s[r["verdict"]] += 1
+    for s in out.values():
+        s["precision"] = round(s["correct"] / s["avec_avis"], 3) if s["avec_avis"] else None
+    return sorted(out.values(), key=lambda s: -s["analyses"])
+
+
+@app.get("/admin/journal", responses=S.doc(S.AdminJournal))
+def admin_journal(authorization: str = Header(None)):
+    check_admin(authorization)
+    rows = journal_rows()
+    return {"analyses": rows, "par_culture": journal_stats(rows)}
+
+
+@app.get("/admin/journal.csv")
+def admin_journal_csv(authorization: str = Header(None)):
+    import csv
+    import io
+    from fastapi.responses import Response
+    check_admin(authorization)
+    rows = journal_rows()
+    buf = io.StringIO()
+    w = csv.DictWriter(buf, fieldnames=list(S.JournalRow.model_fields))
+    w.writeheader()
+    w.writerows(rows)
+    return Response(buf.getvalue(), media_type="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": "attachment; filename=journal_agria.csv"})
 
 
 # ------------------------------------------------------------------ the web app

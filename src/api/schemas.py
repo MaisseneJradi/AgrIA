@@ -19,6 +19,8 @@ class Health(Strict):
     statut: str
     modeles: List[str]
     device: str
+    mode_test: bool = False
+    admin: bool = False
 
 
 class Gouvernorat(Strict):
@@ -82,6 +84,7 @@ class Diagnostic(Strict):
     top3: Optional[List[Tuple[str, float]]] = None
     autre_modele: Optional[OtherModel] = None
     choix_du_modele: Optional[str] = None
+    niveau: Optional[Literal["sur", "probable", "incertain"]] = None
 
 
 class CropInfo(Strict):
@@ -134,11 +137,39 @@ class TraceStep(Strict):
     duree_ms: int
 
 
+class CardLine(Strict):
+    """A line of a registered product, exactly as in the text; url: the page of a validated shop offer."""
+    role: Literal["produit", "dose_pratique", "lmr", "boutique", "boutique_absente", "pourquoi"]
+    texte: str
+    url: Optional[str] = None
+
+
+class CardProduct(Strict):
+    nom: str
+    lignes: List[CardLine]
+
+
+class Card(Strict):
+    """A section of the answer. Joined by a blank line, the "texte" of the cards ARE the answer text (checked by the
+    Vérificateur): the app shows them as cards without changing a character."""
+    type: Literal["autre_photo", "doute", "pistes", "questions", "crda", "sain", "hypothese", "diagnostic",
+                  "traitements", "ecartes", "rotation", "securite", "a_savoir", "aucun_produit", "affiner",
+                  "prevention", "conseils", "sources", "engrais", "eau", "fin", "texte"]
+    texte: str
+    titre: Optional[str] = None
+    elements: Optional[List[str]] = None
+    produits: Optional[List[CardProduct]] = None
+    champs: Optional[List[str]] = None
+    citations: Optional[List[str]] = None
+    sources: Optional[List[str]] = None
+
+
 class Diagnose(Strict):
     """POST /diagnose. `texte` is the answer written by code and checked by the Vérificateur: the app shows it as is."""
     issue: Literal["conseil", "question", "autre_photo", "crda"]
     texte: str
     langue: Literal["fr", "ar"]
+    cartes: List[Card]
     diagnostic: Optional[Diagnostic] = None
     culture: Optional[CropInfo] = None
     produits: List[Product]
@@ -156,6 +187,43 @@ class Diagnose(Strict):
 
 class FeedbackSaved(Strict):
     statut: str
+
+
+class JournalRow(Strict):
+    id: str
+    date: str
+    culture: Optional[str] = None
+    gouvernorat: Optional[str] = None
+    langue: Optional[str] = None
+    issue: Optional[str] = None
+    classe: Optional[str] = None
+    maladie: Optional[str] = None
+    confiance: Optional[float] = None
+    fiable: Optional[bool] = None
+    produits: str = ""
+    verdict: Optional[Literal["correct", "partiel", "faux"]] = None
+    vraie_culture: Optional[str] = None
+    vrai_probleme: Optional[str] = None
+    vraie_reponse: Optional[str] = None
+    commentaire: Optional[str] = None
+    garder_photo: Optional[bool] = None
+    photo: bool = False
+
+
+class CropStats(Strict):
+    culture: str
+    analyses: int
+    avec_avis: int
+    correct: int
+    partiel: int
+    faux: int
+    precision: Optional[float] = None
+
+
+class AdminJournal(Strict):
+    """GET /admin/journal: the analyses of the test journal (newest first) and the accuracy per crop."""
+    analyses: List[JournalRow]
+    par_culture: List[CropStats]
 
 
 def doc(model):

@@ -1,48 +1,102 @@
 import { useMutation } from "@tanstack/react-query";
-import { Camera, Languages, MessageSquareText, Plus, RotateCcw, SlidersHorizontal } from "lucide-react";
-import { Fragment, useEffect, useRef, type ReactNode } from "react";
+import { Camera, Clock, Languages, Plus, RotateCcw, SlidersHorizontal, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { api, type DiagnoseAnswer } from "@/api/client";
+import { api, NetworkError, type DiagnoseAnswer } from "@/api/client";
 import { useCultures } from "@/api/queries";
 import { Alert, Button, Card, SkeletonBlock } from "@/components/ui";
 import type { Lang } from "@/lib/i18n";
+import { formatDate } from "@/lib/format";
+import { useOnline } from "@/lib/useOnline";
+import { AnswerCardView } from "../answer/AnswerCards";
+import { isReliable, visibleCards } from "../answer/cards";
+import { AnswerActions, TraceView } from "../answer/AnswerExtras";
+import { saveAnswer } from "../history/history";
+import { clearPending, getPending, setPending, type Pending } from "../queue/queue";
+import { FeedbackCard } from "../test-mode/FeedbackCard";
 import { ContextFields } from "./ContextFields";
 import { cropName } from "./crops";
 import { describeError } from "./errors";
+import { diagnoseForm } from "./form";
 import { StepPage } from "./StepPage";
 import { STEP_PATH } from "./steps";
-import { diagnoseForm } from "./form";
 import { CONTEXT_FIELDS, useDiagnosis, type ContextField } from "./store";
 
-/** Step 4 (step 2 of the React plan): the answer as the agents wrote it and the Vérificateur checked it, shown as is.
- * The cards (treatments, safety, sources) come at step 3 of the plan. */
+/** Step 4: the answer of the agents as cards (the same text the Vérificateur checked, cut where the API cut it),
+ * the questions to refine, how AgrIA decided, share / print / read aloud, the tester's opinion in test mode. */
 export function AnswerStep() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as Lang;
   const navigate = useNavigate();
-  const { crop, context, setContext, submission, submit, answer, setAnswer, reset } = useDiagnosis();
+  const online = useOnline();
+  const {
+    photo,
+    crop,
+    message,
+    gouvernorat,
+    context,
+    setContext,
+    submission,
+    submit,
+    answer,
+    setAnswer,
+    reset,
+    queuedFrom,
+  } = useDiagnosis();
   const cultures = useCultures();
   const sent = useRef<number | null>(null);
+  const [pending, setPendingState] = useState<Pending | null>(null);
 
   const run = useMutation({
     mutationFn: () => api.diagnose(diagnoseForm(lang)),
-    onSuccess: setAnswer,
+    onSuccess: (a) => {
+      setAnswer(a);
+      void saveAnswer(a, useDiagnosis.getState().crop); // text only, on this device
+    },
   });
   const { mutate } = run;
 
-  // one request per submission ("Analyser", "Relancer", retry); after a reload the answer is asked again
+  // one request per submission ("Analyser", "Relancer", retry); after a reload the answer is asked again. Without
+  // network nothing is sent: the farmer is told at once and can put the photo aside.
+  const [offlineAt, setOfflineAt] = useState<number | null>(null);
   useEffect(() => {
     if (!answer && sent.current !== submission) {
       sent.current = submission;
+      if (!navigator.onLine) {
+        setOfflineAt(submission);
+        return;
+      }
+      setOfflineAt(null);
       mutate();
     }
   }, [answer, submission, mutate]);
 
-  const error = run.isError ? describeError(run.error, t) : null;
-  const asked = (answer?.questions_contexte ?? []).filter((f): f is ContextField =>
-    (CONTEXT_FIELDS as string[]).includes(f),
-  );
+  useEffect(() => {
+    void getPending().then(setPendingState);
+  }, [submission]);
+
+  const offline = offlineAt === submission && !run.isPending;
+  const error = run.isError
+    ? describeError(run.error, t)
+    : offline
+      ? { kind: "network" as const, text: t("error.network") }
+      : null;
+  const noNetwork = offline || run.error instanceof NetworkError || (run.isError && !online);
+
+  async function putAside() {
+    if (!photo || !crop) return;
+    const p: Pending = {
+      date: new Date().toISOString(),
+      photo,
+      crop,
+      message,
+      gouvernorat,
+      context,
+      langue: lang,
+    };
+    if (await setPending(p)) setPendingState(p);
+  }
 
   return (
     <StepPage
@@ -71,26 +125,57 @@ export function AnswerStep() {
         </Card>
       )}
 
-      {error && (
+      {error && !pending && (
         <Alert
           tone="danger"
           title={t("error.title")}
           action={
-            error.kind === "photo" ? (
-              <Button variant="secondary" icon={Camera} onClick={() => navigate(STEP_PATH.photo)}>
-                {t("crop.retake")}
-              </Button>
-            ) : (
-              <Button variant="secondary" icon={RotateCcw} onClick={submit}>
-                {t("common.retry")}
-              </Button>
-            )
+            <div className="flex flex-wrap gap-2">
+              {error.kind === "photo" ? (
+                <Button variant="secondary" icon={Camera} onClick={() => navigate(STEP_PATH.photo)}>
+                  {t("crop.retake")}
+                </Button>
+              ) : (
+                <Button variant="secondary" icon={RotateCcw} onClick={submit}>
+                  {t("common.retry")}
+                </Button>
+              )}
+              {noNetwork && (
+                <Button variant="secondary" icon={Clock} onClick={() => void putAside()}>
+                  {t("queue.accept")}
+                </Button>
+              )}
+            </div>
           }
         >
           {error.text}
+          {noNetwork && <p className="mt-1">{t("queue.offer")}</p>}
         </Alert>
       )}
 
+      {pending && !answer && (
+        <Alert
+          tone="info"
+          icon={Clock}
+          action={
+            <Button
+              variant="secondary"
+              icon={X}
+              onClick={() => void clearPending().then(() => setPendingState(null))}
+            >
+              {t("queue.cancel")}
+            </Button>
+          }
+        >
+          {t("queue.waiting", { date: formatDate(pending.date, lang) })}
+        </Alert>
+      )}
+
+      {answer && queuedFrom && (
+        <Alert tone="info" icon={Clock}>
+          {t("queue.sent", { date: formatDate(queuedFrom, lang) })}
+        </Alert>
+      )}
       {answer && (
         <AnswerView
           answer={answer}
@@ -98,107 +183,61 @@ export function AnswerStep() {
           pageLang={lang}
           onOtherLang={submit}
           onRetake={() => navigate(STEP_PATH.photo)}
+          refine={<RefineFields answer={answer} value={context} onChange={setContext} onSubmit={submit} />}
         />
-      )}
-
-      {answer && asked.length > 0 && (
-        <Card title={t("answer.refineTitle")} icon={SlidersHorizontal} tone="warning">
-          <p>{t("answer.refineIntro")}</p>
-          <ContextFields fields={asked} value={context} onChange={setContext} />
-          <Button icon={RotateCcw} block onClick={submit}>
-            {t("answer.refine")}
-          </Button>
-        </Card>
       )}
     </StepPage>
   );
 }
 
-const URL_RE = /(https?:\/\/[^\s)]+)/g;
-
-/** The text of the answer, line by line, links clickable (left to right inside Arabic text). Nothing is added,
- * removed or reordered: this is the text the Vérificateur checked. */
-export function AnswerText({ text, lang }: { text: string; lang: "fr" | "ar" }) {
+function RefineFields({
+  answer,
+  value,
+  onChange,
+  onSubmit,
+}: {
+  answer: DiagnoseAnswer;
+  value: Parameters<typeof ContextFields>[0]["value"];
+  onChange: Parameters<typeof ContextFields>[0]["onChange"];
+  onSubmit: () => void;
+}) {
+  const { t } = useTranslation();
+  const asked = (answer.questions_contexte ?? []).filter((f): f is ContextField =>
+    (CONTEXT_FIELDS as string[]).includes(f),
+  );
+  if (!asked.length) return null;
   return (
-    <div
-      lang={lang}
-      dir={lang === "ar" ? "rtl" : "ltr"}
-      className="whitespace-pre-wrap break-words leading-relaxed"
-    >
-      {text.split(URL_RE).map((part, i) =>
-        /^https?:\/\//.test(part) ? (
-          <a
-            key={i}
-            href={part}
-            target="_blank"
-            rel="noopener noreferrer"
-            dir="ltr"
-            className="break-all font-medium text-text underline underline-offset-2"
-          >
-            {part}
-          </a>
-        ) : lang === "ar" ? (
-          <Fragment key={i}>{isolateLatin(part)}</Fragment>
-        ) : (
-          <Fragment key={i}>{part}</Fragment>
-        ),
-      )}
+    <div className="space-y-4">
+      <ContextFields fields={asked} value={value} onChange={onChange} />
+      <Button icon={RotateCcw} block onClick={onSubmit}>
+        {t("answer.refine")}
+      </Button>
     </div>
   );
 }
 
-// a run of French or Latin text inside Arabic (product names, doses, "Alternariose (brûlure alternarienne)"): starts
-// with a Latin letter or a digit, ends with one (or a closing bracket, a % or a unit dot)
-const LATIN_RUN = /([A-Za-zÀ-ÖØ-öø-ÿŒœ0-9][A-Za-zÀ-ÖØ-öø-ÿŒœ0-9 .,;:/%()+'’-]*[A-Za-zÀ-ÖØ-öø-ÿŒœ0-9)%.])/g;
-
-/** In an Arabic answer, each Latin run is isolated left to right (<bdi dir="ltr">), so that its brackets and numbers
- * stay in place. Display only: the characters are the same (tested). */
-function isolateLatin(text: string) {
-  const out: ReactNode[] = [];
-  text.split(LATIN_RUN).forEach((part, i) => {
-    if (i % 2 === 0) {
-      out.push(part);
-      return;
-    }
-    // a closing bracket of the Arabic sentence around the run stays outside it
-    let run = part;
-    let tail = "";
-    while (run.endsWith(")") && count(run, ")") > count(run, "(")) {
-      tail = ")" + tail;
-      run = run.slice(0, -1);
-    }
-    out.push(
-      <bdi key={i} dir="ltr">
-        {run}
-      </bdi>,
-      tail,
-    );
-  });
-  return out;
-}
-
-function count(s: string, ch: string): number {
-  return s.split(ch).length - 1;
-}
-
+/** The cards of an answer (also used by the history, with `old` set: the date is said, it is never shown as new). */
 export function AnswerView({
   answer,
   cropLabel,
   pageLang,
   onOtherLang,
   onRetake,
+  refine,
 }: {
   answer: DiagnoseAnswer;
   cropLabel: string;
   pageLang: Lang;
-  onOtherLang: () => void;
-  onRetake: () => void;
+  onOtherLang?: () => void;
+  onRetake?: () => void;
+  refine?: React.ReactNode;
 }) {
   const { t } = useTranslation();
-  const tone = answer.issue === "conseil" ? "success" : answer.issue === "crda" ? "danger" : "warning";
+  const cards = visibleCards(answer);
+  const reliable = isReliable(answer);
   return (
     <div aria-live="polite" className="space-y-4">
-      {answer.langue !== pageLang && (
+      {answer.langue !== pageLang && onOtherLang && (
         <Alert
           tone="info"
           icon={Languages}
@@ -211,23 +250,27 @@ export function AnswerView({
           {t("answer.otherLang")}
         </Alert>
       )}
-      <Card
-        title={t(`answer.issue.${answer.issue}`)}
-        icon={MessageSquareText}
-        tone={tone}
-        actions={
-          cropLabel ? (
-            <span className="rounded-full bg-surface-2 px-3 py-1 text-sm font-semibold">{cropLabel}</span>
-          ) : undefined
-        }
-      >
-        <AnswerText text={answer.texte} lang={answer.langue} />
-      </Card>
-      {answer.issue === "autre_photo" && (
+      {!reliable && answer.issue !== "autre_photo" && <Alert tone="warning">{t("cards.notReliable")}</Alert>}
+      {cards.map((card, i) =>
+        card.type === "affiner" ? (
+          refine ? (
+            <Card key={i} title={t("answer.refineTitle")} icon={SlidersHorizontal} tone="warning">
+              <p>{card.titre}</p>
+              {refine}
+            </Card>
+          ) : null
+        ) : (
+          <AnswerCardView key={i} card={card} answer={answer} cropLabel={cropLabel} />
+        ),
+      )}
+      {answer.issue === "autre_photo" && onRetake && (
         <Button variant="secondary" icon={Camera} block onClick={onRetake}>
           {t("answer.retakePhoto")}
         </Button>
       )}
+      <TraceView answer={answer} />
+      <AnswerActions answer={answer} />
+      {answer.journal_id && <FeedbackCard journalId={answer.journal_id} />}
     </div>
   );
 }

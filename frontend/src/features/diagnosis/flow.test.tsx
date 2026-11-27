@@ -81,7 +81,7 @@ describe("farmer flow", () => {
     const tomato = await screen.findByRole("button", { name: /Tomate/ });
     expect(within(tomato).getByText("proposé")).toBeInTheDocument();
     expect(tomato).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("button", { name: "Olivier" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Pommier" })).toBeInTheDocument();
     expect(screen.queryByText(/%/)).not.toBeInTheDocument(); // never a raw probability
     expect(screen.queryByText(/Autre plante/)).not.toBeInTheDocument(); // not a crop of /cultures
     const next = screen.getByRole("button", { name: "Continuer" });
@@ -101,7 +101,9 @@ describe("farmer flow", () => {
     await userEvent.click(screen.getByRole("button", { name: "Analyser la photo" }));
 
     // answer: the text of the API as is, links clickable
-    expect(await screen.findByText(/Alternariose \(brûlure alternarienne\)/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Diagnostic : Alternariose \(brûlure alternarienne\)/),
+    ).toBeInTheDocument();
     expect(router.state.location.pathname).toBe("/reponse");
     const link = screen.getByRole("link", { name: /agrishop\.tn/ });
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
@@ -114,6 +116,11 @@ describe("farmer flow", () => {
     expect(form?.get("mois")).toBe(String(new Date().getMonth() + 1));
     expect(form?.get("photo")).toBeInstanceOf(File);
     expect(form?.get("days_to_harvest")).toBeNull(); // empty: not sent
+    // the answer as cards: diagnosis with the confidence in words, the products, safety
+    expect(screen.getByRole("region", { name: "Diagnostic" })).toHaveTextContent("Sûr");
+    expect(screen.getByRole("region", { name: "Traitements homologués" })).toBeInTheDocument();
+    expect(screen.getAllByRole("article")).toHaveLength(3);
+    expect(screen.getByRole("region", { name: "Sécurité" })).toBeInTheDocument();
     expect(sent("diagnose")).toHaveLength(1);
     expect(sent("identify")[0]?.get("photo")).toBeInstanceOf(File);
   });
@@ -158,7 +165,7 @@ describe("farmer flow", () => {
     expect(await screen.findByText(/Vérifiez votre connexion/)).toBeInTheDocument();
     fail = false;
     await userEvent.click(screen.getByRole("button", { name: "Réessayer" }));
-    expect(await screen.findByText(/Alternariose/)).toBeInTheDocument();
+    expect(await screen.findByText(/Diagnostic : Alternariose/)).toBeInTheDocument();
   });
 
   it("server error and unreadable photo have their own message", async () => {
@@ -177,9 +184,11 @@ describe("farmer flow", () => {
     useDiagnosis.setState({ photo: { dataUrl: TINY_JPEG, width: 8, height: 8, bytes: 60 }, crop: "tomato" });
     await renderApp("/reponse");
     expect(await screen.findByText(/Je ne suis pas encore sûr/)).toBeInTheDocument();
-    expect(screen.getByText("À confirmer")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Diagnostic incertain" })).toBeInTheDocument();
+    expect(screen.getByText(/aucun produit n'est conseillé avant confirmation/)).toBeInTheDocument();
     expect(screen.queryByText(/Score 250 EC/)).not.toBeInTheDocument();
     expect(screen.queryByText(/0\.5 l\/ha/)).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Traitements homologués" })).not.toBeInTheDocument();
   });
 
   it("the questions of the agents are answered on the answer screen, then sent again", async () => {

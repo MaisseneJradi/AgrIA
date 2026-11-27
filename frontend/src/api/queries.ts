@@ -19,3 +19,7 @@ export const useCultures = () =>
   useQuery({ queryKey: ["cultures"], queryFn: api.cultures, staleTime: Infinity });
 export const useGouvernorats = () =>
   useQuery({ queryKey: ["gouvernorats"], queryFn: api.gouvernorats, staleTime: Infinity });
+
+/** Test mode (journal on the server) and admin: asked once; on failure the app is simply not in test mode. */
+export const useHealth = () =>
+  useQuery({ queryKey: ["health"], queryFn: api.health, staleTime: 5 * 60_000, retry: false });

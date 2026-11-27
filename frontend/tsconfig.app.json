@@ -15,7 +15,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
-    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom", "vite-plugin-pwa/client"],
     "baseUrl": ".",
     "paths": { "@/*": ["src/*"] }
   },

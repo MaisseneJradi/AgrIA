@@ -11,6 +11,11 @@ import { Layout } from "./Layout";
 // The style guide exists only in development: the condition is false in a production build, so Vite leaves the page
 // (and its code) out of dist.
 const Styleguide = import.meta.env.DEV ? lazy(() => import("@/pages/Styleguide")) : null;
+// pages outside the flow: loaded only when opened (performance budget of the first screen)
+const History = lazy(() => import("@/pages/History"));
+const About = lazy(() => import("@/pages/About"));
+const AdminTest = lazy(() => import("@/pages/AdminTest"));
+const lazyPage = (el: JSX.Element) => <Suspense fallback={<SkeletonBlock lines={6} />}>{el}</Suspense>;
 
 // the farmer flow, one address per step: the phone's back button goes to the previous step
 const children: RouteObject[] = [
@@ -40,6 +45,11 @@ const children: RouteObject[] = [
     ),
   },
 ];
+children.push(
+  { path: "historique", element: lazyPage(<History />) },
+  { path: "a-propos", element: lazyPage(<About />) },
+  { path: "admin/test", element: lazyPage(<AdminTest />) },
+);
 if (Styleguide) {
   children.push({
     path: "styleguide",

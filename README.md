@@ -176,6 +176,8 @@ python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000
 | `AGRIA_DEVICE` | `cuda` ou `cpu` | détection automatique |
 | `AGRIA_JOURNAL=1` | **mode test uniquement** : garde chaque analyse et l'avis du testeur dans `data/journal/` | désactivé |
 | `AGRIA_CROP_MODEL` | dossier du modèle de culture dans `models/` | `crop` |
+| `AGRIA_UI=react` | sert l'application React (`frontend/dist`, après `npm run build`) au lieu de la première application (`src/app`) | première application |
+| `AGRIA_ADMIN_TOKEN` | jeton de la page `/admin/test` et des routes `/admin/journal` (en-tête `Authorization: Bearer <jeton>`) ; sans jeton, l'administration est désactivée | désactivé |
 
 **Vie privée.** Par défaut, la photo est écrite dans un fichier temporaire, lue par les modèles, puis supprimée : rien n'est conservé. Le mode journal ne doit jamais être activé pour de vrais utilisateurs sans leur accord.
 
